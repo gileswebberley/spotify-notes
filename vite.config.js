@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import eslint from 'vite-plugin-eslint';
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
+  // const env = loadEnv(mode, process.cwd(), '');
   return {
     plugins: [
       react({
@@ -13,8 +13,9 @@ export default defineConfig(({ mode }) => {
       }),
       eslint(),
     ],
-    define: {
-      'process.env': env,
-    },
+    // define: {
+    //   'process.env': env,
+    //   process: { env },
+    // },
   };
 });
