@@ -1,17 +1,23 @@
 import { useEffect } from 'react';
-import { useToken } from '../hooks/useToken';
+// import { useToken } from '../hooks/useToken';
 import { gotoAuth } from '../services/apiSpotify';
+import { useCodeChallenge } from '../hooks/useCodeChallenge';
 
 function Home() {
-  const token = useToken();
+  const code = useCodeChallenge();
+  if (!code) {
+    console.log(`No code found in Home (code is ${code})`);
+    gotoAuth();
+  }
   // Redirect to Spotify auth if no token
   useEffect(() => {
-    if (!token) {
-      gotoAuth();
-    }
-  }, [token]);
+    // if (!code) {
+    //   console.log(`No code found in Home (code is ${code})`);
+    //   gotoAuth();
+    // }
+  }, [code]);
 
-  return <div></div>;
+  return <div>The code is: {code}</div>;
 }
 
 export default Home;

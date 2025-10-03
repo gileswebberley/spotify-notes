@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-
+//This is no longer allowed as a way to authorize with Spotify :(
 export function useToken() {
   const [token, setToken] = useState('');
 
