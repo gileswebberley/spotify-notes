@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import AppLayout from './ui/AppLayout';
 import Home from './pages/Home';
 import Error from './ui/Error';
+import Playlists from './pages/Playlists';
 
 const router = createBrowserRouter(
   //Now we're going to create a layout that will work with phone screens or browsers on a pc in the AppLayout component, then make our routes children
@@ -17,15 +18,16 @@ const router = createBrowserRouter(
         {
           path: '/',
           element: <Home />,
+          errorElement: <Error />,
         },
-        // {
-        //   path: "/menu",
-        //   element: <Menu />,
-        //   //loader function defined and exported from Menu.js
-        //   loader: menuLoader,
-        //   //our overall error handler does not sit within the layout because it is at the parent level so let's catch those more local errors here and stop it bubbling-up
-        //   errorElement: <Error />,
-        // },
+        {
+          path: '/playlists',
+          element: <Playlists />,
+          //loader function defined and exported from Menu.js
+          // loader: menuLoader,
+          //our overall error handler does not sit within the layout because it is at the parent level so let's catch those more local errors here and stop it bubbling-up
+          errorElement: <Error />,
+        },
         // {
         //   path: "/cart",
         //   element: <Cart />,

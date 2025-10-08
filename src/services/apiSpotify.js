@@ -68,7 +68,7 @@ export function gotoAuth() {
 export async function requestToken(code) {
   console.log(`Requesting token with code: ${code}`);
   //once we've got a code from the gotoAuth redirect we can exchange it for a token
-  //   const codeVerifier = window.localStorage.getItem(CODE_VERIFIER_STORAGE_KEY);
+  const codeVerifier = window.localStorage.getItem(CODE_VERIFIER_STORAGE_KEY);
   const url = 'https://accounts.spotify.com/api/token';
   const payload = {
     method: 'POST',
@@ -83,24 +83,16 @@ export async function requestToken(code) {
       code_verifier: codeVerifier,
     }),
   };
-  console.log(`Token request payload: ${payload.body.toString()}`);
+  //   console.log(`Token request payload: ${payload.body.toString()}`);
   const result = await fetch(url, payload);
-  //   if (!result.ok) {
-  //     throw new Error(`HTTP error! status: ${result.status}`);
-  //   }
+  console.log(`Token request result status: ${result.status}`);
   const response = await result.json();
   if (!response.ok) {
     throw new Error(
       `Token request error: ${response.error} - ${response.error_description}`
     );
   }
-
+  console.log(`Token response: ${JSON.stringify(response)}`);
   window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, response.access_token);
-  //   return response.access_token;
+  return response.access_token;
 }
-//old deprecated method -
-// function gotoAuth() {
-//   window.location.href = `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`;
-// }
-
-// export { gotoAuth };
