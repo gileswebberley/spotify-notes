@@ -1,12 +1,13 @@
+//...decided to centralise these constants
 import {
   REDIRECT_URI,
   AUTH_ENDPOINT,
   SCOPE,
   CODE_VERIFIER_STORAGE_KEY,
   ACCESS_TOKEN_STORAGE_KEY,
+  CODE_CHALLENGE_STORAGE_KEY,
 } from '../utils/constants.js';
 
-//...decided to centralise these constants
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 
 //We now have to use PCKE authorizion flow as the token method was deprecated in 2025
@@ -23,44 +24,48 @@ async function sha256(plain) {
   const encoder = new TextEncoder();
   const data = encoder.encode(plain);
   return await window.crypto.subtle.digest('SHA-256', data);
+  //   return hashed;
 }
 
 //base64 encode the hash
 function base64encode(input) {
-  //   return (
-  //     btoa(String.fromCharCode(...new Uint8Array(input)))
-  // .replace(/\+/g, '-')
-  // .replace(/\//g, '_')
-  // .replace(/=/g, '')
-  //   );
-  //let's try the auth0 method for this perhaps
-  return input
-    .toString('base64')
+  return btoa(String.fromCharCode(...new Uint8Array(input)))
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
-    .replace(/=/g, '');
+    .replace(/=+$/, '');
 }
-const codeVerifier = generateRandomString(64);
-// const codeVerifier = base64encode(generateRandomString(64));
 
-//finally we can generate the code challenge
-const hashed = await sha256(codeVerifier);
-const codeChallenge = base64encode(hashed);
+//These were all defined in the main thread and so were being recreated between sending the code challenge and requesting the token with the verifier - moving them here and calling within the gotoAuth function seems to have solved the problem
+async function createCodeChallengeWithVerifier() {
+  const codeVerifier = generateRandomString(64);
+  //using await avoids the codeChallenge being saved as [object Promise] which is what I had been sending to Spotify!!
+  const codeChallenge = await sha256(codeVerifier)
+    .then((hashed) => {
+      console.log(`Code challenge is: ${base64encode(hashed)}`);
+      return base64encode(hashed);
+    })
+    .catch((e) => {
+      console.error(`Error generating code challenge: ${e}`);
+    });
 
-//Now we'll pop our code challenge in local storage to compare later
-window.localStorage.setItem(CODE_VERIFIER_STORAGE_KEY, codeVerifier);
+  //Now we'll pop our code challenge in local storage to compare later
+  window.localStorage.setItem(CODE_VERIFIER_STORAGE_KEY, codeVerifier);
+  window.localStorage.setItem(CODE_CHALLENGE_STORAGE_KEY, codeChallenge);
+}
 
-//next we build our request string
-const params = {
-  client_id: CLIENT_ID,
-  response_type: 'code',
-  redirect_uri: REDIRECT_URI,
-  scope: SCOPE,
-  code_challenge_method: 'S256',
-  code_challenge: codeChallenge,
-};
-
-export function gotoAuth() {
+export async function gotoAuth() {
+  await createCodeChallengeWithVerifier();
+  const codeChallenge = window.localStorage.getItem(CODE_CHALLENGE_STORAGE_KEY);
+  console.log(`Code challenge from storage is: ${codeChallenge}`);
+  //next we build our request string
+  const params = {
+    client_id: CLIENT_ID,
+    response_type: 'code',
+    redirect_uri: REDIRECT_URI,
+    scope: SCOPE,
+    code_challenge_method: 'S256',
+    code_challenge: codeChallenge,
+  };
   AUTH_ENDPOINT.search = new URLSearchParams(params).toString();
   window.location.href = AUTH_ENDPOINT.toString();
 }
@@ -85,9 +90,12 @@ export async function requestToken(code) {
   };
   //   console.log(`Token request payload: ${payload.body.toString()}`);
   const result = await fetch(url, payload);
-  console.log(`Token request result status: ${result.status}`);
+  if (!result.ok) {
+    console.log(`Token request result status: ${result.status}`);
+    throw new Error(`error fetching token: ${result?.message}`);
+  }
   const response = await result.json();
-  if (!response.ok) {
+  if (response.error) {
     throw new Error(
       `Token request error: ${response.error} - ${response.error_description}`
     );

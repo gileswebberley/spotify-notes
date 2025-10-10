@@ -1,43 +1,55 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 // import { useToken } from '../hooks/useToken';
 import { gotoAuth, requestToken } from '../services/apiSpotify';
-import { getCodeChallenge } from '../hooks/getCodeChallenge';
-import { ACCESS_TOKEN_STORAGE_KEY, REDIRECT_URI } from '../utils/constants';
+import { useCodeChallenge } from '../hooks/useCodeChallenge';
+import {
+  ACCESS_TOKEN_STORAGE_KEY,
+  AUTH_CODE,
+  REDIRECT_URI,
+} from '../utils/constants';
 import { useNavigate } from 'react-router-dom';
 
 function Home() {
-  const { code, error } = getCodeChallenge();
-  const authorized = useRef(false);
+  console.log('Home component rendered');
+  const { code, error } = useCodeChallenge();
+  //   const authorized = useRef(false);
   const navigate = useNavigate();
   //code is the ref.current - if no value then we have not gone to spotify for an auth code, if it has a value then it is the code that has been returned
-  if (!code) {
-    console.log(`No code found in Home ${code}`);
-    gotoAuth();
-    // authorized.current = true;
-  } else if (error) {
-    return <div>Error during authentication: {error}</div>;
-  } else {
-    window.location.href = REDIRECT_URI;
-    authorized.current = true;
+  useEffect(() => {
+    async function getTokenWithCode(code) {
+      await requestToken(code)
+        .then(() => {
+          console.log(`Token successfully requested`);
+          window.localStorage.removeItem(AUTH_CODE);
+          navigate('/playlists', { replace: true });
+        })
+        .catch((e) => {
+          console.error(`Error requesting token: ${e}`);
+        });
+    }
+    if (
+      window.localStorage.getItem(AUTH_CODE) &&
+      !window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
+    ) {
+      getTokenWithCode(window.localStorage.getItem(AUTH_CODE));
+    } else if (!code && !error) {
+      console.log(`No code found in Home ${code}`);
+      gotoAuth();
+    } else if (code && !window.localStorage.getItem(AUTH_CODE)) {
+      console.log(`Code found in Home: ${code}`);
+      window.localStorage.setItem(AUTH_CODE, code);
+      //navigate('/', { replace: true });
+      window.location.href = REDIRECT_URI;
+    }
+  }, [code, error, navigate]);
+
+  if (error) {
+    return (
+      <div>Please accept the usage of Spotify to use this app: {error}</div>
+    );
   }
 
-  if (
-    !window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY) &&
-    authorized.current &&
-    code
-  ) {
-    // console.log(`Code found in Home: ${code}`);
-    requestToken(code)
-      .then(() => {
-        console.log(`Token successfully requested`);
-        navigate('/playlists');
-      })
-      .catch((e) => {
-        console.error(`Error requesting token: ${e}`);
-      });
-  }
-
-  return <div>The code is: {code}</div>;
+  return <div>Code: {code}</div>;
 }
 
 export default Home;
