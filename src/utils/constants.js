@@ -1,7 +1,10 @@
-export const REDIRECT_URI = 'http://127.0.0.1:5173/';
+export const HOST = '127.0.0.1';
+export const PORT = 5173;
+export const REDIRECT_URI = `http://${HOST}:${PORT}/`; //'http://127.0.0.1:5173/';
 export const AUTH_ENDPOINT = new URL('https://accounts.spotify.com/authorize');
 export const SCOPE = 'playlist-read-private playlist-read-collaborative'; // user-read-private user-read-email';
-export const CODE_VERIFIER_STORAGE_KEY = 'code_verifier';
+export const CODE_VERIFIER_STORAGE_KEY = 'code-verifier';
 export const CODE_CHALLENGE_STORAGE_KEY = 'code-challenge';
-export const ACCESS_TOKEN_STORAGE_KEY = 'access_token';
-export const AUTH_CODE = 'auth_code';
+export const ACCESS_TOKEN_STORAGE_KEY = 'access-token';
+export const REFRESH_TOKEN_STORAGE_KEY = 'refresh-token';
+export const AUTH_CODE_STORAGE_KEY = 'auth_code';

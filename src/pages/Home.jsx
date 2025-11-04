@@ -4,23 +4,23 @@ import { gotoAuth, requestToken } from '../services/apiSpotify';
 import { useCodeChallenge } from '../hooks/useCodeChallenge';
 import {
   ACCESS_TOKEN_STORAGE_KEY,
-  AUTH_CODE,
+  AUTH_CODE_STORAGE_KEY,
   REDIRECT_URI,
 } from '../utils/constants';
 import { useNavigate } from 'react-router-dom';
 
 function Home() {
   console.log('Home component rendered');
-  const { code, error } = useCodeChallenge();
-  //   const authorized = useRef(false);
-  const navigate = useNavigate();
   //code is the ref.current - if no value then we have not gone to spotify for an auth code, if it has a value then it is the code that has been returned
+  const { code, error } = useCodeChallenge();
+  const navigate = useNavigate();
+
   useEffect(() => {
     async function getTokenWithCode(code) {
       await requestToken(code)
         .then(() => {
           console.log(`Token successfully requested`);
-          window.localStorage.removeItem(AUTH_CODE);
+          window.localStorage.removeItem(AUTH_CODE_STORAGE_KEY);
           navigate('/playlists', { replace: true });
         })
         .catch((e) => {
@@ -28,16 +28,16 @@ function Home() {
         });
     }
     if (
-      window.localStorage.getItem(AUTH_CODE) &&
+      window.localStorage.getItem(AUTH_CODE_STORAGE_KEY) &&
       !window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
     ) {
-      getTokenWithCode(window.localStorage.getItem(AUTH_CODE));
+      getTokenWithCode(window.localStorage.getItem(AUTH_CODE_STORAGE_KEY));
     } else if (!code && !error) {
       console.log(`No code found in Home ${code}`);
       gotoAuth();
-    } else if (code && !window.localStorage.getItem(AUTH_CODE)) {
+    } else if (code && !window.localStorage.getItem(AUTH_CODE_STORAGE_KEY)) {
       console.log(`Code found in Home: ${code}`);
-      window.localStorage.setItem(AUTH_CODE, code);
+      window.localStorage.setItem(AUTH_CODE_STORAGE_KEY, code);
       //navigate('/', { replace: true });
       window.location.href = REDIRECT_URI;
     }

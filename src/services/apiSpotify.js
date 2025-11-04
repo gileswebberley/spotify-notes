@@ -6,12 +6,13 @@ import {
   CODE_VERIFIER_STORAGE_KEY,
   ACCESS_TOKEN_STORAGE_KEY,
   CODE_CHALLENGE_STORAGE_KEY,
+  REFRESH_TOKEN_STORAGE_KEY,
 } from '../utils/constants.js';
 
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 
 //We now have to use PCKE authorizion flow as the token method was deprecated in 2025
-//first generate a random string with this code from Spotify docs https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow
+//first generate a random string as the code-verifier with this code from Spotify docs https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow
 const generateRandomString = (length) => {
   const possible =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -19,7 +20,7 @@ const generateRandomString = (length) => {
   return values.reduce((acc, x) => acc + possible[x % possible.length], '');
 };
 
-//Next it needs to be hashed using SHA256 and then base64 encoded
+//Next we need to create the code-challenge, it needs to be hashed using SHA256 and then base64 encoded
 async function sha256(plain) {
   const encoder = new TextEncoder();
   const data = encoder.encode(plain);
@@ -102,5 +103,11 @@ export async function requestToken(code) {
   }
   console.log(`Token response: ${JSON.stringify(response)}`);
   window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, response.access_token);
+  window.localStorage.setItem(
+    REFRESH_TOKEN_STORAGE_KEY,
+    response.refresh_token
+  );
+  window.localStorage.removeItem(CODE_VERIFIER_STORAGE_KEY);
+  window.localStorage.removeItem(CODE_CHALLENGE_STORAGE_KEY);
   return response.access_token;
 }

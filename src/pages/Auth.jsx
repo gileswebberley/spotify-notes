@@ -1,11 +1,14 @@
 import { useEffect } from 'react';
 import { requestToken } from '../services/apiSpotify';
 import { useNavigate } from 'react-router-dom';
-import { ACCESS_TOKEN_STORAGE_KEY, AUTH_CODE } from '../utils/constants';
+import {
+  ACCESS_TOKEN_STORAGE_KEY,
+  AUTH_CODE_STORAGE_KEY,
+} from '../utils/constants';
 
 function Auth() {
   const navigate = useNavigate();
-  const code = window.localStorage.getItem(AUTH_CODE);
+  const code = window.localStorage.getItem(AUTH_CODE_STORAGE_KEY);
   useEffect(() => {
     async function getTokenWithCode(code) {
       await requestToken(code)
