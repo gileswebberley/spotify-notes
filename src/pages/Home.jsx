@@ -16,6 +16,7 @@ function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    //if we have already got the code then this function 'swaps' it for the actual access token
     async function getTokenWithCode(code) {
       await requestToken(code)
         .then(() => {
@@ -27,15 +28,20 @@ function Home() {
           console.error(`Error requesting token: ${e}`);
         });
     }
+    //we have gone to the spotify auth and got our code which we can 'swap' for a token
     if (
       window.localStorage.getItem(AUTH_CODE_STORAGE_KEY) &&
       !window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
     ) {
       getTokenWithCode(window.localStorage.getItem(AUTH_CODE_STORAGE_KEY));
-    } else if (!code && !error) {
+    }
+    //we have not gone to spotify for an auth code yet so we cannot get our token yet
+    else if (!code && !error) {
       console.log(`No code found in Home ${code}`);
       gotoAuth();
-    } else if (code && !window.localStorage.getItem(AUTH_CODE_STORAGE_KEY)) {
+    }
+    //we have gone to spotify and got a code back so we store it in local storage and 'reload' the app to clear the url params
+    else if (code && !window.localStorage.getItem(AUTH_CODE_STORAGE_KEY)) {
       console.log(`Code found in Home: ${code}`);
       window.localStorage.setItem(AUTH_CODE_STORAGE_KEY, code);
       //navigate('/', { replace: true });

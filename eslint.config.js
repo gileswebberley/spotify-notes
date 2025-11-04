@@ -23,7 +23,10 @@ export default defineConfig([
         sourceType: 'module',
       },
     },
-    // plugins: ['react-refresh'],
+    plugins: {
+      react: react,
+    },
+    settings: { react: { version: '18.2' } },
     rules: {
       'react-refresh/only-export-components': [
         'warn',
