@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 // import { useToken } from '../hooks/useToken';
-import { gotoAuth, requestToken } from '../services/apiSpotify';
+import { gotoSpotifyAuth, requestToken } from '../services/apiSpotify';
 import { useCodeChallenge } from '../hooks/useCodeChallenge';
 import {
   ACCESS_TOKEN_STORAGE_KEY,
@@ -38,7 +38,7 @@ function Home() {
     //we have not gone to spotify for an auth code yet so we cannot get our token yet
     else if (!code && !error) {
       console.log(`No code found in Home ${code}`);
-      gotoAuth();
+      gotoSpotifyAuth();
     }
     //we have gone to spotify and got a code back so we store it in local storage and 'reload' the app to clear the url params
     else if (code && !window.localStorage.getItem(AUTH_CODE_STORAGE_KEY)) {

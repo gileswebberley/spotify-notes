@@ -7,6 +7,7 @@ import {
   ACCESS_TOKEN_STORAGE_KEY,
   CODE_CHALLENGE_STORAGE_KEY,
   REFRESH_TOKEN_STORAGE_KEY,
+  EXPIRATION_TIME_STORAGE_KEY,
 } from '../utils/constants.js';
 
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
@@ -54,7 +55,7 @@ async function createCodeChallengeWithVerifier() {
   window.localStorage.setItem(CODE_CHALLENGE_STORAGE_KEY, codeChallenge);
 }
 
-export async function gotoAuth() {
+export async function gotoSpotifyAuth() {
   await createCodeChallengeWithVerifier();
   const codeChallenge = window.localStorage.getItem(CODE_CHALLENGE_STORAGE_KEY);
   console.log(`Code challenge from storage is: ${codeChallenge}`);
@@ -67,13 +68,15 @@ export async function gotoAuth() {
     code_challenge_method: 'S256',
     code_challenge: codeChallenge,
   };
+  //as the AUTH_ENDPOINT is a URL object we can set the search params directly
   AUTH_ENDPOINT.search = new URLSearchParams(params).toString();
+  //then redirect to the modified AUTH_ENDPOINT (namely with the params added to the URL object)
   window.location.href = AUTH_ENDPOINT.toString();
 }
 
 export async function requestToken(code) {
   console.log(`Requesting token with code: ${code}`);
-  //once we've got a code from the gotoAuth redirect we can exchange it for a token
+  //once we've got a code from the gotoSpotifyAuth redirect we can exchange it for a token
   const codeVerifier = window.localStorage.getItem(CODE_VERIFIER_STORAGE_KEY);
   const url = 'https://accounts.spotify.com/api/token';
   const payload = {
@@ -89,7 +92,19 @@ export async function requestToken(code) {
       code_verifier: codeVerifier,
     }),
   };
-  //   console.log(`Token request payload: ${payload.body.toString()}`);
+
+  const response = await fetchPostPayloadResponse(url, payload);
+
+  setAccessTokenStorage(response);
+
+  //clear up the now defunct code based keys (they expire after 10 minutes anyway)
+  window.localStorage.removeItem(CODE_VERIFIER_STORAGE_KEY);
+  window.localStorage.removeItem(CODE_CHALLENGE_STORAGE_KEY);
+  return response.access_token;
+}
+
+//because I'm copying and pasting some stuff I'll extract it into functions
+async function fetchPostPayloadResponse(url, payload) {
   const result = await fetch(url, payload);
   if (!result.ok) {
     console.log(`Token request result status: ${result.status}`);
@@ -102,12 +117,48 @@ export async function requestToken(code) {
     );
   }
   console.log(`Token response: ${JSON.stringify(response)}`);
+  return response;
+}
+
+function setAccessTokenStorage(response) {
   window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, response.access_token);
   window.localStorage.setItem(
     REFRESH_TOKEN_STORAGE_KEY,
     response.refresh_token
   );
-  window.localStorage.removeItem(CODE_VERIFIER_STORAGE_KEY);
-  window.localStorage.removeItem(CODE_CHALLENGE_STORAGE_KEY);
-  return response.access_token;
+  //to deal with the access token expiring we'll store the expiration time and then we can compare against it within the useAccessToken function
+  const expirationTime = new Date().getTime() + response.expires_in * 1000; //expires_in is in seconds!
+  window.localStorage.setItem(EXPIRATION_TIME_STORAGE_KEY, expirationTime);
+}
+
+async function refreshAccessToken() {
+  const refreshToken = window.localStorage.getItem(REFRESH_TOKEN_STORAGE_KEY);
+  const url = 'https://accounts.spotify.com/api/token';
+  const payload = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+      client_id: CLIENT_ID,
+    }),
+  };
+  const response = await fetchPostPayloadResponse(url, payload);
+  setAccessTokenStorage(response);
+}
+
+//I need to work out how to deal with the access token expiring and refresh it - apparently you receive a 401 error when expired at which point we'll want to use the refresh token to get a new one
+export async function useAccessToken() {
+  //check whether there's at least 5 minutes left on the token
+  if (
+    new Date().getTime() + 5000 * 60 >
+    window.localStorage.getItem(EXPIRATION_TIME_STORAGE_KEY)
+  ) {
+    //token is expired or about to expire so we need to get a new one
+    await refreshAccessToken();
+  }
+  const accessToken = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
+  return accessToken;
 }
