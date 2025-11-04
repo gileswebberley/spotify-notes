@@ -34,6 +34,7 @@ function Home() {
       !window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
     ) {
       getTokenWithCode(window.localStorage.getItem(AUTH_CODE_STORAGE_KEY));
+      //   getTokenWithCode();
     }
     //we have not gone to spotify for an auth code yet so we cannot get our token yet
     else if (!code && !error) {

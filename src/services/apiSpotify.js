@@ -55,6 +55,7 @@ async function createCodeChallengeWithVerifier() {
   window.localStorage.setItem(CODE_CHALLENGE_STORAGE_KEY, codeChallenge);
 }
 
+//This creates the code challenge and verifier then redirects to Spotify for authorisation code which we can use to request an access token
 export async function gotoSpotifyAuth() {
   await createCodeChallengeWithVerifier();
   const codeChallenge = window.localStorage.getItem(CODE_CHALLENGE_STORAGE_KEY);
@@ -74,9 +75,10 @@ export async function gotoSpotifyAuth() {
   window.location.href = AUTH_ENDPOINT.toString();
 }
 
+//Once we've got the code from spotify we use this to 'swap' it for an access token
 export async function requestToken(code) {
-  console.log(`Requesting token with code: ${code}`);
-  //once we've got a code from the gotoSpotifyAuth redirect we can exchange it for a token
+  //   console.log(`Requesting token with code: ${code}`);
+  //this should have been stored during execution of gotoSpotifyAuth along with the code that has been passed in here
   const codeVerifier = window.localStorage.getItem(CODE_VERIFIER_STORAGE_KEY);
   const url = 'https://accounts.spotify.com/api/token';
   const payload = {
@@ -150,7 +152,7 @@ async function refreshAccessToken() {
 }
 
 //I need to work out how to deal with the access token expiring and refresh it - apparently you receive a 401 error when expired at which point we'll want to use the refresh token to get a new one
-export async function useAccessToken() {
+export async function getAccessToken() {
   //check whether there's at least 5 minutes left on the token
   if (
     new Date().getTime() + 5000 * 60 >

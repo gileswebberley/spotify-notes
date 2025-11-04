@@ -5,6 +5,7 @@ import AppLayout from './ui/AppLayout';
 import Home from './pages/Home';
 import Error from './ui/Error';
 import Playlists from './pages/Playlists';
+import { loader as playlistLoader } from './pages/Playlists';
 import Auth from './pages/Auth';
 
 const router = createBrowserRouter(
@@ -30,7 +31,7 @@ const router = createBrowserRouter(
           path: '/playlists',
           element: <Playlists />,
           //loader function defined and exported from Menu.js
-          // loader: menuLoader,
+          loader: playlistLoader,
           //our overall error handler does not sit within the layout because it is at the parent level so let's catch those more local errors here and stop it bubbling-up
           errorElement: <Error />,
         },
