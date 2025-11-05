@@ -1,7 +1,7 @@
 import { useLoaderData, useNavigation } from 'react-router-dom';
 import { getUserPlaylists } from '../services/apiSpotify';
 import User from '../ui/User';
-import Playlist from '../ui/Playlist';
+import Playlist from '../ui/PlaylistItem';
 
 function Playlists() {
   const playlists = useLoaderData();
