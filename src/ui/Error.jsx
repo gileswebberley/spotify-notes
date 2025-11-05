@@ -9,7 +9,7 @@ function Error() {
     <div>
       <h1>Something went wrong 😢</h1>
       <p>{err.message || err.data}</p>
-      <NavLink to="-1">&larr; Go back</NavLink>
+      <NavLink to={-1}>&larr; Go back</NavLink>
     </div>
   );
 }

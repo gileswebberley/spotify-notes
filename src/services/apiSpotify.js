@@ -122,7 +122,7 @@ async function fetchPayloadResponse(url, payload) {
       `Response error from fetchPayloadResponse: ${response.error} - ${response.error_description}`
     );
   }
-  console.log(`fetchPayloadResponse response: ${JSON.stringify(response)}`);
+  // console.log(`fetchPayloadResponse response: ${JSON.stringify(response)}`);
   return response;
 }
 
@@ -191,6 +191,23 @@ export async function getUserProfile() {
   };
   const result = await fetchPayloadResponse(url, payload);
   console.log(`User profile response:`);
-  console.table(JSON.stringify(result));
+  console.table(result);
+  return result;
+}
+
+export async function getUserPlaylists() {
+  const accessToken = await getAccessToken();
+  // const userId = await getUserProfile().then((profile) => profile.id);
+  const url = `https://api.spotify.com/v1/me/playlists?limit=50`;
+  // console.log(`Fetching playlists for user: ${userId}`);
+  const payload = {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+  const result = await fetchPayloadResponse(url, payload);
+  console.log(`User playlists response:`);
+  console.table(result.items);
   return result;
 }

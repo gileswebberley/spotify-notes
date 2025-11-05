@@ -18,8 +18,9 @@ function User() {
     if (!userProfile) fetchUserProfile();
   }, [userProfile]);
   const navigation = useNavigation();
+  const isLoading = navigation.state === 'loading' || !userProfile;
 
-  if (navigation.state === 'loading') {
+  if (isLoading) {
     return <div>Loading user profile...</div>;
   }
 
