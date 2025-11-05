@@ -48,6 +48,11 @@ function Home() {
       //navigate('/', { replace: true });
       window.location.href = REDIRECT_URI;
     }
+    //we have come back to home although we already have an access token so just navigate to playlists
+    else if (window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY) && !error) {
+      console.log(`Access token already exists - navigating to playlists`);
+      navigate('/playlists', { replace: true });
+    }
   }, [code, error, navigate]);
 
   if (error) {

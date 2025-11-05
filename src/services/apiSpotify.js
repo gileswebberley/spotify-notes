@@ -95,7 +95,7 @@ export async function requestToken(code) {
     }),
   };
 
-  const response = await fetchPostPayloadResponse(url, payload);
+  const response = await fetchPayloadResponse(url, payload);
 
   setAccessTokenStorage(response);
 
@@ -106,19 +106,23 @@ export async function requestToken(code) {
 }
 
 //because I'm copying and pasting some stuff I'll extract it into functions
-async function fetchPostPayloadResponse(url, payload) {
+async function fetchPayloadResponse(url, payload) {
   const result = await fetch(url, payload);
   if (!result.ok) {
-    console.log(`Token request result status: ${result.status}`);
-    throw new Error(`error fetching token: ${result?.message}`);
+    console.log(
+      `Fetching error from fetchPayloadResponse call - status: ${result.status}`
+    );
+    throw new Error(
+      `Fetching error from fetchPayloadResponse: ${result?.message}`
+    );
   }
   const response = await result.json();
   if (response.error) {
     throw new Error(
-      `Token request error: ${response.error} - ${response.error_description}`
+      `Response error from fetchPayloadResponse: ${response.error} - ${response.error_description}`
     );
   }
-  console.log(`Token response: ${JSON.stringify(response)}`);
+  console.log(`fetchPayloadResponse response: ${JSON.stringify(response)}`);
   return response;
 }
 
@@ -147,20 +151,46 @@ async function refreshAccessToken() {
       client_id: CLIENT_ID,
     }),
   };
-  const response = await fetchPostPayloadResponse(url, payload);
+  const response = await fetchPayloadResponse(url, payload).catch((e) => {
+    console.error(`Error refreshing access token: ${e}`);
+    gotoSpotifyAuth(); //if we can't refresh the token then we need to re-authenticate
+  });
   setAccessTokenStorage(response);
 }
 
-//I need to work out how to deal with the access token expiring and refresh it - apparently you receive a 401 error when expired at which point we'll want to use the refresh token to get a new one
+//I need to work out how to deal with the access token expiring and refresh it - apparently you receive a 401 error when expired at which point we'll want to use the refresh token to get a new one. Instead of doing that I'm going to save the UTC expiiration time and simply compare that against now in milliseconds
 export async function getAccessToken() {
-  //check whether there's at least 5 minutes left on the token
-  if (
-    new Date().getTime() + 5000 * 60 >
+  const now = Number(new Date().getTime());
+  const safe = 5000 * 60 + now; //5 minutes safety margin
+  const expire = Number(
     window.localStorage.getItem(EXPIRATION_TIME_STORAGE_KEY)
-  ) {
+  );
+  console.log(
+    `Now is ${safe} and token expires at ${expire} so safe > expire is ${
+      safe > expire
+    } by ${(expire - safe) / 60000} minutes`
+  );
+  //check whether there's at least 5 minutes left on the token
+  if (expire - safe <= 0) {
     //token is expired or about to expire so we need to get a new one
+    console.log(`Access token expired or about to expire - refreshing`);
     await refreshAccessToken();
   }
   const accessToken = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
   return accessToken;
+}
+
+export async function getUserProfile() {
+  const accessToken = await getAccessToken();
+  const url = 'https://api.spotify.com/v1/me';
+  const payload = {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+  const result = await fetchPayloadResponse(url, payload);
+  console.log(`User profile response:`);
+  console.table(JSON.stringify(result));
+  return result;
 }

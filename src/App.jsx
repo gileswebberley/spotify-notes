@@ -22,11 +22,11 @@ const router = createBrowserRouter(
           element: <Home />,
           errorElement: <Error />,
         },
-        {
-          path: '/auth',
-          element: <Auth />,
-          errorElement: <Error />,
-        },
+        // {
+        //   path: '/auth',
+        //   element: <Auth />,
+        //   errorElement: <Error />,
+        // },
         {
           path: '/playlists',
           element: <Playlists />,
