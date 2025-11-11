@@ -2,7 +2,7 @@ import { useLoaderData, useNavigation } from 'react-router-dom';
 import { getUserPlaylists } from '../services/apiSpotify';
 import User from '../ui/User';
 import Playlist from '../ui/PlaylistItem';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import PlaylistsPaginationButton from '../ui/PlaylistsPaginationButton';
 
 function Playlists() {
@@ -40,12 +40,15 @@ function Playlists() {
       });
     }
   };
-  //the pagination works but when the list is updated I want it to scroll to the top of the page so I'll use a little effect hook
-  useEffect(() => {
-    if (playlists && !isLoading) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+  //I was scrolling to the top of the page but actually I just want the list to be at the top of the view I think?
+  const playlistsViewElement = useRef(null);
+  //the pagination works but when the list is updated I want it to scroll to the top of the page so I'll use a little effect hook, the scollY check is to only make it happen after the first list (ie not when we first visit the page)
+  useLayoutEffect(() => {
+    if (playlists && !isLoading && window.scrollY > 0) {
+      // window.scrollTo({ top: 0, behavior: 'smooth' });
+      playlistsViewElement.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [playlists, isLoading]);
+  }, [playlists, isLoading, hasPrevious]);
 
   return (
     <>
@@ -54,7 +57,7 @@ function Playlists() {
       {isLoading ? (
         <div>Loading playlists...</div>
       ) : (
-        <ul>
+        <ul ref={playlistsViewElement}>
           {playlists?.items.map((playlist) => (
             <Playlist key={playlist.id} playlist={playlist} />
           ))}
