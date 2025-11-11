@@ -195,11 +195,12 @@ export async function getUserProfile() {
   return result;
 }
 
-export async function getUserPlaylists() {
+export async function getUserPlaylists(offset = 0, limit = 20) {
   const accessToken = await getAccessToken();
   // const userId = await getUserProfile().then((profile) => profile.id);
-  const url = `https://api.spotify.com/v1/me/playlists?limit=50`;
+  const url = new URL(`https://api.spotify.com/v1/me/playlists`);
   // console.log(`Fetching playlists for user: ${userId}`);
+  url.search = new URLSearchParams({ offset, limit }).toString();
   const payload = {
     method: 'GET',
     headers: {

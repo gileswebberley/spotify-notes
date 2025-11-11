@@ -27,9 +27,13 @@ function Home() {
         .catch((e) => {
           console.error(`Error requesting token: ${e}`);
         });
+    } //we have come back to home although we already have an access token so just navigate to playlists
+    if (window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY) && !error) {
+      console.log(`Access token already exists - navigating to playlists`);
+      navigate('/playlists', { replace: true });
     }
     //we have gone to the spotify auth and got our code which we can 'swap' for a token
-    if (
+    else if (
       window.localStorage.getItem(AUTH_CODE_STORAGE_KEY) &&
       !window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
     ) {
@@ -47,11 +51,6 @@ function Home() {
       window.localStorage.setItem(AUTH_CODE_STORAGE_KEY, code);
       //navigate('/', { replace: true });
       window.location.href = REDIRECT_URI;
-    }
-    //we have come back to home although we already have an access token so just navigate to playlists
-    else if (window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY) && !error) {
-      console.log(`Access token already exists - navigating to playlists`);
-      navigate('/playlists', { replace: true });
     }
   }, [code, error, navigate]);
 
