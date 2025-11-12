@@ -66,3 +66,15 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.user-image {
+  /* width: [attr=data-size] */
+  border-radius: 50%;
+  overflow: hidden;
+  display: inline-block;
+}
+.user-image img {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  /* display: block; */
+}

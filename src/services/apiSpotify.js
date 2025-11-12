@@ -188,7 +188,7 @@ export async function getAccessToken() {
 export async function getUserProfile() {
   const accessToken = await getAccessToken();
   if (!accessToken) {
-    console.error(`No access token available - cannot fetch user profile`);
+    console.warn(`No access token available - cannot fetch user profile`);
     return null;
   }
   const url = 'https://api.spotify.com/v1/me';

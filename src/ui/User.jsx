@@ -3,32 +3,26 @@
 // import { getUserProfile } from '../services/apiSpotify';
 // import { useNavigation } from 'react-router-dom';
 
-import { useUserContext } from '../contexts/UserContext';
+import { useUserContext } from '../contexts/userContext';
+import ImagePx from './ImagePx';
+import UserImage from './UserImage';
 
 function User() {
-  //having quickly implemented this I think I might want to refactor it to put this in a context provider so that it is available to all components
-  //   const [userProfile, setUserProfile] = useState(null);
-
-  //   useEffect(() => {
-  //     async function fetchUserProfile() {
-  //       try {
-  //         const profile = await getUserProfile();
-  //         setUserProfile(profile);
-  //       } catch (error) {
-  //         console.error('Error fetching user profile:', error);
-  //       }
-  //     }
-  //     if (!userProfile) fetchUserProfile();
-  //   }, [userProfile]);
-  //   const navigation = useNavigation();
-  //   const isLoading = navigation.state === 'loading' || !userProfile;
-  const { isLoadingUser, getUserFirstName } = useUserContext();
+  //having quickly implemented this I think I might want to refactor it to put this in a context provider so that it is available to all components because we'll save notes under the user id later on
+  const { isLoadingUser, getUserFirstName, getUserImages } = useUserContext();
 
   if (isLoadingUser) {
     return <div>Loading user profile...</div>;
   }
+  const images = getUserImages();
+  console.table('User images:', images);
 
-  return <div>Hi {getUserFirstName()}</div>;
+  return (
+    <div>
+      <UserImage images={images} size={50} />
+      Hi {getUserFirstName()}
+    </div>
+  );
 }
 
 export default User;

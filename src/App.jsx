@@ -6,7 +6,7 @@ import Home from './pages/Home';
 import Error from './ui/Error';
 import Playlists from './pages/Playlists';
 import { loader as playlistLoader } from './pages/Playlists';
-import Auth from './pages/Auth';
+// import Auth from './pages/Auth';
 
 const router = createBrowserRouter(
   //Now we're going to create a layout that will work with phone screens or browsers on a pc in the AppLayout component, then make our routes children
