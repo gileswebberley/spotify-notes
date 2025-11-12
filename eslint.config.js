@@ -34,7 +34,7 @@ export default defineConfig([
       ],
       'react/prop-types': ['off'],
       'react-hooks/exhaustive-deps': 'warn',
-      'react/no-unescaped-entities': 'warn',
+      // 'react/no-unescaped-entities': 'warn',
       'no-unused-vars': ['warn', { varsIgnorePattern: 'React' }],
     },
   },

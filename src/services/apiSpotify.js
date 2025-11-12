@@ -165,6 +165,11 @@ export async function getAccessToken() {
   const expire = Number(
     window.localStorage.getItem(EXPIRATION_TIME_STORAGE_KEY)
   );
+  //I've just made a user context which requests the user profile before we're logged in so we'll check whether the expiration time has been set as a way to know if we are logged in or not - I'll return false if not logged in
+  if (!expire) {
+    console.log(`No expiration time found - user not logged in`);
+    return false;
+  }
   console.log(
     `Now is ${safe} and token expires at ${expire} so safe > expire is ${
       safe > expire
@@ -182,6 +187,10 @@ export async function getAccessToken() {
 
 export async function getUserProfile() {
   const accessToken = await getAccessToken();
+  if (!accessToken) {
+    console.error(`No access token available - cannot fetch user profile`);
+    return null;
+  }
   const url = 'https://api.spotify.com/v1/me';
   const payload = {
     method: 'GET',

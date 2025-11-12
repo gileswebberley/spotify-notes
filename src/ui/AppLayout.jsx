@@ -1,9 +1,12 @@
 import { Outlet } from 'react-router-dom';
+import { UserContextProvider } from '../contexts/UserContext';
 
 function AppLayout() {
   return (
     <main className="app-layout">
-      <Outlet />
+      <UserContextProvider>
+        <Outlet />
+      </UserContextProvider>
     </main>
   );
 }
