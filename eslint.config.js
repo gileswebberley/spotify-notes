@@ -2,7 +2,7 @@ import js from '@eslint/js';
 import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
-import react from 'eslint-plugin-react';
+import react from 'eslint-config-react-app'; //changing this from eslint-plugin-react has fixed the unused warnings for react components
 import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
@@ -32,12 +32,10 @@ export default defineConfig([
         'warn',
         { allowConstantExport: true },
       ],
-      // 'no-unused-vars': 'warn',
       'react/prop-types': ['off'],
       'react-hooks/exhaustive-deps': 'warn',
       'react/no-unescaped-entities': 'warn',
       'no-unused-vars': ['warn', { varsIgnorePattern: 'React' }],
-      // 'react/prop-types': ['off'],
     },
   },
 ]);
