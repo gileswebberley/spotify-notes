@@ -56,11 +56,15 @@ function Home() {
 
   if (error) {
     return (
-      <div>Please accept the usage of Spotify to use this app: {error}</div>
+      <>
+        <h1>Please accept the usage of Spotify to use this app</h1>
+        <p>Error details: {error}</p>
+        <button onClick={() => navigate('/')}>Try Again</button>
+      </>
     );
   }
 
-  return <div>Code: {code}</div>;
+  return <h1>We're just getting your Spotify authentication dealt with...</h1>;
 }
 
 export default Home;
