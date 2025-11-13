@@ -26,6 +26,8 @@ function Home() {
         })
         .catch((e) => {
           console.error(`Error requesting token: ${e}`);
+          //try again if it failed? It seems to fail when network is throttled :/
+          navigate('/', { replace: true });
         });
     } //we have come back to home although we already have an access token so just navigate to playlists
     if (window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY) && !error) {

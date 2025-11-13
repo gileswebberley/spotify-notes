@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { getUserProfile } from '../services/apiSpotify';
 import { useLocation, useNavigation } from 'react-router-dom';
+import { AUTH_PATH } from '../utils/constants';
 
 // const initialUserState = {
 //   user: null,
@@ -25,7 +26,7 @@ function UserContextProvider({ children }) {
         console.error('Error fetching user profile:', error);
       }
     }
-    if (!userProfile && path !== '/') fetchUserProfile();
+    if (!userProfile && path !== AUTH_PATH) fetchUserProfile();
   }, [userProfile, path]);
 
   function getUserFirstName() {

@@ -10,3 +10,4 @@ export const ACCESS_TOKEN_STORAGE_KEY = 'access-token';
 export const REFRESH_TOKEN_STORAGE_KEY = 'refresh-token';
 export const AUTH_CODE_STORAGE_KEY = 'auth_code';
 export const EXPIRATION_TIME_STORAGE_KEY = 'token-expiration-time';
+export const AUTH_PATH = '/';
