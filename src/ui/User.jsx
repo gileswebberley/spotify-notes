@@ -1,10 +1,4 @@
-// import { use } from 'react';
-// import { useEffect, useState } from 'react';
-// import { getUserProfile } from '../services/apiSpotify';
-// import { useNavigation } from 'react-router-dom';
-
 import { useUserContext } from '../contexts/userContext';
-import ImagePx from './ImagePx';
 import UserImage from './UserImage';
 
 function User() {

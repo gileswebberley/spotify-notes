@@ -2,7 +2,7 @@ import js from '@eslint/js';
 import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
-import react from 'eslint-config-react-app'; //changing this from eslint-plugin-react has fixed the unused warnings for react components
+import react from 'eslint-plugin-react'; //changing this from eslint-plugin-react has fixed the unused warnings for react components
 import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
@@ -24,7 +24,7 @@ export default defineConfig([
       },
     },
     plugins: {
-      react: react,
+      react,
     },
     settings: { react: { version: '18.2' } },
     rules: {
@@ -34,7 +34,7 @@ export default defineConfig([
       ],
       'react/prop-types': ['off'],
       'react-hooks/exhaustive-deps': 'warn',
-      // 'react/no-unescaped-entities': 'warn',
+      'react/jsx-uses-vars': 'warn',
       'no-unused-vars': ['warn', { varsIgnorePattern: 'React' }],
     },
   },
