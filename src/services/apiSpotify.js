@@ -217,7 +217,42 @@ export async function getUserPlaylists(offset = 0, limit = 20) {
     },
   };
   const result = await fetchPayloadResponse(url, payload);
-  console.log(`User playlists response:`);
-  console.table(result.items);
+  // console.log(`User playlists response:`);
+  // console.table(result.items);
+  return result;
+}
+
+export async function getUserPlaylist(playlistId) {
+  const accessToken = await getAccessToken();
+  const url = new URL(`https://api.spotify.com/v1/playlists/${playlistId}`);
+  const payload = {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+  //limit has no effect ads it is locked to 100 by Spotify
+  // const limit = 500; //arbitrary large number to get all tracks in one go
+  // url.search = new URLSearchParams({ limit }).toString();
+  const result = await fetchPayloadResponse(url, payload);
+  console.table(`Playlist ${playlistId} details:`, result);
+  return result;
+}
+
+export async function getPlaylistTracks(offset = 0, limit = 20, [playlistId]) {
+  const accessToken = await getAccessToken();
+  const url = new URL(
+    `https://api.spotify.com/v1/playlists/${playlistId}/tracks`
+  );
+  url.search = new URLSearchParams({ offset, limit }).toString();
+  const payload = {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+  const result = await fetchPayloadResponse(url, payload);
+  // console.log(`Playlist ${playlistId} tracks response:`);
+  // console.table(result.items);
   return result;
 }

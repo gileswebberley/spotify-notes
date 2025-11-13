@@ -4,8 +4,9 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import AppLayout from './ui/AppLayout';
 import Home from './pages/Home';
 import Error from './ui/Error';
-import Playlists from './pages/Playlists';
-import { loader as playlistLoader } from './pages/Playlists';
+import Playlists, { loader as playlistsLoader } from './pages/Playlists';
+// import { loader as playlistsLoader } from './pages/Playlists';
+import Playlist, { loader as playlistLoader } from './pages/Playlist';
 // import Auth from './pages/Auth';
 
 const router = createBrowserRouter(
@@ -31,8 +32,14 @@ const router = createBrowserRouter(
           path: '/playlists',
           element: <Playlists />,
           //loader function defined and exported from Menu.js
-          loader: playlistLoader,
+          loader: playlistsLoader,
           //our overall error handler does not sit within the layout because it is at the parent level so let's catch those more local errors here and stop it bubbling-up
+          errorElement: <Error />,
+        },
+        {
+          path: '/playlist/:playlistId',
+          element: <Playlist />,
+          loader: playlistLoader,
           errorElement: <Error />,
         },
         // {

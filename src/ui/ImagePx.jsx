@@ -7,7 +7,8 @@ function ImagePx({ images, name, size = 'sm' }) {
   } else {
     pixelSize = size;
   }
-  const imgUrl = images?.find((img) => img.height === pixelSize)?.url;
+  images.sort((a, b) => a.height - b.height);
+  const imgUrl = images?.find((img) => img.height >= pixelSize)?.url;
   return (
     <>
       {imgUrl ? (
