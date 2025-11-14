@@ -16,12 +16,8 @@ function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('RUNNING EFFECT IN HOME....');
     //if we have already got the code then this function 'swaps' it for the actual access token
     async function getTokenWithCode(code) {
-      console.log(
-        'getTokenWithCode has been called so about to run requestToken...'
-      );
       await requestToken(code)
         .then(() => {
           console.log(`Token successfully requested`);
@@ -32,11 +28,9 @@ function Home() {
           console.error(
             `Error requesting token within getTokenWithCode. Error: ${e}`
           );
-          //try again if it failed? It seems to fail when network is throttled :/
-          // navigate('/', { replace: true });
         });
-      console.log('End of getTokenWithCode after then().catch() block');
-    } //we have come back to home although we already have an access token so just navigate to playlists
+    }
+    //we have come back to home although we already have an access token so just navigate to playlists
     if (window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY) && !error) {
       console.log(`Access token already exists - navigating to playlists`);
       navigate('/playlists', { replace: true });
@@ -46,13 +40,7 @@ function Home() {
       window.localStorage.getItem(AUTH_CODE_STORAGE_KEY) &&
       !window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
     ) {
-      console.log(
-        `Have auth code now requesting access token with call to getTokenWithCode(${window.localStorage.getItem(
-          AUTH_CODE_STORAGE_KEY
-        )})`
-      );
       getTokenWithCode(window.localStorage.getItem(AUTH_CODE_STORAGE_KEY));
-      //   getTokenWithCode();
     }
     //we have not gone to spotify for an auth code yet so we cannot get our token yet
     else if (!code && !error) {
@@ -67,13 +55,7 @@ function Home() {
         `Code found in Home, setting AUTH_CODE_STORAGE_KEY to: ${code}`
       );
       window.localStorage.setItem(AUTH_CODE_STORAGE_KEY, code);
-      //navigate('/', { replace: true });
-      console.log(
-        `code has been set to ${window.localStorage.getItem(
-          AUTH_CODE_STORAGE_KEY
-        )}`
-      );
-      console.log('Now reloading page with window.location.href....');
+      //essentially this strips the code param from the url so our routing works correctly, navigate('/') didn't seem to work correctly
       window.location.href = REDIRECT_URI;
     }
   }, [code, error, navigate]);
