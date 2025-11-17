@@ -41,9 +41,12 @@ function Playlist() {
           </button>
           <h3>Playlist: {playlist?.name}</h3>
           <ul ref={trackViewElement}>
-            {tracks?.items.map((track) => (
-              <TrackItem key={track.id} track={track.track} />
-            ))}
+            {tracks?.items.map((item) => {
+              //check that they are only tracks as episodes can also be returned in playlists - could add an EpisodeItem later if it makes any sense
+              if (item.track.type === 'episode') return null;
+              //passing the item rather than the track object as it has the added_at property which would be handy to have in the notes
+              return <TrackItem key={item.track.id} item={item} />;
+            })}
           </ul>
         </>
       )}

@@ -9,7 +9,7 @@ function User() {
     return <div>Loading user profile...</div>;
   }
   const images = getUserImages();
-  console.table('User images:', images);
+  // console.table('User images:', images);
 
   return (
     <div>
