@@ -1,22 +1,27 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useUserContext } from '../contexts/userContext';
-import { getUserNoteForTrack, saveNoteForTrack } from '../services/DexieDB';
+import {
+  deleteNoteForTrack,
+  getUserNoteForTrack,
+  saveNoteForTrack,
+} from '../services/DexieDB';
 import { formatDate } from '../utils/helpers';
 import { useState } from 'react';
 
 function NoteUI({ trackId }) {
   const [editMode, setEditMode] = useState(false);
   const { isLoadingUser, getUserId } = useUserContext();
+  const [isAddingOrDeleting, setIsAddingOrDeleting] = useState(false);
   let userId = null;
   //useLiveQuery is a hook provided by dexie-react-hooks which allows us to run a Dexie query and have the component re-render when the result changes
   const note = useLiveQuery(async () => {
     if (!isLoadingUser) {
-      //} && !userId) {
       userId = getUserId();
       return await getNote(userId, trackId);
     }
   }, [isLoadingUser, userId]);
 
+  //simply extracted to keep useLiveQuery cleaner
   async function getNote(userId, trackId) {
     try {
       // console.log('live query is calling getUserNoteForTrack....');
@@ -31,20 +36,40 @@ function NoteUI({ trackId }) {
 
   async function handleSaveNote(event) {
     event.preventDefault();
-    console.log(`Testing update of note with userId: ${getUserId()}`);
+    setIsAddingOrDeleting(true);
     const formData = new FormData(event.target);
     const noteContent = formData.get('noteContent');
     const userId = getUserId();
-    // const trackId = formData.get('trackId');
-    // const userId = formData.get('userId');
     try {
       const savedNote = await saveNoteForTrack(userId, trackId, noteContent);
       console.log('Note saved:', savedNote);
       // return savedNote;
       setEditMode(false);
+      setIsAddingOrDeleting(false);
     } catch (e) {
       console.error('Error saving note:', e);
       throw e;
+    } finally {
+      setIsAddingOrDeleting(false);
+    }
+  }
+
+  async function handleDeleteNote(event) {
+    if (window.confirm('Are you sure you want to delete this note?')) {
+      const userId = getUserId();
+      try {
+        const deleted = await deleteNoteForTrack(userId, trackId);
+        if (deleted) {
+          console.log('Note deleted');
+        } else {
+          console.log('No note to delete');
+        }
+      } catch (e) {
+        console.error('Error deleting note:', e);
+        throw e;
+      }
+    } else {
+      event.target.blur();
     }
   }
 
@@ -65,6 +90,12 @@ function NoteUI({ trackId }) {
           note: {note?.content}
           <span> ({formatDate(note?.createdAt)})</span>
           <button onClick={() => setEditMode(true)}>edit</button>
+          <button
+            disbaled={isAddingOrDeleting.toString()}
+            onClick={handleDeleteNote}
+          >
+            delete
+          </button>
         </div>
       ) : (
         <form method="post" onSubmit={handleSaveNote}>
