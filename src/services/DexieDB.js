@@ -7,27 +7,51 @@ db.version(1).stores({
   notes: '++id, userId, trackId',
 });
 
-export function getNotesByUserId(userId) {
-  db.transaction('r', db.notes, async () => {
-    const userNotes = await db.notes.where('userId').equals(userId).toArray();
-    return userNotes ?? [];
-  }).catch((e) => {
-    console.error(`Failed to get notes by userId ${userId}:`, e);
-    throw e;
+//pop a test note in the db
+db.on('populate', function (tx) {
+  tx.notes.add({
+    userId: '1198909265',
+    trackId: '4xNl7wvrgaTDofpLenB9Mo',
+    content: 'This is a test note for PUDDLE ( OF ME ) by Saya Gray',
+    createdAt: new Date(),
+    updatedAt: new Date(),
   });
+});
+
+export async function getNotesByUserId(userId) {
+  return db
+    .transaction('r', db.notes, async () => {
+      const userNotes = await db.notes.where('userId').equals(userId).toArray();
+      return userNotes ?? [];
+    })
+    .catch((e) => {
+      console.error(`Failed to get notes by userId ${userId}:`, e);
+      throw e;
+    });
 }
 
-export function getUserNoteForTrack(userId, trackId) {
-  db.transaction('r', db.notes, async () => {
-    const note = await db.notes.where({ userId, trackId }).first();
-    return note?.content ?? null;
-  }).catch((e) => {
-    console.error(`Failed to get note for track id ${trackId}:`, e);
-    throw e;
-  });
+export async function getUserNoteForTrack(userId, trackId) {
+  //this worked but I believe using a transaction does more work in the background like looking after aborting etc
+  // try {
+  //   const note = await db.notes.where({ userId, trackId }).first();
+  //   console.table('Fetched note:', note);
+  //   return note;
+  // } catch (e) {
+  //   console.error(`Failed to get note for track id ${trackId}:`, e);
+  //   throw e;
+  // }
+  return db
+    .transaction('r', db.notes, async () => {
+      const note = await db.notes.where({ userId, trackId }).first();
+      return note ?? null;
+    })
+    .catch((e) => {
+      console.error(`Failed to get note for track id ${trackId}:`, e);
+      throw e;
+    });
 }
 
-export function saveNoteForTrack(userId, trackId, noteContent) {
+export async function saveNoteForTrack(userId, trackId, noteContent) {
   return db
     .transaction('rw', db.notes, async () => {
       const existingNote = await db.notes.where({ userId, trackId }).first();

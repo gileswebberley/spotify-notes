@@ -1,4 +1,5 @@
 import ImagePx from './ImagePx';
+import NoteUI from './NoteUI';
 
 function TrackItem({ item }) {
   const { name, album, artists, id } = item.track;
@@ -13,6 +14,7 @@ function TrackItem({ item }) {
       >
         [Open in Spotify]
       </a>
+      <NoteUI trackId={id} />
     </div>
   );
 }

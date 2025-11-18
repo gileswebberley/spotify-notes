@@ -3,10 +3,6 @@ import { getUserProfile } from '../services/apiSpotify';
 import { useLocation, useNavigation } from 'react-router-dom';
 import { AUTH_PATH } from '../utils/constants';
 
-// const initialUserState = {
-//   user: null,
-// };
-
 const UserContext = createContext(null);
 
 function UserContextProvider({ children }) {
@@ -15,7 +11,7 @@ function UserContextProvider({ children }) {
   const location = useLocation();
   const path = location.pathname;
   const navigation = useNavigation();
-  const isLoadingUser = navigation.state === 'loading' && !userProfile;
+  const isLoadingUser = navigation.state === 'loading' || !userProfile;
 
   useEffect(() => {
     async function fetchUserProfile() {
@@ -42,7 +38,8 @@ function UserContextProvider({ children }) {
   }
 
   function getUserId() {
-    const id = userProfile?.id;
+    let id;
+    id = userProfile?.id;
     if (!id) {
       throw new Error('User ID is not available');
     }
