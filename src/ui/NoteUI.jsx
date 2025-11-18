@@ -1,6 +1,7 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useUserContext } from '../contexts/userContext';
-import { getUserNoteForTrack } from '../services/DexieDB';
+import { getUserNoteForTrack, saveNoteForTrack } from '../services/DexieDB';
+import { formatDate } from '../utils/helpers';
 
 function NoteUI({ trackId }) {
   const { isLoadingUser, getUserId } = useUserContext();
@@ -10,9 +11,9 @@ function NoteUI({ trackId }) {
     if (!isLoadingUser && !userId) {
       userId = getUserId();
       try {
-        console.log('live query is calling getUserNoteForTrack....');
+        // console.log('live query is calling getUserNoteForTrack....');
         const note = await getUserNoteForTrack(userId, trackId);
-        console.table('Fetched note in live query:', note);
+        // console.table('Fetched note in live query:', note);
         return note;
       } catch (e) {
         console.error(`Failed to get note for track id ${trackId}:`, e);
@@ -23,15 +24,35 @@ function NoteUI({ trackId }) {
 
   if (isLoadingUser) {
     // console.log('is loading user...');
-    return <div>Loading user info to check for notes</div>;
+    return null;
+  }
+
+  if (!note) {
+    // console.log('no note found for this track');
+    return <button>add note</button>;
   }
 
   return (
     <div>
-      userid: {userId} trackId: {trackId}{' '}
-      {note ? ` note: ${note?.content}` : ' no note'}
+      {`note: ${note?.content}`}
+      <span> ({formatDate(note?.createdAt)})</span>
     </div>
   );
+}
+
+export async function action({ request }) {
+  const formData = await request.formData();
+  const noteContent = formData.get('noteContent');
+  const trackId = formData.get('trackId');
+  const userId = formData.get('userId');
+  try {
+    const savedNote = await saveNoteForTrack(userId, trackId, noteContent);
+    console.log('Note saved:', savedNote);
+    return savedNote;
+  } catch (e) {
+    console.error('Error saving note:', e);
+    throw e;
+  }
 }
 
 export default NoteUI;

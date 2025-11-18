@@ -51,6 +51,7 @@ export async function getUserNoteForTrack(userId, trackId) {
     });
 }
 
+//rather than have a separate update and add function I'll just have one which does either depending on whether a note already exists for that userId and trackId
 export async function saveNoteForTrack(userId, trackId, noteContent) {
   return db
     .transaction('rw', db.notes, async () => {
