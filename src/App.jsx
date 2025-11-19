@@ -7,6 +7,7 @@ import Error from './ui/Error';
 import Playlists, { loader as playlistsLoader } from './pages/Playlists';
 // import { loader as playlistsLoader } from './pages/Playlists';
 import Playlist, { loader as playlistLoader } from './pages/Playlist';
+import SuspenseWidget from './ui/SuspenseWidget';
 // import Auth from './pages/Auth';
 
 const router = createBrowserRouter(
@@ -42,25 +43,6 @@ const router = createBrowserRouter(
           loader: playlistLoader,
           errorElement: <Error />,
         },
-        // {
-        //   path: "/cart",
-        //   element: <Cart />,
-        //   errorElement: <Error />,
-        // },
-        // {
-        //   path: "/order/new",
-        //   element: <CreateOrder />,
-        //   //now we are using the actions functionality to submit a Form (not form) from the CreateOrder component
-        //   action: CreateOrderAction,
-        //   errorElement: <Error />,
-        // },
-        // {
-        //   path: "/order/:orderId",
-        //   element: <Order />,
-        //   loader: orderLoader,
-        //   action: updateOrderAction,
-        //   errorElement: <Error />,
-        // },
       ],
     },
   ]
@@ -68,7 +50,9 @@ const router = createBrowserRouter(
 
 function App() {
   //standard setup for react router v6.4+
-  return <RouterProvider router={router} />;
+  return (
+    <RouterProvider router={router} fallbackElement={<SuspenseWidget />} />
+  );
 }
 
 export default App;

@@ -200,6 +200,14 @@ export async function getAccessToken() {
   return accessToken;
 }
 
+//I want to be able to protect the playlists and playlist component so just want a little function that checks if we have logged in or are trying to go to a link
+export function isLoggedIn() {
+  if (!window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)) {
+    return false;
+  }
+  return true;
+}
+
 export async function getUserProfile() {
   const accessToken = await getAccessToken();
   if (!accessToken) {

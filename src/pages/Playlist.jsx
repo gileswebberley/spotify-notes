@@ -1,10 +1,20 @@
-import { useLoaderData, useNavigate, useNavigation } from 'react-router-dom';
-import { getPlaylistTracks, getUserPlaylist } from '../services/apiSpotify';
+import {
+  redirect,
+  useLoaderData,
+  useNavigate,
+  useNavigation,
+} from 'react-router-dom';
+import {
+  getPlaylistTracks,
+  getUserPlaylist,
+  isLoggedIn,
+} from '../services/apiSpotify';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { usePaginatedFetch } from '../hooks/usePaginatedFetch';
 import TrackItem from '../ui/TrackItem';
 import User from '../ui/User';
 import PlaylistsPaginationButton from '../ui/PlaylistsPaginationButton';
+import { AUTH_PATH } from '../utils/constants';
 
 function Playlist() {
   const { playlist, playlistId } = useLoaderData();
@@ -67,6 +77,9 @@ function Playlist() {
 }
 
 export async function loader({ params }) {
+  if (!isLoggedIn()) {
+    return redirect(AUTH_PATH);
+  }
   const { playlistId } = params;
   const playlist = await getUserPlaylist(playlistId);
   return { playlist, playlistId };

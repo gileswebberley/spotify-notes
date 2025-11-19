@@ -73,6 +73,7 @@ function NoteUI({ trackId }) {
       }
     } else {
       setIsAddingOrDeleting(false);
+      //remove focus from button when deleting is cancelled
       event.target.blur();
     }
   }
@@ -93,15 +94,18 @@ function NoteUI({ trackId }) {
 
   return (
     <>
-      {!editMode ? (
-        <div>
-          note: {note?.content}
-          <span> ({formatDate(note?.createdAt)})</span>
-          <button onClick={() => setEditMode(true)}>edit</button>
-          <button disabled={isAddingOrDeleting} onClick={handleDeleteNote}>
-            delete
-          </button>
-        </div>
+      {!editMode && note ? (
+        <details>
+          <summary>View Note</summary>
+          <div>
+            {note?.content}
+            <span> ({formatDate(note?.createdAt)})</span>
+            <button onClick={() => setEditMode(true)}>edit</button>
+            <button disabled={isAddingOrDeleting} onClick={handleDeleteNote}>
+              delete
+            </button>
+          </div>
+        </details>
       ) : (
         <form method="post" onSubmit={handleSaveNote}>
           {/* <input type="hidden" name="trackId" value={trackId} />
