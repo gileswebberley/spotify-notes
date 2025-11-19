@@ -8,6 +8,7 @@ function ImagePlaceholder({ size }) {
         borderRadius: 10,
         display: 'inline-block',
       }}
+      alt="No image available"
     ></div>
   );
 }

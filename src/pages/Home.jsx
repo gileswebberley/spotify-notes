@@ -40,7 +40,8 @@ function Home() {
       window.localStorage.getItem(AUTH_CODE_STORAGE_KEY) &&
       !window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
     ) {
-      getTokenWithCode(window.localStorage.getItem(AUTH_CODE_STORAGE_KEY));
+      const code = window.localStorage.getItem(AUTH_CODE_STORAGE_KEY);
+      getTokenWithCode(code);
     }
     //we have not gone to spotify for an auth code yet so we cannot get our token yet
     else if (!code && !error) {
@@ -55,8 +56,6 @@ function Home() {
         `Code found in Home, setting AUTH_CODE_STORAGE_KEY to: ${code}`
       );
       window.localStorage.setItem(AUTH_CODE_STORAGE_KEY, code);
-      //essentially this strips the code param from the url so our routing works correctly, navigate('/') didn't seem to work correctly
-      window.location.href = REDIRECT_URI;
     }
   }, [code, error, navigate]);
 

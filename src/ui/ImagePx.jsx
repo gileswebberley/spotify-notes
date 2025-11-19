@@ -9,6 +9,7 @@ function ImagePx({ images, name, size = 'sm' }) {
   }
   images.sort((a, b) => a.height - b.height);
   const imgUrl = images?.find((img) => img.height >= pixelSize)?.url;
+  //set the width and height properties on the img tag so that it avoids layout shifts whilst loading
   return (
     <>
       {imgUrl ? (

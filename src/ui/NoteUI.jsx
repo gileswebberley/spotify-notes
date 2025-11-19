@@ -8,7 +8,7 @@ import {
 import { formatDate } from '../utils/helpers';
 import { useState } from 'react';
 
-function NoteUI({ trackId }) {
+function NoteUI({ trackId, addedAt }) {
   const [editMode, setEditMode] = useState(false);
   const { isLoadingUser, getUserId } = useUserContext();
   const [isAddingOrDeleting, setIsAddingOrDeleting] = useState(false);
@@ -118,6 +118,13 @@ function NoteUI({ trackId }) {
           />
           <button type="submit" disabled={isAddingOrDeleting}>
             Save Note
+          </button>
+          <button
+            type="cancel"
+            disabled={isAddingOrDeleting}
+            onClick={() => setEditMode(false)}
+          >
+            Cancel
           </button>
         </form>
       )}
