@@ -55,6 +55,7 @@ function NoteUI({ trackId }) {
   }
 
   async function handleDeleteNote(event) {
+    setIsAddingOrDeleting(true);
     if (window.confirm('Are you sure you want to delete this note?')) {
       const userId = getUserId();
       try {
@@ -67,8 +68,11 @@ function NoteUI({ trackId }) {
       } catch (e) {
         console.error('Error deleting note:', e);
         throw e;
+      } finally {
+        setIsAddingOrDeleting(false);
       }
     } else {
+      setIsAddingOrDeleting(false);
       event.target.blur();
     }
   }
@@ -80,7 +84,11 @@ function NoteUI({ trackId }) {
 
   if (!note && !editMode) {
     // console.log('no note found for this track');
-    return <button onClick={() => setEditMode(true)}>add note</button>;
+    return (
+      <button disabled={isAddingOrDeleting} onClick={() => setEditMode(true)}>
+        add note
+      </button>
+    );
   }
 
   return (
@@ -90,10 +98,7 @@ function NoteUI({ trackId }) {
           note: {note?.content}
           <span> ({formatDate(note?.createdAt)})</span>
           <button onClick={() => setEditMode(true)}>edit</button>
-          <button
-            disbaled={isAddingOrDeleting.toString()}
-            onClick={handleDeleteNote}
-          >
+          <button disabled={isAddingOrDeleting} onClick={handleDeleteNote}>
             delete
           </button>
         </div>
@@ -107,7 +112,9 @@ function NoteUI({ trackId }) {
             name="noteContent"
             defaultValue={note?.content}
           />
-          <button type="submit">Save Note</button>
+          <button type="submit" disabled={isAddingOrDeleting}>
+            Save Note
+          </button>
         </form>
       )}
     </>
