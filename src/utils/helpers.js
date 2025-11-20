@@ -9,3 +9,9 @@ export function formatDate(date) {
     minute: '2-digit',
   }).format(new Date(dateStr));
 }
+
+export function getImageURLByHeightSize(images, size) {
+  images.sort((a, b) => a.height - b.height);
+  const imgUrl = images?.find((img) => img.height >= size)?.url;
+  return imgUrl;
+}

@@ -113,8 +113,8 @@ export async function requestToken(code) {
 //because I'm copying and pasting some stuff I'll extract it into functions
 //first a function to handle fetch requests with a payload and deal with errors
 async function fetchPayloadResponse(url, payload) {
-  console.log(`fetchPayloadResponse called with url: ${url}`);
-  console.table('And payload:', payload);
+  // console.log(`fetchPayloadResponse called with url: ${url}`);
+  // console.table('And payload:', payload);
   const result = await fetch(url, payload);
   if (!result.ok) {
     console.table(

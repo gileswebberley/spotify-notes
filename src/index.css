@@ -3,6 +3,9 @@
   line-height: 1.5;
   font-weight: 400;
 
+  --spotify-green: #1db954;
+  --playlist-header-colour: rgb(0, 0, 0);
+
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
@@ -77,4 +80,27 @@ button:focus-visible {
   aspect-ratio: 1 / 1;
   width: 100%;
   /* display: block; */
+}
+
+a,
+.icon-button {
+  padding-inline: 0.25rem;
+  padding-block: 0.25rem;
+  color: var(--spotify-green);
+  background-color: inherit;
+  transition: scale 0.25s;
+
+  &:hover {
+    scale: 1.5;
+    border-color: rgba(255, 255, 255, 0);
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline-style: none;
+  }
+}
+
+.playlist-header {
+  background-color: var(--playlist-header-colour);
 }

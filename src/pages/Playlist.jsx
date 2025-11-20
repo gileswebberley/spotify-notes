@@ -15,9 +15,11 @@ import TrackItem from '../ui/TrackItem';
 import User from '../ui/User';
 import PlaylistsPaginationButton from '../ui/PlaylistsPaginationButton';
 import { AUTH_PATH } from '../utils/constants';
+import PlaylistHeader from '../ui/PlaylistHeader';
 
 function Playlist() {
   const { playlist, playlistId } = useLoaderData();
+  console.table('Playlist object: ', playlist);
   //   const [tracks, setTracks] = useState(playlist?.tracks || []);
   const {
     data: tracks,
@@ -49,6 +51,7 @@ function Playlist() {
           <button onClick={() => navigate('/playlists')}>
             Back to Playlists
           </button>
+          <PlaylistHeader playlist={playlist} />
           <h3>Playlist: {playlist?.name}</h3>
           <ul ref={trackViewElement}>
             {tracks?.items.map((item) => {

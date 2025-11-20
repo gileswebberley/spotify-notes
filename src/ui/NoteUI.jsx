@@ -7,9 +7,20 @@ import {
 } from '../services/DexieDB';
 import { formatDate } from '../utils/helpers';
 import { useState } from 'react';
+import {
+  MdCancel,
+  MdDeleteForever,
+  MdNoteAdd,
+  MdSave,
+  MdEditNote,
+  MdPreview,
+} from 'react-icons/md';
+import IconButton from './IconButton';
+import { BiSolidHide, BiSolidShow } from 'react-icons/bi';
 
 function NoteUI({ trackId, addedAt }) {
   const [editMode, setEditMode] = useState(false);
+  const [showNote, setShowNote] = useState(false);
   const { isLoadingUser, getUserId } = useUserContext();
   const [isAddingOrDeleting, setIsAddingOrDeleting] = useState(false);
   let userId = null;
@@ -44,12 +55,12 @@ function NoteUI({ trackId, addedAt }) {
       const savedNote = await saveNoteForTrack(userId, trackId, noteContent);
       console.log('Note saved:', savedNote);
       // return savedNote;
-      setEditMode(false);
-      setIsAddingOrDeleting(false);
+      //   setIsAddingOrDeleting(false);
     } catch (e) {
       console.error('Error saving note:', e);
       throw e;
     } finally {
+      setEditMode(false);
       setIsAddingOrDeleting(false);
     }
   }
@@ -86,26 +97,53 @@ function NoteUI({ trackId, addedAt }) {
   if (!note && !editMode) {
     // console.log('no note found for this track');
     return (
-      <button disabled={isAddingOrDeleting} onClick={() => setEditMode(true)}>
-        add note
-      </button>
+      <IconButton
+        disabledProp={isAddingOrDeleting}
+        clickHandler={() => setEditMode(true)}
+        tooltipText="Add a note to this track"
+      >
+        <MdNoteAdd />
+      </IconButton>
     );
   }
 
   return (
     <>
       {!editMode && note ? (
-        <details>
-          <summary>View Note</summary>
+        !showNote ? (
+          <IconButton
+            clickHandler={() => setShowNote(true)}
+            disabledProp={isAddingOrDeleting}
+            tooltipText="View the note for this track"
+          >
+            <BiSolidShow />
+          </IconButton>
+        ) : (
           <div>
             {note?.content}
             <span> ({formatDate(note?.createdAt)})</span>
-            <button onClick={() => setEditMode(true)}>edit</button>
-            <button disabled={isAddingOrDeleting} onClick={handleDeleteNote}>
-              delete
-            </button>
+            <IconButton
+              clickHandler={() => setEditMode(true)}
+              disabledProp={isAddingOrDeleting}
+              tooltipText="Edit the note for this track"
+            >
+              <MdEditNote />
+            </IconButton>
+            <IconButton
+              clickHandler={() => setShowNote(false)}
+              tooltipText="Hide this note"
+            >
+              <BiSolidHide />
+            </IconButton>
+            <IconButton
+              disabledProp={isAddingOrDeleting}
+              clickHandler={handleDeleteNote}
+              tooltipText="Delete the note for this track"
+            >
+              <MdDeleteForever />
+            </IconButton>
           </div>
-        </details>
+        )
       ) : (
         <form method="post" onSubmit={handleSaveNote}>
           {/* <input type="hidden" name="trackId" value={trackId} />
@@ -116,16 +154,24 @@ function NoteUI({ trackId, addedAt }) {
             name="noteContent"
             defaultValue={note?.content}
           />
-          <button type="submit" disabled={isAddingOrDeleting}>
-            Save Note
-          </button>
-          <button
-            type="cancel"
-            disabled={isAddingOrDeleting}
-            onClick={() => setEditMode(false)}
+          <IconButton
+            type="submit"
+            disabledProp={isAddingOrDeleting}
+            tooltipText="Save your note"
           >
-            Cancel
-          </button>
+            <MdSave />
+          </IconButton>
+          <IconButton
+            type="cancel"
+            disabledProp={isAddingOrDeleting}
+            clickHandler={() => {
+              setEditMode(false);
+              setShowNote(false);
+            }}
+            tooltipText="Cancel changes to this note"
+          >
+            <MdCancel />
+          </IconButton>
         </form>
       )}
     </>
