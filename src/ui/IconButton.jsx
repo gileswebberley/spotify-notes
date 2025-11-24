@@ -17,7 +17,7 @@ function IconButton({
 }) {
   return (
     <button
-      className="icon-button"
+      className="clear-button icon-button"
       style={additionalStyles}
       disabled={disabledProp}
       onClick={clickHandler}

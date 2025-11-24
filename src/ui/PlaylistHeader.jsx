@@ -1,15 +1,13 @@
-import { useEffect } from 'react';
-import { getImageURLByHeightSize } from '../utils/helpers';
-import ImagePx from './ImagePx';
-import ColorThief from 'colorthief';
 import HeaderColourSettingImage from './HeaderColourSettingImage';
+import BackButton from './BackButton';
 
 function PlaylistHeader({ playlist }) {
   const { images, name, tracks } = playlist;
   const totalTracks = tracks.total;
 
   return (
-    <div className="playlist-header">
+    <div className="playlist-header-colour">
+      {/* <BackButton steps={1} /> */}
       <HeaderColourSettingImage images={images} />
     </div>
   );

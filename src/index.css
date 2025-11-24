@@ -1,8 +1,4 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
   --spotify-green: #1db954;
   --default-playlist-header-colour: rgba(0, 0, 0, 0);
   --playlist-header-colour: rgba(0, 0, 0, 0);
@@ -12,27 +8,28 @@
   color: rgba(255, 255, 255, 0.87);
   background-color: var(--background-charcoal);
 
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
 body {
   margin: 0;
-  display: flex;
+  /* display: flex;
   place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  width: 100%; */
+  /* min-width: 310px; */
+  min-height: 100dvh;
+}
+
+ul {
+  margin: 0;
+  display: contents;
 }
 
 h1 {
@@ -80,21 +77,25 @@ button:focus-visible {
 }
 .user-image img {
   aspect-ratio: 1 / 1;
+  object-fit: cover;
   width: 100%;
   /* display: block; */
 }
 
 a,
 .icon-button {
+  color: var(--spotify-green);
+}
+
+.clear-button {
   padding-inline: 0.25rem;
   padding-block: 0.25rem;
-  color: var(--spotify-green);
-  background-color: inherit;
+  background-color: rgba(0, 0, 0, 0);
   transition: scale 0.25s;
 
   &:hover {
-    scale: 1.5;
-    border-color: rgba(255, 255, 255, 0);
+    scale: 1.2;
+    border-color: rgba(0, 0, 0, 0);
   }
 
   &:focus,
@@ -103,11 +104,35 @@ a,
   }
 }
 
-.playlist-header {
+.playlist-header-colour {
+  --mixed-colour: color-mix(
+    in lch increasing hue,
+    var(--playlist-header-colour) 60%,
+    var(--background-charcoal)
+  );
   /* background-color: var(--playlist-header-colour); */
   background: linear-gradient(
     180deg,
     var(--playlist-header-colour),
+    40%,
+    var(--mixed-colour),
     var(--background-charcoal) 95%
   );
+  margin-bottom: 0;
+}
+
+.back-button {
+  display: block;
+  font-size: 2rem;
+  position: sticky;
+  top: 0;
+}
+
+.list-container {
+  margin-top: 0;
+  background-color: var(--background-charcoal);
+}
+
+.playlist-page-colour {
+  background-color: var(--playlist-header-colour);
 }
