@@ -4,11 +4,13 @@
   font-weight: 400;
 
   --spotify-green: #1db954;
-  --playlist-header-colour: rgb(0, 0, 0);
+  --default-playlist-header-colour: rgba(0, 0, 0, 0);
+  --playlist-header-colour: rgba(0, 0, 0, 0);
+  --background-charcoal: #242424;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: var(--background-charcoal);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -102,5 +104,10 @@ a,
 }
 
 .playlist-header {
-  background-color: var(--playlist-header-colour);
+  /* background-color: var(--playlist-header-colour); */
+  background: linear-gradient(
+    180deg,
+    var(--playlist-header-colour),
+    var(--background-charcoal) 95%
+  );
 }

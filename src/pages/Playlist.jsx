@@ -56,8 +56,9 @@ function Playlist() {
           <ul ref={trackViewElement}>
             {tracks?.items.map((item) => {
               //check that they are only tracks as episodes can also be returned in playlists - could add an EpisodeItem later if it makes any sense
-              if (item.track.type === 'episode') return null;
+              if (item.track?.type === 'episode' || !item.track) return null;
               //passing the item rather than the track object as it has the added_at property which would be handy to have in the notes
+              //   console.table(`item for playlist is: `, item);
               return <TrackItem key={item.track.id} item={item} />;
             })}
           </ul>
