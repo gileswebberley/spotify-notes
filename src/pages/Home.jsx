@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 // import { useToken } from '../hooks/useToken';
 import { gotoSpotifyAuth, requestToken } from '../services/apiSpotify';
 import { useCodeChallenge } from '../hooks/useCodeChallenge';
@@ -8,6 +8,7 @@ import {
   REDIRECT_URI,
 } from '../utils/constants';
 import { useNavigate } from 'react-router-dom';
+import Spinner from '../ui/Spinner';
 
 function Home() {
   console.log('Home component rendered');
@@ -15,7 +16,8 @@ function Home() {
   const { code, error } = useCodeChallenge();
   const navigate = useNavigate();
 
-  useEffect(() => {
+  //trying to get the spinner to show before this executes which is why I tried LayoutEffect in place of standard useEffect - it didn't work :(
+  useLayoutEffect(() => {
     //if we have already got the code then this function 'swaps' it for the actual access token
     async function getTokenWithCode(code) {
       await requestToken(code)
@@ -64,12 +66,14 @@ function Home() {
       <>
         <h1>Please accept the usage of Spotify to use this app</h1>
         <p>Error details: {error}</p>
-        <button onClick={() => navigate('/')}>Try Again</button>
+        <button onClick={() => window.location.replace(REDIRECT_URI)}>
+          Try Again
+        </button>
       </>
     );
   }
 
-  return <h1>We're just getting your Spotify authentication dealt with...</h1>;
+  return <Spinner />;
 }
 
 export default Home;
