@@ -70,7 +70,6 @@ button:focus-visible {
 } */
 
 .user-image {
-  /* width: [attr=data-size] */
   border-radius: 50%;
   overflow: hidden;
   display: inline-block;
@@ -79,7 +78,6 @@ button:focus-visible {
   aspect-ratio: 1 / 1;
   object-fit: cover;
   width: 100%;
-  /* display: block; */
 }
 
 a,
@@ -144,7 +142,6 @@ a,
 
 .spinner-container {
   container-type: inline-size;
-  margin-bottom: 0;
   width: 100%;
   height: 100dvh;
   display: flex;
@@ -153,8 +150,8 @@ a,
 }
 
 .spinner {
-  width: 48px;
-  height: 48px;
+  width: min(30cqw, 30cqh, 60px);
+  height: min(30cqw, 30cqh, 60px);
   border: 5px solid var(--spotify-green);
   border-bottom-color: rgba(29, 185, 84, 0.6);
   border-radius: 50%;
