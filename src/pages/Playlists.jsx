@@ -37,7 +37,7 @@ function Playlists() {
 
   return (
     <>
-      {/* <User /> */}
+      {/* <User /> put this into the AppLayout */}
       <h3>Playlists Page</h3>
       {isLoading ? (
         <Spinner />

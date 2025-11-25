@@ -20,18 +20,24 @@ const router = createBrowserRouter(
   //Now we're going to create a layout that will work with phone screens or browsers on a pc in the AppLayout component, then make our routes children
   [
     {
+      index: true,
+      // path: '/',
+      element: <Home />,
+      errorElement: <Error />,
+    },
+    {
       path: '/',
       //layout route so no path
       element: <AppLayout />,
       //browser router also catches errors and you can define a component to be shown if that occurs (see Error component for how to get the message)
       errorElement: <Error />,
       children: [
-        {
-          index: true,
-          // path: '/',
-          element: <Home />,
-          errorElement: <Error />,
-        },
+        // {
+        //   index: true,
+        //   // path: '/',
+        //   element: <Home />,
+        //   errorElement: <Error />,
+        // },
         // {
         //   path: '/auth',
         //   element: <Auth />,
