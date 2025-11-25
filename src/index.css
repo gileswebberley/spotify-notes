@@ -1,5 +1,5 @@
 :root {
-  --spotify-green: #1db954;
+  --spotify-green: rgba(29, 185, 84, 100);
   --default-playlist-header-colour: rgba(0, 0, 0, 0);
   --playlist-header-colour: rgba(0, 0, 0, 0);
   --background-charcoal: #242424;
@@ -121,6 +121,11 @@ a,
   margin-bottom: 0;
 }
 
+.playlist-header-container {
+  container-type: inline-size;
+  container-name: playlist-header;
+}
+
 .back-button {
   display: block;
   font-size: 2rem;
@@ -135,4 +140,24 @@ a,
 
 .playlist-page-colour {
   background-color: var(--playlist-header-colour);
+}
+
+.spinner-container {
+  container-type: inline-size;
+  margin-bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid var(--spotify-green);
+  border-bottom-color: rgba(29, 185, 84, 20);
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
 }

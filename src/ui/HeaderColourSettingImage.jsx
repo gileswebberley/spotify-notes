@@ -21,10 +21,10 @@ function HeaderColourSettingImage({ images, size = 125 }) {
       image.src = imgUrl;
       const colourThief = new ColorThief();
       listener = image.addEventListener('load', function () {
-        const dominantColour = colourThief.getColor(image);
-        console.log(`Dominant colour is ${dominantColour}`);
+        // const dominantColour = colourThief.getColor(image);
+        // console.log(`Dominant colour is ${dominantColour}`);
         const pallette = colourThief.getPalette(image);
-        console.table(`Pallette of colours is`, pallette);
+        // console.table(`Pallette of colours is`, pallette);
         //so, I'm using the threshold so that I can only pick the dominant colour channels to add to the overall colour as an atempt to get the more primary feel of spotify...hasn't really worked but is producing reasonable colours
         let mixColour = pallette.reduce(
           (acc, colour, index) => {
@@ -48,7 +48,7 @@ function HeaderColourSettingImage({ images, size = 125 }) {
         //     return Math.floor(channel / 2);
         //   });
         // }
-        console.log(`mixColour: ${mixColour}`);
+        // console.log(`mixColour: ${mixColour}`);
         document.documentElement.style.setProperty(
           '--playlist-header-colour',
           `rgba(${mixColour}, 100)`

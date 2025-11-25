@@ -6,7 +6,7 @@ function PlaylistHeader({ playlist }) {
   const totalTracks = tracks.total;
 
   return (
-    <div className="playlist-header-colour">
+    <div className="playlist-header-colour playlist-header-container">
       {/* <BackButton steps={1} /> */}
       <HeaderColourSettingImage images={images} />
     </div>

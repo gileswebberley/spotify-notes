@@ -7,6 +7,7 @@ import PlaylistsPaginationButton from '../ui/PlaylistsPaginationButton';
 import PlaylistItem from '../ui/PlaylistItem';
 import { usePaginatedFetch } from '../hooks/usePaginatedFetch';
 import { AUTH_PATH } from '../utils/constants';
+import Spinner from '../ui/Spinner';
 
 function Playlists() {
   // let playlists = useLoaderData();
@@ -36,10 +37,10 @@ function Playlists() {
 
   return (
     <>
-      <User />
+      {/* <User /> */}
       <h3>Playlists Page</h3>
       {isLoading ? (
-        <div>Loading playlists...</div>
+        <Spinner />
       ) : (
         <ul ref={playlistsViewElement}>
           {playlists?.items.map((playlist) => (

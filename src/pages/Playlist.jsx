@@ -43,7 +43,7 @@ function Playlist() {
 
   return (
     <div className="playlist-page-colour">
-      <User />
+      {/* <User /> */}
 
       {isLoading ? (
         <div>Loading playlist...</div>

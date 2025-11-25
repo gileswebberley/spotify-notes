@@ -15,6 +15,7 @@ function UserContextProvider({ children }) {
 
   useEffect(() => {
     async function fetchUserProfile() {
+      console.log('fetching user profile....');
       try {
         const profile = await getUserProfile();
         setUserProfile(profile);
