@@ -13,8 +13,10 @@ function AppLayout() {
   return (
     <main className="app-layout">
       <UserContextProvider>
-        <User />
-        <Outlet key={location.key} />
+        <section className="main-content">
+          <User />
+          <Outlet key={location.key} />
+        </section>
       </UserContextProvider>
     </main>
   );

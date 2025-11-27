@@ -5,13 +5,13 @@ import ImagePlaceholder from './ImagePlaceholder';
  * @typedef (Object) Props
  * @property {Array<String>} images - the array of images to check for a suitable sized image (must be as big or bigger than desired size)
  * @property {String} name - for use in the alt property
- * @property {String | Number} size - default = 'sm', can be a number of pixels or 'sm' (60px) or 'md' (300px) or 'lg' (640px) - default is 'sm'
+ * @property {String | Number} size - default = 'sm', can be a number of pixels or 'sm' (60px) or 'md' (300px) or 'lg' (640px) - default is 'md'
  * @property {Boolean} showPlaceholder - default = true, whether to return a placeholder or simply null
  *
  * @param {Props} props
  * @returns
  */
-function ImagePx({ images, name, showPlaceholder = true, size = 'sm' }) {
+function ImagePx({ images, name, showPlaceholder = true, size = 'md' }) {
   let pixelSize;
   if (typeof size !== 'number') {
     pixelSize = size === 'sm' ? 60 : size === 'md' ? 300 : 640;
@@ -26,6 +26,7 @@ function ImagePx({ images, name, showPlaceholder = true, size = 'sm' }) {
     <>
       {imgUrl ? (
         <img
+          className="listing-image"
           width={pixelSize}
           height={pixelSize}
           loading="lazy"

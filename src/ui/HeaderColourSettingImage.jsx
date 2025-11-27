@@ -3,7 +3,7 @@ import { getImageURLByHeightSize } from '../utils/helpers';
 import { useEffect } from 'react';
 import ImagePlaceholder from './ImagePlaceholder';
 
-function HeaderColourSettingImage({ images, size = 125 }) {
+function HeaderColourSettingImage({ images, size = 250 }) {
   //trying to get the colour based on the image for the header like on spotify, using the color thief npm package
   const imgUrl = getImageURLByHeightSize(images, size);
   //this is used as the threshold for making the colour darker

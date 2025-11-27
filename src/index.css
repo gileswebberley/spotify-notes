@@ -3,6 +3,9 @@
   --default-playlist-header-colour: rgba(0, 0, 0, 0);
   --playlist-header-colour: rgba(0, 0, 0, 0);
   --background-charcoal: #242424;
+  /* make sure the images are in a container with container-size: inline-size */
+  --listing-image-size: clamp(6rem, 5cqw, 100%);
+  --max-content-width: 640px;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -18,18 +21,39 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
+* {
   margin: 0;
-  /* display: flex;
-  place-items: center;
-  width: 100%; */
-  /* min-width: 310px; */
+  padding: 0;
+  box-sizing: inherit;
+}
+
+html {
+  /* make 1rem equivalent to approx 10px */
+  font-size: 62.5%;
+  box-sizing: border-box;
+}
+
+body {
   min-height: 100dvh;
+}
+
+/* We'll set up a simple grid as a way to place our content in the middle of a big screen and simply take up the whole screen when it's smaller than --max-content-width */
+.app-layout {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr min(100%, var(--max-content-width)) 1fr;
+  justify-content: center;
+}
+
+.main-content {
+  grid-column: 2;
+  padding: 3rem;
 }
 
 ul {
   margin: 0;
-  display: contents;
+  /* display: contents; */
+  max-width: 480px;
 }
 
 h1 {
@@ -80,6 +104,24 @@ button:focus-visible {
   width: 100%;
 }
 
+.listing-image {
+  aspect-ratio: 1/1;
+  object-fit: contain;
+  width: var(--listing-image-size);
+  height: var(--listing-image-size);
+  /* max-width: 100%;
+  max-height: 100%; */
+  border-radius: calc(var(--listing-image-size) / 15);
+  display: 'inline-block';
+}
+
+.listing-image-placeholder {
+  /* width: var(--listing-image-size);
+  height: var(--listing-image-size); */
+  display: inline-block;
+  background-color: #dddddd;
+}
+
 a,
 .icon-button {
   color: var(--spotify-green);
@@ -120,8 +162,12 @@ a,
 }
 
 .playlist-header-container {
-  container-type: inline-size;
-  container-name: playlist-header;
+  /* container: playlist-header / size; This makes it collapse in height*/
+  container: playlist-header / inline-size;
+}
+
+.playlist-item-container {
+  container: playlist-item / inline-size;
 }
 
 .back-button {
@@ -132,7 +178,11 @@ a,
 }
 
 .list-container {
-  margin-top: 0;
+  container: list-container / inline-size;
+  /* margin-top: 0; */
+  /* max-width: 480px; */
+  /* display: flex;
+  justify-content: center; */
   background-color: var(--background-charcoal);
 }
 

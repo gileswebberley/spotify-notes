@@ -42,11 +42,13 @@ function Playlists() {
       {isLoading ? (
         <Spinner />
       ) : (
-        <ul ref={playlistsViewElement}>
-          {playlists?.items.map((playlist) => (
-            <PlaylistItem key={playlist.id} playlist={playlist} />
-          ))}
-        </ul>
+        <div className="list-container">
+          <ul ref={playlistsViewElement}>
+            {playlists?.items.map((playlist) => (
+              <PlaylistItem key={playlist.id} playlist={playlist} />
+            ))}
+          </ul>
+        </div>
       )}
       {hasPrevious && (
         <PlaylistsPaginationButton

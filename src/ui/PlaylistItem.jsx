@@ -12,12 +12,13 @@ function PlaylistItem({ playlist }) {
 
   return (
     <div
+      classname="playlist-item-container"
       role="button"
       aria-description={`Click to open the playlist called ${name}`}
       onClick={handleClick}
       style={{ cursor: 'pointer' }}
     >
-      <ImagePx images={images} name={name} size="sm" />
+      <ImagePx images={images} name={name} />
       {name} by {owner.display_name} ({tracks.total} tracks)
     </div>
   );

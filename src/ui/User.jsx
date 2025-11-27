@@ -8,7 +8,7 @@ function User() {
   const { isLoadingUser, getUserFirstName, getUserImages } = useUserContext();
   const location = useLocation();
   const path = location.path;
-  if (path === AUTH_PATH) {
+  if (path === AUTH_PATH || path === '/') {
     return null;
   }
 
