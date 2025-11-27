@@ -6,6 +6,8 @@
   /* make sure the images are in a container with container-size: inline-size */
   --listing-image-size: clamp(6rem, 5cqw, 100%);
   --max-content-width: 640px;
+  --main-grid-row: 1fr min(100%, var(--max-content-width)) 1fr;
+  --footer-height: 6rem;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -41,13 +43,35 @@ body {
 .app-layout {
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr min(100%, var(--max-content-width)) 1fr;
-  justify-content: center;
+  grid-template-columns: var(--main-grid-row);
+  /* 1fr min(100%, var(--max-content-width)) 1fr; */
+  grid-template-areas: 'gutter-start main gutter-end';
 }
 
 .main-content {
-  grid-column: 2;
-  padding: 3rem;
+  grid-area: main;
+  padding-bottom: var(--footer-height);
+}
+
+footer {
+  container: footer-container / inline-size;
+  background-color: rgba(0, 0, 0, 0.8);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--footer-height);
+  display: grid;
+  grid-template-columns: var(--main-grid-row);
+  /* gap: 10px; */
+  grid-template-areas: 'footer-start footer-main footer-end';
+}
+
+.footer-content {
+  grid-area: footer-main;
+  display: flex;
+  width: 100%;
+  justify-content: center;
 }
 
 ul {

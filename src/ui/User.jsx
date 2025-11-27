@@ -19,7 +19,7 @@ function User() {
   // console.table('User images:', images);
 
   return (
-    <div>
+    <div className="footer-user">
       <UserImage images={images} size={50} />
       Hi {getUserFirstName()}
     </div>
