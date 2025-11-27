@@ -2,9 +2,10 @@
   --spotify-green: rgba(29, 185, 84, 100);
   --default-playlist-header-colour: rgba(0, 0, 0, 0);
   --playlist-header-colour: rgba(0, 0, 0, 0);
-  --background-charcoal: #242424;
+  --light-background-charcoal: #242424;
+  --background-charcoal: #121212;
   /* make sure the images are in a container with container-size: inline-size */
-  --listing-image-size: clamp(6rem, 5cqw, 100%);
+  --listing-image-size: clamp(6rem, 15cqw, 100%);
   --max-content-width: 640px;
   --main-grid-row: 1fr min(100%, var(--max-content-width)) 1fr;
   --footer-height: 6rem;
@@ -42,15 +43,19 @@ body {
 /* We'll set up a simple grid as a way to place our content in the middle of a big screen and simply take up the whole screen when it's smaller than --max-content-width */
 .app-layout {
   width: 100%;
+  height: 100dvh;
+  overflow: hidden;
   display: grid;
   grid-template-columns: var(--main-grid-row);
   /* 1fr min(100%, var(--max-content-width)) 1fr; */
   grid-template-areas: 'gutter-start main gutter-end';
 }
 
+/* Using the overlayscrollbars package instead of overflow: auto */
 .main-content {
   grid-area: main;
-  padding-bottom: var(--footer-height);
+  margin-bottom: var(--footer-height);
+  /* overflow-y: auto; */
 }
 
 footer {

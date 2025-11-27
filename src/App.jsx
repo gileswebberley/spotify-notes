@@ -1,17 +1,14 @@
 //following the tutorial https://dev.to/dom_the_dev/how-to-use-the-spotify-api-in-your-react-js-app-50pn
-
+//going to use the overlayscrollbars package so I need to import the css
+import 'overlayscrollbars/styles/overlayscrollbars.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { lazy } from 'react';
 import Spinner from './ui/Spinner';
 import AppLayout from './ui/AppLayout';
-// import Home from './pages/Home';
 const Home = lazy(() => import('./pages/Home'));
 import Error from './ui/Error';
-// import Playlists,
 const Playlists = lazy(() => import('./pages/Playlists'));
 import { loader as playlistsLoader } from './pages/Playlists';
-// import { loader as playlistsLoader } from './pages/Playlists';
-// import Playlist,
 const Playlist = lazy(() => import('./pages/Playlist'));
 import { loader as playlistLoader } from './pages/Playlist';
 // import Auth from './pages/Auth';

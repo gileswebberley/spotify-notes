@@ -2,6 +2,7 @@ import { Outlet, useLocation, useNavigation } from 'react-router-dom';
 import { UserContextProvider } from '../contexts/userContext';
 import Spinner from './Spinner';
 import User from './User';
+import OverlayScrollContainer from './OverlayScrollContainer';
 
 function AppLayout() {
   const navigationState = useNavigation();
@@ -13,9 +14,9 @@ function AppLayout() {
   return (
     <main className="app-layout">
       <UserContextProvider>
-        <section className="main-content">
+        <OverlayScrollContainer className="main-content">
           <Outlet key={location.key} />
-        </section>
+        </OverlayScrollContainer>
         <footer>
           <div className="footer-content">
             <User />
