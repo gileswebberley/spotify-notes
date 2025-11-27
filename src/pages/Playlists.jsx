@@ -45,9 +45,11 @@ function Playlists() {
         <>
           <div className="list-container">
             <ul ref={playlistsViewElement}>
-              {playlists?.items.map((playlist) => (
-                <PlaylistItem key={playlist.id} playlist={playlist} />
-              ))}
+              {playlists?.items.map((item) =>
+                item.tracks.total < 2 ? null : (
+                  <PlaylistItem key={item.id} playlist={item} />
+                )
+              )}
             </ul>
           </div>
         </>

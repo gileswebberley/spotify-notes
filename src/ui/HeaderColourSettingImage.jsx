@@ -71,9 +71,8 @@ function HeaderColourSettingImage({ images, size = 250 }) {
   }, [imgUrl]);
   return imgUrl ? (
     <img width={size} height={size} src={imgUrl} />
-  ) : (
-    <ImagePlaceholder size={size} />
-  );
+  ) : // <ImagePlaceholder size={size} />
+  null;
 }
 
 export default HeaderColourSettingImage;
