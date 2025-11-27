@@ -52,7 +52,7 @@ function Playlist() {
           <BackButton steps={1} />
           <PlaylistHeader playlist={playlist} />
           <div className="list-container">
-            <ul className="list-ul" ref={trackViewElement}>
+            <ul ref={trackViewElement}>
               {tracks?.items.map((item) => {
                 //check that they are only tracks as episodes can also be returned in playlists - could add an EpisodeItem later if it makes any sense
                 if (item.track?.type === 'episode' || !item.track) return null;

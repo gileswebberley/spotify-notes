@@ -8,7 +8,7 @@ function TrackItem({ item }) {
   const { added_at } = item;
   const artistString = artists.map((artist) => artist.name).join(', ');
   return (
-    <div className="listing-item">
+    <div className="interactive-listing-item">
       <ImagePx images={album?.images} size={64} name={name} />
       {name} by {artistString} ({formatDate(added_at)})
       <a

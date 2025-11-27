@@ -36,19 +36,21 @@ function Playlists() {
   }, [playlists]);
 
   return (
-    <>
+    <div>
       {/* <User /> put this into the AppLayout */}
       <h3>Playlists Page</h3>
       {isLoading ? (
         <Spinner />
       ) : (
-        <div className="list-container">
-          <ul ref={playlistsViewElement}>
-            {playlists?.items.map((playlist) => (
-              <PlaylistItem key={playlist.id} playlist={playlist} />
-            ))}
-          </ul>
-        </div>
+        <>
+          <div className="list-container">
+            <ul ref={playlistsViewElement}>
+              {playlists?.items.map((playlist) => (
+                <PlaylistItem key={playlist.id} playlist={playlist} />
+              ))}
+            </ul>
+          </div>
+        </>
       )}
       {hasPrevious && (
         <PlaylistsPaginationButton
@@ -62,7 +64,7 @@ function Playlists() {
           title={'Next'}
         />
       )}
-    </>
+    </div>
   );
 }
 

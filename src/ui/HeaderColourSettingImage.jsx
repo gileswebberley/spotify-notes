@@ -9,7 +9,7 @@ function HeaderColourSettingImage({ images, size = 250 }) {
   //this is used as the threshold for making the colour darker
   const brightnessThreshold = 127;
   //how many of the discovered pallette colours will be used to calculate the average
-  const sampleSize = 3;
+  const sampleSize = 5;
 
   useEffect(() => {
     let listener = null;

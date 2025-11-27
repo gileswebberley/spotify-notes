@@ -2,7 +2,7 @@
   --spotify-green: rgba(29, 185, 84, 100);
   --default-playlist-header-colour: rgba(0, 0, 0, 0);
   --playlist-header-colour: rgba(0, 0, 0, 0);
-  --light-background-charcoal: #242424;
+  --light-background-charcoal: #2a2a2a;
   --background-charcoal: #121212;
   /* make sure the images are in a container with container-size: inline-size */
   --listing-image-size: clamp(6rem, 15cqw, 100%);
@@ -69,7 +69,7 @@ footer {
   display: grid;
   grid-template-columns: var(--main-grid-row);
   /* gap: 10px; */
-  grid-template-areas: 'footer-start footer-main footer-end';
+  grid-template-areas: '. footer-main .';
 }
 
 .footer-content {
@@ -82,7 +82,8 @@ footer {
 ul {
   margin: 0;
   /* display: contents; */
-  max-width: 480px;
+  /* max-width: 480px; */
+  width: 100%;
 }
 
 h1 {
@@ -195,8 +196,21 @@ a,
   container: playlist-header / inline-size;
 }
 
-.playlist-item-container {
+/* .playlist-item-container {
   container: playlist-item / inline-size;
+} */
+
+.interactive-listing-item {
+  padding-block: 0.2rem;
+  border-radius: 0.6rem;
+  container: listing-item / inline-size;
+  width: 100%;
+  height: fit-content;
+  /* background-color: var(--background-charcoal); */
+
+  &:hover {
+    background-color: var(--light-background-charcoal);
+  }
 }
 
 .back-button {

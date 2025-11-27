@@ -12,7 +12,7 @@ function PlaylistItem({ playlist }) {
 
   return (
     <div
-      classname="playlist-item-container"
+      className="interactive-listing-item"
       role="button"
       aria-description={`Click to open the playlist called ${name}`}
       onClick={handleClick}

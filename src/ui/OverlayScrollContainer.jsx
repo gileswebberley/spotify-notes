@@ -5,7 +5,14 @@ function OverlayScrollContainer({ className, children }) {
     <OverlayScrollbarsComponent
       element="section"
       className={className}
-      options={{ scrollbars: { autoHide: 'scroll', theme: 'os-theme-light' } }}
+      options={{
+        scrollbars: {
+          autoHide: 'leave',
+          autoHideSuspend: true,
+          autoHideDelay: 600,
+          theme: 'os-theme-light',
+        },
+      }}
       defer
     >
       {children}
