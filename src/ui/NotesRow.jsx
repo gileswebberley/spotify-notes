@@ -23,11 +23,11 @@ function NotesRow() {
   return (
     <>
       {showNote && !editMode && (
-        <div className="list-row">
-          <div className="notes-row">
-            {note?.content}
-            <span> ({formatDate(note?.createdAt)})</span>
-          </div>
+        // <div className="list-row">
+        <div className="notes-row">
+          {note?.content}
+          <span> ({formatDate(note?.createdAt)})</span>
+          {/* </div> */}
           <IconButton
             clickHandler={() => setEditMode(true)}
             disabledProp={isAddingOrDeleting}
@@ -46,38 +46,38 @@ function NotesRow() {
       )}
 
       {showNote && editMode && (
-        <div className="list-row">
-          <div className="notes-row">
-            <form method="post" onSubmit={handleSaveNote}>
-              {/* <input type="hidden" name="trackId" value={trackId} />
+        // <div className="list-row">
+        <div className="notes-row">
+          <form method="post" onSubmit={handleSaveNote}>
+            {/* <input type="hidden" name="trackId" value={trackId} />
           <input type="hidden" name="userId" value={userId} /> */}
-              <textarea
-                cols={100}
-                rows={5}
-                name="noteContent"
-                defaultValue={note?.content}
-              />
-              <IconButton
-                type="submit"
-                disabledProp={isAddingOrDeleting}
-                tooltipText="Save your note"
-              >
-                <MdSave />
-              </IconButton>
-              <IconButton
-                type="cancel"
-                disabledProp={isAddingOrDeleting}
-                clickHandler={() => {
-                  setEditMode(false);
-                  setShowNote(false);
-                }}
-                tooltipText="Cancel changes to this note"
-              >
-                <MdCancel />
-              </IconButton>
-            </form>
-          </div>
+            <textarea
+              cols={100}
+              rows={5}
+              name="noteContent"
+              defaultValue={note?.content}
+            />
+            <IconButton
+              type="submit"
+              disabledProp={isAddingOrDeleting}
+              tooltipText="Save your note"
+            >
+              <MdSave />
+            </IconButton>
+            <IconButton
+              type="cancel"
+              disabledProp={isAddingOrDeleting}
+              clickHandler={() => {
+                setEditMode(false);
+                setShowNote(false);
+              }}
+              tooltipText="Cancel changes to this note"
+            >
+              <MdCancel />
+            </IconButton>
+          </form>
         </div>
+        // </div>
       )}
     </>
   );
