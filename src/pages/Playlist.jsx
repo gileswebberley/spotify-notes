@@ -17,6 +17,7 @@ import PlaylistsPaginationButton from '../ui/PlaylistsPaginationButton';
 import { AUTH_PATH } from '../utils/constants';
 import PlaylistHeader from '../ui/PlaylistHeader';
 import BackButton from '../ui/BackButton';
+import { FaEllipsis } from 'react-icons/fa6';
 
 function Playlist() {
   const { playlist, playlistId } = useLoaderData();
@@ -51,8 +52,20 @@ function Playlist() {
         <>
           <BackButton steps={1} />
           <PlaylistHeader playlist={playlist} />
-          <div className="list-container">
-            <ul ref={trackViewElement}>
+          <div className="list-container" ref={trackViewElement}>
+            <div className="list-table">
+              <div className="list-header list-row">
+                <div className="col-title">Title</div>
+                <div className="col-album">Album</div>
+                <div className="col-added-by">Added by</div>
+                <div className="col-date-added">Date added</div>
+                <div className="col-runtime">⏱</div>
+                <div className="col-buttons">
+                  <FaEllipsis />
+                </div>
+              </div>
+              {/* <ul> */}
+              {/* <div className="list-row"> */}
               {tracks?.items.map((item) => {
                 //check that they are only tracks as episodes can also be returned in playlists - could add an EpisodeItem later if it makes any sense
                 if (item.track?.type === 'episode' || !item.track) return null;
@@ -60,7 +73,9 @@ function Playlist() {
                 //   console.table(`item for playlist is: `, item);
                 return <TrackItem key={item.track.id} item={item} />;
               })}
-            </ul>
+              {/* </div> */}
+              {/* </ul> */}
+            </div>
           </div>
         </>
       )}

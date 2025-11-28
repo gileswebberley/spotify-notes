@@ -5,8 +5,10 @@
   --light-background-charcoal: #2a2a2a;
   --background-charcoal: #121212;
   /* make sure the images are in a container with container-size: inline-size */
-  --listing-image-size: clamp(6rem, 15cqw, 100%);
-  --max-content-width: 640px;
+  /* --listing-image-size: 5rem; */
+  --listing-image-size: clamp(6rem, 15cqw, 80%);
+  --header-image-size: clamp(10rem, 30cqw, 100%);
+  --max-content-width: 960px;
   --main-grid-row: 1fr min(100%, var(--max-content-width)) 1fr;
   --footer-height: 6rem;
 
@@ -90,7 +92,7 @@ h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
-
+/* 
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -108,7 +110,7 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-}
+} */
 
 /* @media (prefers-color-scheme: light) {
   :root {
@@ -139,15 +141,11 @@ button:focus-visible {
   object-fit: contain;
   width: var(--listing-image-size);
   height: var(--listing-image-size);
-  /* max-width: 100%;
-  max-height: 100%; */
   border-radius: calc(var(--listing-image-size) / 15);
   display: 'inline-block';
 }
 
 .listing-image-placeholder {
-  /* width: var(--listing-image-size);
-  height: var(--listing-image-size); */
   display: inline-block;
   background-color: #dddddd;
 }
@@ -155,13 +153,16 @@ button:focus-visible {
 a,
 .icon-button {
   color: var(--spotify-green);
+  font-size: 2rem;
 }
 
 .clear-button {
-  padding-inline: 0.25rem;
-  padding-block: 0.25rem;
+  /* padding-inline: 0.25rem;
+  padding-block: 0.25rem; */
   background-color: rgba(0, 0, 0, 0);
   transition: scale 0.25s;
+  border: 1px solid transparent;
+  cursor: pointer;
 
   &:hover {
     scale: 1.2;
@@ -177,7 +178,7 @@ a,
 .playlist-header-colour {
   --mixed-colour: color-mix(
     in lch increasing hue,
-    var(--playlist-header-colour) 60%,
+    var(--playlist-header-colour) 20%,
     var(--background-charcoal)
   );
   /* background-color: var(--playlist-header-colour); */
@@ -196,37 +197,143 @@ a,
   container: playlist-header / inline-size;
 }
 
-/* .playlist-item-container {
-  container: playlist-item / inline-size;
-} */
-
-.interactive-listing-item {
-  padding-block: 0.2rem;
-  border-radius: 0.6rem;
-  container: listing-item / inline-size;
-  width: 100%;
-  height: fit-content;
-  /* background-color: var(--background-charcoal); */
-
-  &:hover {
-    background-color: var(--light-background-charcoal);
-  }
+.playlist-header-image {
+  aspect-ratio: 1/1;
+  object-fit: contain;
+  width: var(--header-image-size);
+  height: var(--header-image-size);
+  border-radius: calc(var(--header-image-size) / 15);
+  display: 'inline-block';
 }
 
 .back-button {
   display: block;
-  font-size: 2rem;
+  font-size: 3rem;
   position: sticky;
   top: 0;
+  padding-left: 0.5rem;
+  z-index: 10;
+}
+
+.track-name-font {
+  font-size: 1.6rem;
+  font-weight: 500;
+  letter-spacing: +0.02rem;
+  /* display: block; This stops the ellipsis from working*/
+}
+
+/* .artist-name-font {
+  font-size: 1.3rem;
+  font-weight: 300;
+  font-kerning: normal;
+  letter-spacing: +0.015rem;
+} */
+
+.ellipsis-text-block {
+  white-space: nowrap;
+  /* min-width setting is a fix when it's inside a flex or grid container according to the mighty ai */
+  min-width: 0;
+  height: fit-content;
+  align-self: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .list-container {
   container: list-container / inline-size;
-  /* margin-top: 0; */
-  /* max-width: 480px; */
-  /* display: flex;
-  justify-content: center; */
   background-color: var(--background-charcoal);
+}
+
+/* all of the grid cells, other than the header, contents to get the hover colour change to work */
+.list-row:not(.list-header):hover > div {
+  border-radius: 0.6rem;
+  background-color: var(--light-background-charcoal);
+}
+
+/* attempt to make the rows with collapsing columns 
+title/artist | album | added by | date added | runtime
+*/
+.list-table {
+  display: grid;
+  grid-template-columns: 2fr minmax(150px, 1fr) 1.2fr 1fr 0.3fr 80px;
+  /* gap: 1rem; */
+}
+/* remove date added column */
+@container list-container (width < 820px ) {
+  .list-table {
+    grid-template-columns: 2fr minmax(150px, 1fr) 1.2fr 0.3fr 80px;
+  }
+
+  .col-date-added {
+    display: none;
+  }
+}
+/* remove added by column */
+@container list-container (width < 700px ) {
+  .list-table {
+    grid-template-columns: 2fr minmax(150px, 1fr) 0.3fr 80px;
+  }
+
+  .col-added-by {
+    display: none;
+  }
+}
+/* remove runtime column */
+@container list-container (width < 550px ) {
+  .list-table {
+    grid-template-columns: 2fr minmax(150px, 1fr) 80px;
+  }
+
+  .col-runtime {
+    display: none;
+  }
+}
+/* remove album column */
+@container list-container (width < 400px ) {
+  .list-table {
+    grid-template-columns: 2fr 80px;
+  }
+
+  .col-album {
+    display: none;
+  }
+}
+/* apparently you can then make the children of a div act as items within a parent grid with this line */
+.list-row {
+  display: contents;
+}
+
+.notes-row {
+  grid-column: 1/-1;
+}
+
+.list-row > div,
+.list-header > div {
+  font-size: 1.3rem;
+  font-weight: 300;
+  font-kerning: normal;
+  letter-spacing: +0.015rem;
+  padding-block: 0.5rem;
+  padding-inline: 1rem;
+  align-content: center;
+  cursor: default;
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+
+.list-header > div {
+  position: sticky;
+  padding-top: 3.5rem;
+  top: 0;
+  background-color: var(--background-charcoal);
+  font-weight: 400;
+  border-bottom: 2px solid var(--light-background-charcoal);
+}
+
+.col-title {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  /* justify-items: end; */
 }
 
 .playlist-page-colour {

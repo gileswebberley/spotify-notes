@@ -70,7 +70,12 @@ function HeaderColourSettingImage({ images, size = 250 }) {
     };
   }, [imgUrl]);
   return imgUrl ? (
-    <img width={size} height={size} src={imgUrl} />
+    <img
+      className="playlist-header-image"
+      width={size}
+      height={size}
+      src={imgUrl}
+    />
   ) : // <ImagePlaceholder size={size} />
   null;
 }

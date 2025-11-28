@@ -210,13 +210,16 @@ export function isLoggedIn() {
   return true;
 }
 
-export async function getUserProfile() {
+//adding get by id for get the added-by user in tracklist
+export async function getUserProfile(id = null) {
   const accessToken = await getAccessToken();
   if (!accessToken) {
     console.warn(`No access token available - cannot fetch user profile`);
     return null;
   }
-  const url = 'https://api.spotify.com/v1/me';
+  const url = !id
+    ? 'https://api.spotify.com/v1/me'
+    : `https://api.spotify.com/v1/users/${id}`;
   //a little reminder - GET requests do not have a body so if you see extra stuff in the documentation (like limit or offset) they need to go in the URL as query params
   const payload = {
     method: 'GET',

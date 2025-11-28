@@ -119,21 +119,23 @@ function NoteUI({ trackId, addedAt }) {
             <BiSolidShow />
           </IconButton>
         ) : (
-          <div>
-            {note?.content}
-            <span> ({formatDate(note?.createdAt)})</span>
+          <div className="list-row">
+            <div className="notes-row">
+              {note?.content}
+              <span> ({formatDate(note?.createdAt)})</span>
+            </div>
+            <IconButton
+              clickHandler={() => setShowNote(false)}
+              tooltipText="Hide this note"
+            >
+              <BiSolidHide />
+            </IconButton>
             <IconButton
               clickHandler={() => setEditMode(true)}
               disabledProp={isAddingOrDeleting}
               tooltipText="Edit the note for this track"
             >
               <MdEditNote />
-            </IconButton>
-            <IconButton
-              clickHandler={() => setShowNote(false)}
-              tooltipText="Hide this note"
-            >
-              <BiSolidHide />
             </IconButton>
             <IconButton
               disabledProp={isAddingOrDeleting}
