@@ -304,6 +304,7 @@ title/artist | album | added by | date added | runtime
 }
 
 .notes-row {
+  display: contents;
   grid-column: 1/-1;
 }
 
