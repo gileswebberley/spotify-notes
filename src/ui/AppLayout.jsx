@@ -8,7 +8,7 @@ function AppLayout() {
   const navigationState = useNavigation();
   const location = useLocation();
   const isLoading = navigationState.state === 'loading';
-  console.log(`AppLayout navigation status: ${navigationState.state}`);
+  // console.log(`AppLayout navigation status: ${navigationState.state}`);
   if (isLoading) return <Spinner />;
 
   return (

@@ -2,29 +2,36 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { getUserProfile } from '../services/apiSpotify';
 import { useLocation, useNavigation } from 'react-router-dom';
 import { AUTH_PATH } from '../utils/constants';
+import { useUser } from '../query-hooks/useUser';
 
 const UserContext = createContext(null);
 
 function UserContextProvider({ children }) {
-  const [userProfile, setUserProfile] = useState(null);
+  //ok, let's make this use tanstack query instead - if the hook is called without an id then it will create a query key ['user','me']
+  // const [userProfile, setUserProfile] = useState(null);
   //we don't want to try to get the user whilst we're logging in which happens at the root path (Home)
-  const location = useLocation();
-  const path = location.pathname;
-  const navigation = useNavigation();
-  const isLoadingUser = navigation.state === 'loading' || !userProfile;
+  // const location = useLocation();
+  // const path = location.pathname;
+  // const navigation = useNavigation();
+  const { status, fetchStatus, user: userProfile, error } = useUser();
+  const isLoadingUser = status === 'pending' || !userProfile;
 
-  useEffect(() => {
-    async function fetchUserProfile() {
-      console.log('fetching user profile....');
-      try {
-        const profile = await getUserProfile();
-        setUserProfile(profile);
-      } catch (error) {
-        console.error('Error fetching user profile:', error);
-      }
-    }
-    if (!userProfile && path !== AUTH_PATH) fetchUserProfile();
-  }, [userProfile, path]);
+  if (error) {
+    console.error('Error fetching user profile:', error);
+  }
+  // useEffect(() => {
+  //   async function fetchUserProfile() {
+  //     console.log('fetching user profile....');
+  //     try {
+  //       const profile = await getUserProfile();
+  //       setUserProfile(profile);
+  //     } catch (error) {
+  //       console.error('Error fetching user profile:', error);
+  //     }
+  //   }
+  //   //I've moved the authorisation out of the AppLayout and so this should now be safe as it wraps the children of AppLayout
+  //   if (!userProfile && path !== AUTH_PATH) fetchUserProfile();
+  // }, [userProfile, path]);
 
   function getUserFirstName() {
     return getUserDisplayName().split(' ')[0] ?? 'Anon';
