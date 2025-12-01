@@ -7,7 +7,7 @@ function HeaderColourSettingImage({ images, size = 250 }) {
   //trying to get the colour based on the image for the header like on spotify, using the color thief npm package
   const imgUrl = getImageURLByHeightSize(images, size);
   //this is used as the threshold for making the colour darker
-  const brightnessThreshold = 127;
+  const brightnessThreshold = 87;
   //how many of the discovered pallette colours will be used to calculate the average
   const sampleSize = 5;
 

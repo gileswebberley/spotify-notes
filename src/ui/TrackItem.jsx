@@ -13,6 +13,7 @@ function TrackItem({ item }) {
   const { added_at, added_by } = item;
   const artistString = artists.map((artist) => artist.name).join(', ');
   const [addedByUser, setAddedByUser] = useState({});
+  //This is causing SO MANY calls to the api that it is complaining about the number of requests, time to bite the bullet and shift all of this over to tanstack query I think
   useEffect(() => {
     if (!addedByUser?.display_name) {
       getUserProfile(added_by?.id)

@@ -3,6 +3,7 @@ import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import react from 'eslint-plugin-react'; //changing this from eslint-plugin-react has fixed the unused warnings for react components
+import pluginQuery from '@tanstack/eslint-plugin-query';
 import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
@@ -25,9 +26,11 @@ export default defineConfig([
     },
     plugins: {
       react,
+      '@tanstack/query': pluginQuery,
     },
     settings: { react: { version: '18.2' } },
     rules: {
+      '@tanstack/query/exhaustive-deps': 'error',
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },

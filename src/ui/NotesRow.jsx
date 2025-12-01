@@ -6,13 +6,10 @@ import IconButton from './IconButton';
 function NotesRow() {
   const {
     isAddingOrDeleting,
-    setIsAddingOrDeleting,
     editMode,
     setEditMode,
     showNote,
     setShowNote,
-    isLoadingUser,
-    getUserId,
     note,
     handleSaveNote,
     handleDeleteNote,
