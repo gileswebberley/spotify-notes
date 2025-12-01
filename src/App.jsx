@@ -61,7 +61,8 @@ const router = createBrowserRouter(
         {
           path: '/playlist/:playlistId',
           element: <Playlist />,
-          loader: playlistLoader,
+          //let's try to use the prefetch of the infinite query as it is a different call to the call for getting more tracks
+          loader: playlistLoader(queryClient),
           errorElement: <Error />,
         },
       ],

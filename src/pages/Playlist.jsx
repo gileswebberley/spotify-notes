@@ -96,15 +96,33 @@ function Playlist() {
     </div>
   );
 }
+//need to change this for the use of tanstack query - I'm trying to get it so I can prefetch as I use a different api function for the tracks
+// export async function loader({ params }) {
+//   if (!isLoggedIn()) {
+//     return redirect(AUTH_PATH);
+//   }
+//   const { playlistId } = params;
+//   const playlist = await getUserPlaylist(playlistId);
+//   return { playlist, playlistId };
+//   //fetch playlist details from spotify api using the playlistId
+// }
 
-export async function loader({ params }) {
-  if (!isLoggedIn()) {
-    return redirect(AUTH_PATH);
-  }
-  const { playlistId } = params;
-  const playlist = await getUserPlaylist(playlistId);
-  return { playlist, playlistId };
-  //fetch playlist details from spotify api using the playlistId
-}
+export const loader =
+  (queryClient) =>
+  async ({ params }) => {
+    if (!isLoggedIn()) {
+      return redirect(AUTH_PATH);
+    }
+    const { playlistId } = params;
+    let playlist = null;
+    //this means that the first 'page' of a playlist will be cached and then the rest of the tracks (outside of the limit spotify enforces) will be cached by the infinite query that is the backbone of the usePaginatedFetch hook
+    await queryClient
+      .fetchQuery({
+        queryKey: ['playlist', playlistId],
+        queryFn: () => getUserPlaylist(playlistId),
+      })
+      .then((data) => (playlist = data));
+    return { playlist, playlistId };
+  };
 
 export default Playlist;

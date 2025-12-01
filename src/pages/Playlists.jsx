@@ -12,7 +12,7 @@ import Spinner from '../ui/Spinner';
 function Playlists() {
   // let playlists = useLoaderData();
   //on first render we use the loader so the data is there before render
-  const loaderData = useLoaderData();
+  // const loaderData = useLoaderData();
   //then use a bit of state which is initialised with the loader data, so we can rerender when we get next/previous pages
   //extracted all this to a custom hook so that I can use it with tracks in the Playlist page too
   const {
@@ -20,10 +20,11 @@ function Playlists() {
     getNextPrev,
     hasNext,
     hasPrevious,
-  } = usePaginatedFetch(getUserPlaylists, loaderData);
+    isLoading,
+  } = usePaginatedFetch(getUserPlaylists, null);
   //to check the loading state we use the useNavigation hook and it's state
   const navigation = useNavigation();
-  const isLoading = !playlists || navigation.state === 'loading';
+  // const isLoading = !playlists || navigation.state === 'loading';
 
   //I was scrolling to the top of the page but actually I just want the list to be at the top of the view I think?
   const playlistsViewElement = useRef(null);
@@ -70,12 +71,14 @@ function Playlists() {
   );
 }
 
+//Now using react-query so it loads the first 20 and caches them, unlike in Playlist (singular) the first call to usePaginatedFetch is the same function so we can do it this way
 export async function loader() {
   if (!isLoggedIn()) {
     return redirect(AUTH_PATH);
   }
-  const playlists = await getUserPlaylists();
-  return playlists;
+  // const playlists = await getUserPlaylists();
+  // return playlists;
+  return null;
 }
 
 export default Playlists;
