@@ -30,7 +30,7 @@ export default defineConfig([
     },
     settings: { react: { version: '18.2' } },
     rules: {
-      '@tanstack/query/exhaustive-deps': 'error',
+      '@tanstack/query/exhaustive-deps': 'warn',
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },

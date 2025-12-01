@@ -11,7 +11,17 @@ const Playlists = lazy(() => import('./pages/Playlists'));
 import { loader as playlistsLoader } from './pages/Playlists';
 const Playlist = lazy(() => import('./pages/Playlist'));
 import { loader as playlistLoader } from './pages/Playlist';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 // import Auth from './pages/Auth';
+
+//I'm dealing with a lot of data requests now so I'm going to implement tanstack query to look after caching etc
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 120000,
+    },
+  },
+});
 
 const router = createBrowserRouter(
   //Now we're going to create a layout that will work with phone screens or browsers on a pc in the AppLayout component, then make our routes children
@@ -62,11 +72,13 @@ const router = createBrowserRouter(
 function App() {
   //standard setup for react router v6.4+
   return (
-    <RouterProvider
-      // future={{ v7_startTransition: true }}
-      router={router}
-      fallbackElement={<Spinner />}
-    />
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider
+        // future={{ v7_startTransition: true }}
+        router={router}
+        fallbackElement={<Spinner />}
+      />
+    </QueryClientProvider>
   );
 }
 
