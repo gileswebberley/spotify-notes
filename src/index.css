@@ -246,12 +246,19 @@ a,
 
 /* all of the grid cells, other than the header, contents to get the hover colour change to work */
 .list-row:not(.list-header):hover > div {
-  border-radius: 0.6rem;
   background-color: var(--light-background-charcoal);
+  /* we just want this on the first and last column */
+  &:is(.col-title) {
+    border-radius: 0.6rem 0 0 0.6rem;
+  }
+
+  &:is(.col-buttons) {
+    border-radius: 0 0.6rem 0.6rem 0;
+  }
 }
 
 /* attempt to make the rows with collapsing columns 
-title/artist | album | added by | date added | runtime
+title/artist | album | added by | date added | runtime | buttons
 */
 .list-table {
   display: grid;
