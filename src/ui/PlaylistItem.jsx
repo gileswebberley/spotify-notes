@@ -8,7 +8,7 @@ const PlaylistItem = forwardRef(({ playlist }, ref) => {
   const navigate = useNavigate();
 
   function handleClick() {
-    console.log(`Clicked playlist with id: ${id}`);
+    // console.log(`Clicked playlist with id: ${id}`);
     navigate(`/playlist/${id}`);
   }
 
@@ -27,8 +27,8 @@ const PlaylistItem = forwardRef(({ playlist }, ref) => {
           {owner?.display_name}
         </div>
       </div>
-      <div className="col-playlist-added">date</div>
-      <div className="col-tracks">{tracks.total}</div>
+      {/* can't find this information via the web api :/ <div className="col-playlist-added">date</div> */}
+      <div className="col-playlist-tracks">{tracks.total}</div>
       {/* <div
         ref={ref}
         className="interactive-listing-item"

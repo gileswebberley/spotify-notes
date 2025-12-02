@@ -49,8 +49,8 @@ function Playlists() {
         <div className="playlist-list-table">
           <div className="list-header list-row">
             <div className="col-title">Title</div>
-            {/* using col-album as it is the last to be hidden */}
-            <div className="col-playlist-added">Date added</div>
+            {/* can't access this info from the web api :/ */}
+            {/* <div className="col-playlist-added">Date added</div> */}
             <div className="col-playlist-tracks">Tracks</div>
           </div>
           {playlists?.items.map((item, index) => {
