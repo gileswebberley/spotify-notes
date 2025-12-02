@@ -266,8 +266,8 @@ export async function getUserPlaylist(playlistId) {
     },
   };
   //limit has no effect as it is locked to 100 by Spotify
-  // const limit = 500; //arbitrary large number to get all tracks in one go
-  // url.search = new URLSearchParams({ limit }).toString();
+  // const limit = 20; //arbitrary large number to get all tracks in one go
+  // url.search = new URLSearchParams({limit}).toString();
   const result = await fetchPayloadResponse(url, payload);
   // console.table(`Playlist ${playlistId} details:`, result);
   return result;

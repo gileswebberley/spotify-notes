@@ -9,7 +9,7 @@ import {
   getUserPlaylist,
   isLoggedIn,
 } from '../services/apiSpotify';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { usePaginatedFetch } from '../query-hooks/usePaginatedFetch';
 import TrackItem from '../ui/TrackItem';
 import User from '../ui/User';
@@ -18,6 +18,8 @@ import { AUTH_PATH } from '../utils/constants';
 import PlaylistHeader from '../ui/PlaylistHeader';
 import BackButton from '../ui/BackButton';
 import { FaEllipsis } from 'react-icons/fa6';
+import Spinner from '../ui/Spinner';
+import { useIntersection } from '../hooks/useIntersection';
 
 function Playlist() {
   const { playlist, playlistId } = useLoaderData();
@@ -27,71 +29,86 @@ function Playlist() {
     data: tracks,
     getNextPrev,
     hasNext,
-    hasPrevious,
   } = usePaginatedFetch(getPlaylistTracks, playlist.tracks, playlistId);
   const navigator = useNavigation();
   //   const navigate = useNavigate();
   const isLoading = navigator.state === 'loading' || !playlist;
   //   const tracks = data ?? { items: [] };
 
-  const trackViewElement = useRef(null);
-  useLayoutEffect(() => {
-    if (window.scrollY > 0) {
-      // window.scrollTo({ top: 0, behavior: 'smooth' });
-      trackViewElement.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [tracks]);
+  // const trackViewElement = useRef(null);
+  // useLayoutEffect(() => {
+  //   if (window.scrollY > 0) {
+  //     // window.scrollTo({ top: 0, behavior: 'smooth' });
+  //     trackViewElement.current.scrollIntoView({ behavior: 'smooth' });
+  //   }
+  // }, [tracks]);
+  let infiniteScrollElementIndex = tracks?.items?.length - 4;
+  console.log(`infiniteScrollElement is ${infiniteScrollElementIndex}`);
+
+  const intersectionCallback = useCallback(
+    (target) => {
+      if (hasNext && !isLoading) {
+        console.log(`I'm loading more of the list`);
+        getNextPrev(1);
+      }
+    },
+    [isLoading, getNextPrev, hasNext]
+  );
+
+  const options = {
+    rootMargin: '0px',
+    scrollMargin: '0px',
+    threshold: 0.5,
+    delay: 100,
+  };
+
+  const { intersectionTargetRef } = useIntersection(
+    intersectionCallback,
+    options
+  );
 
   return (
     <div className="playlist-page-colour">
-      {/* <User /> */}
-
-      {isLoading ? (
-        <div>Loading playlist...</div>
-      ) : (
-        <>
-          <BackButton steps={1} />
-          <PlaylistHeader playlist={playlist} />
-          <div className="list-container" ref={trackViewElement}>
-            <div className="list-table">
-              <div className="list-header list-row">
-                <div className="col-title">Title</div>
-                <div className="col-album">Album</div>
-                <div className="col-added-by">Added by</div>
-                <div className="col-date-added">Date added</div>
-                <div className="col-runtime">⏱</div>
-                <div className="col-buttons">
-                  <FaEllipsis />
-                </div>
-              </div>
-              {/* <ul> */}
-              {/* <div className="list-row"> */}
-              {tracks?.items.map((item) => {
-                //check that they are only tracks as episodes can also be returned in playlists - could add an EpisodeItem later if it makes any sense
-                if (item.track?.type === 'episode' || !item.track) return null;
-                //passing the item rather than the track object as it has the added_at property which would be handy to have in the notes
-                //   console.table(`item for playlist is: `, item);
-                return <TrackItem key={item.track.id} item={item} />;
-              })}
-              {/* </div> */}
-              {/* </ul> */}
+      {isLoading && <Spinner />}
+      <BackButton steps={1} />
+      <PlaylistHeader playlist={playlist} />
+      <div className="list-container">
+        <div className="list-table">
+          <div className="list-header list-row">
+            <div className="col-title">Title</div>
+            <div className="col-album">Album</div>
+            <div className="col-added-by">Added by</div>
+            <div className="col-date-added">Date added</div>
+            <div className="col-runtime">⏱</div>
+            <div className="col-buttons">
+              <FaEllipsis />
             </div>
           </div>
-        </>
-      )}
-      <div>
-        {hasPrevious && (
-          <PlaylistsPaginationButton
-            handler={() => getNextPrev(-1)}
-            title={'Previous'}
-          />
-        )}
-        {hasNext && (
-          <PlaylistsPaginationButton
-            handler={() => getNextPrev(1)}
-            title={'Next'}
-          />
-        )}
+          {/* <ul> */}
+          {/* <div className="list-row"> */}
+          {tracks?.items.map((item, index) => {
+            //check that they are only tracks as episodes can also be returned in playlists - could add an EpisodeItem later if it makes any sense
+            if (item.track?.type === 'episode' || !item.track) {
+              --infiniteScrollElementIndex;
+              return null;
+            }
+            if (infiniteScrollElementIndex === index) {
+              return (
+                <TrackItem
+                  index={index}
+                  ref={intersectionTargetRef}
+                  key={item.track.id}
+                  item={item}
+                />
+              );
+            }
+            //passing the item rather than the track object as it has the added_at property which would be handy to have in the notes
+            //   console.table(`item for playlist is: `, item);
+            return <TrackItem index={index} key={item.track.id} item={item} />;
+          })}
+          {/* </div> */}
+          {/* </ul> */}
+        </div>
       </div>
     </div>
   );

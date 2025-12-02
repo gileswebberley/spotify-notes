@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import ImagePx from './ImagePx';
 import { forwardRef } from 'react';
 
+//forwardRef for use with useIntersection
 const PlaylistItem = forwardRef(({ playlist }, ref) => {
   const { name, tracks, images, owner, id } = playlist;
   const navigate = useNavigate();

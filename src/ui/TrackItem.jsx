@@ -2,37 +2,24 @@ import { FaSpotify } from 'react-icons/fa';
 import { formatDate } from '../utils/helpers';
 import ImagePx from './ImagePx';
 import NoteUI from './NoteUI';
-import { useEffect, useState } from 'react';
-import { getUserProfile } from '../services/apiSpotify';
 import IconButton from './IconButton';
 import { NoteUIContextProvider } from '../contexts/NoteUIContext';
 import NotesRow from './NotesRow';
 import { useUser } from '../query-hooks/useUser';
-import Spinner from './Spinner';
+import { forwardRef } from 'react';
 
-function TrackItem({ item }) {
+//forwardRef for use with useIntersection for infinite scroll behaviour
+const TrackItem = forwardRef(({ item }, ref) => {
   const { name, album, artists, id, duration_ms } = item.track;
   const { added_at, added_by } = item;
   const artistString = artists.map((artist) => artist.name).join(', ');
   //Great, this works nicely
   const { status, fetchStatus, user, error } = useUser(added_by.id);
   const { display_name } = user ?? {};
-  //This is causing SO MANY calls to the api that it is complaining about the number of requests, time to bite the bullet and shift all of this over to tanstack query I think
-  //   const [addedByUser, setAddedByUser] = useState({});
-  //   useEffect(() => {
-  //     if (!addedByUser?.display_name) {
-  //       getUserProfile(added_by?.id)
-  //         .then((result) => setAddedByUser(result))
-  //         .catch(
-  //           (err) =>
-  //             `Failed to get user for added_by in TrackItem - ERROR: ${err}`
-  //         );
-  //     }
-  //   }, [addedByUser?.display_name, added_by?.id]);
   return (
     <NoteUIContextProvider trackId={id}>
       <div className="list-row">
-        <div className="col-title">
+        <div className="col-title" ref={ref}>
           <ImagePx images={album?.images} size={64} name={name} />
           <div className="ellipsis-text-block">
             <span className="track-name-font">{name}</span>
@@ -71,6 +58,6 @@ function TrackItem({ item }) {
       <NotesRow />
     </NoteUIContextProvider>
   );
-}
+});
 
 export default TrackItem;

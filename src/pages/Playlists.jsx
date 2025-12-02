@@ -1,9 +1,6 @@
-import { redirect, useLoaderData, useNavigation } from 'react-router-dom';
+import { redirect } from 'react-router-dom';
 import { getUserPlaylists, isLoggedIn } from '../services/apiSpotify';
-import User from '../ui/User';
-// import Playlist from '../ui/PlaylistItem';
-import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
-import PlaylistsPaginationButton from '../ui/PlaylistsPaginationButton';
+import { useCallback } from 'react';
 import PlaylistItem from '../ui/PlaylistItem';
 import { usePaginatedFetch } from '../query-hooks/usePaginatedFetch';
 import { AUTH_PATH } from '../utils/constants';
@@ -16,7 +13,6 @@ function Playlists() {
     data: playlists,
     getNextPrev,
     hasNext,
-    hasPrevious,
     isLoading,
   } = usePaginatedFetch(getUserPlaylists, null);
 
@@ -32,7 +28,17 @@ function Playlists() {
     [isLoading, getNextPrev, hasNext]
   );
 
-  const { intersectionTargetRef } = useIntersection(intersectionCallback);
+  const options = {
+    rootMargin: '0px',
+    scrollMargin: '0px',
+    threshold: 0.5,
+    delay: 100,
+  };
+
+  const { intersectionTargetRef } = useIntersection(
+    intersectionCallback,
+    options
+  );
 
   return (
     <div>

@@ -1,15 +1,14 @@
 import { useCallback, useEffect, useRef } from 'react';
 
-export function useIntersection(callbackFn, singleUse = true) {
+export function useIntersection(callbackFn, options = {}, singleUse = true) {
   const intersectionTargetRef = useRef(null);
   const viewportElementRef = useRef(null);
-  //   const observerRef = useRef(null);
 
   const observerCallback = useCallback(
     (entries, observer) => {
       const target = entries[0];
       if (target.isIntersecting) {
-        callbackFn(target);
+        callbackFn(target, observer);
         if (singleUse) {
           observer.unobserve(target.target);
         }
@@ -18,18 +17,16 @@ export function useIntersection(callbackFn, singleUse = true) {
     [callbackFn, singleUse]
   );
 
+  //if no viewportElement is set then it will be null which will make it default to the browser window
   useEffect(() => {
     let observer;
     const intersectionTarget = intersectionTargetRef?.current;
     if (intersectionTarget) {
-      const options = {
+      const optionsObj = {
+        ...options,
         root: viewportElementRef?.current,
-        rootMargin: '0px',
-        scrollMargin: '0px',
-        threshold: 0.5,
-        delay: 1500,
       };
-      observer = new IntersectionObserver(observerCallback, options);
+      observer = new IntersectionObserver(observerCallback, optionsObj);
       observer.observe(intersectionTarget);
     }
 
