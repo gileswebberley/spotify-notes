@@ -4,9 +4,10 @@
   --playlist-header-colour: rgba(0, 0, 0, 0);
   --light-background-charcoal: #2a2a2a;
   --background-charcoal: #121212;
+  --dark-background-charcoal: #090909;
   /* make sure the images are in a container with container-size: inline-size */
-  /* --listing-image-size: 5rem; */
-  --listing-image-size: clamp(6rem, 15cqw, 80%);
+  --listing-image-size: 5rem;
+  /* --listing-image-size: minmax(6rem, 5cqw); */
   --header-image-size: clamp(10rem, 30cqw, 100%);
   --max-content-width: 960px;
   --main-grid-row: 1fr min(100%, var(--max-content-width)) 1fr;
@@ -14,7 +15,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: var(--background-charcoal);
+  background-color: var(--dark-background-charcoal);
 
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -83,14 +84,18 @@ footer {
 
 ul {
   margin: 0;
-  /* display: contents; */
-  /* max-width: 480px; */
   width: 100%;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+}
+
+h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  /* padding-bottom: 1.2rem; */
 }
 /* 
 button {
@@ -136,6 +141,7 @@ button:focus-visible {
   width: 100%;
 }
 
+/* used in ImagePx */
 .listing-image {
   aspect-ratio: 1/1;
   object-fit: contain;
@@ -150,7 +156,6 @@ button:focus-visible {
   background-color: #dddddd;
 }
 
-a,
 .icon-button {
   color: var(--spotify-green);
   font-size: 2rem;
@@ -242,6 +247,8 @@ a,
 .list-container {
   container: list-container / inline-size;
   background-color: var(--background-charcoal);
+  padding: 2rem;
+  /* margin-inline: 0.5rem; no because the background of the container is set to header colour for the back button */
 }
 
 /* all of the grid cells, other than the header, contents to get the hover colour change to work */
@@ -257,17 +264,22 @@ a,
   }
 }
 
-/* attempt to make the rows with collapsing columns 
-title/artist | album | added by | date added | runtime | buttons
+/* attempt to make the rows with collapsing columns for the playlist tracks - works nicely :)
+img/title/artist | album | added by | date added | runtime | buttons
 */
-.list-table {
+.track-list-table {
   display: grid;
   grid-template-columns: 2fr minmax(150px, 1fr) 1.2fr 1fr 0.3fr 80px;
   /* gap: 1rem; */
 }
+
+.playlist-list-table {
+  display: grid;
+  grid-template-columns: 3fr 1fr 60px;
+}
 /* remove date added column */
 @container list-container (width < 820px ) {
-  .list-table {
+  .track-list-table {
     grid-template-columns: 2fr minmax(150px, 1fr) 1.2fr 0.3fr 80px;
   }
 
@@ -277,7 +289,7 @@ title/artist | album | added by | date added | runtime | buttons
 }
 /* remove added by column */
 @container list-container (width < 700px ) {
-  .list-table {
+  .track-list-table {
     grid-template-columns: 2fr minmax(150px, 1fr) 0.3fr 80px;
   }
 
@@ -287,7 +299,7 @@ title/artist | album | added by | date added | runtime | buttons
 }
 /* remove runtime column */
 @container list-container (width < 550px ) {
-  .list-table {
+  .track-list-table {
     grid-template-columns: 2fr minmax(150px, 1fr) 80px;
   }
 
@@ -297,11 +309,19 @@ title/artist | album | added by | date added | runtime | buttons
 }
 /* remove album column */
 @container list-container (width < 400px ) {
-  .list-table {
+  .track-list-table {
     grid-template-columns: 2fr 80px;
   }
 
   .col-album {
+    display: none;
+  }
+
+  .playlist-list-table {
+    grid-template-columns: 1fr 60px;
+  }
+
+  .col-playlist-added {
     display: none;
   }
 }
@@ -329,6 +349,10 @@ title/artist | album | added by | date added | runtime | buttons
   transition: background-color 0.3s ease;
 }
 
+.list-row[role='button'] > div {
+  cursor: pointer;
+}
+
 .list-header > div {
   position: sticky;
   padding-top: 3.5rem;
@@ -341,6 +365,7 @@ title/artist | album | added by | date added | runtime | buttons
 .col-title {
   display: grid;
   grid-template-columns: auto 1fr;
+  column-gap: 5px;
   /* justify-items: end; */
 }
 

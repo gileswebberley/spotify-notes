@@ -14,15 +14,32 @@ const PlaylistItem = forwardRef(({ playlist }, ref) => {
 
   return (
     <div
-      ref={ref}
-      className="interactive-listing-item"
+      className="list-row"
       role="button"
       aria-description={`Click to open the playlist called ${name}`}
       onClick={handleClick}
-      style={{ cursor: 'pointer' }}
     >
-      <ImagePx images={images} name={name} />
-      {name} by {owner.display_name} ({tracks.total} tracks)
+      <div className="col-title" ref={ref}>
+        <ImagePx images={images} size={64} name={name} />
+        <div className="ellipsis-text-block">
+          <span className="track-name-font">{name}</span>
+          <br />
+          {owner?.display_name}
+        </div>
+      </div>
+      <div className="col-playlist-added">date</div>
+      <div className="col-tracks">{tracks.total}</div>
+      {/* <div
+        ref={ref}
+        className="interactive-listing-item"
+        role="button"
+        aria-description={`Click to open the playlist called ${name}`}
+        onClick={handleClick}
+        style={{ cursor: 'pointer' }}
+      >
+        <ImagePx images={images} name={name} />
+        {name} by {owner.display_name} ({tracks.total} tracks)
+      </div> */}
     </div>
   );
 });

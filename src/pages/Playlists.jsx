@@ -6,6 +6,7 @@ import { usePaginatedFetch } from '../query-hooks/usePaginatedFetch';
 import { AUTH_PATH } from '../utils/constants';
 import Spinner from '../ui/Spinner';
 import { useIntersection } from '../hooks/useIntersection';
+import { FaEllipsis } from 'react-icons/fa6';
 
 function Playlists() {
   //extracted all this to a custom hook so that I can use it with tracks in the Playlist page too
@@ -43,9 +44,15 @@ function Playlists() {
   return (
     <div>
       {/* <User /> put this into the AppLayout */}
-      <h3>Playlists Page</h3>
       <div className="list-container">
-        <ul>
+        <h2>Your Playlists</h2>
+        <div className="playlist-list-table">
+          <div className="list-header list-row">
+            <div className="col-title">Title</div>
+            {/* using col-album as it is the last to be hidden */}
+            <div className="col-playlist-added">Date added</div>
+            <div className="col-playlist-tracks">Tracks</div>
+          </div>
           {playlists?.items.map((item, index) => {
             if (item.tracks.total < 2) {
               --infiniteScrollElementIndex;
@@ -62,8 +69,8 @@ function Playlists() {
             }
             return <PlaylistItem key={item.id} playlist={item} />;
           })}
-        </ul>
-        {isLoading && <Spinner />}
+          {isLoading && <Spinner />}
+        </div>
       </div>
     </div>
   );

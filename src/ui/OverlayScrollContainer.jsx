@@ -6,6 +6,9 @@ function OverlayScrollContainer({ className, children }) {
       element="section"
       className={className}
       options={{
+        overflow: {
+          x: 'hidden',
+        },
         scrollbars: {
           autoHide: 'leave',
           autoHideSuspend: true,

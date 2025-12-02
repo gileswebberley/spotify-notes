@@ -73,7 +73,7 @@ function Playlist() {
       <BackButton steps={1} />
       <PlaylistHeader playlist={playlist} />
       <div className="list-container">
-        <div className="list-table">
+        <div className="track-list-table">
           <div className="list-header list-row">
             <div className="col-title">Title</div>
             <div className="col-album">Album</div>
