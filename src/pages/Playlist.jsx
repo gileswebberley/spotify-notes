@@ -10,7 +10,7 @@ import {
   isLoggedIn,
 } from '../services/apiSpotify';
 import { useLayoutEffect, useRef, useState } from 'react';
-import { usePaginatedFetch } from '../hooks/usePaginatedFetch';
+import { usePaginatedFetch } from '../query-hooks/usePaginatedFetch';
 import TrackItem from '../ui/TrackItem';
 import User from '../ui/User';
 import PlaylistsPaginationButton from '../ui/PlaylistsPaginationButton';
