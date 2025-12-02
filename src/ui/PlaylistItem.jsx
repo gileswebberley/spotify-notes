@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import ImagePx from './ImagePx';
+import { forwardRef } from 'react';
 
-function PlaylistItem({ playlist }) {
+const PlaylistItem = forwardRef(({ playlist }, ref) => {
   const { name, tracks, images, owner, id } = playlist;
   const navigate = useNavigate();
 
@@ -12,6 +13,7 @@ function PlaylistItem({ playlist }) {
 
   return (
     <div
+      ref={ref}
       className="interactive-listing-item"
       role="button"
       aria-description={`Click to open the playlist called ${name}`}
@@ -22,6 +24,6 @@ function PlaylistItem({ playlist }) {
       {name} by {owner.display_name} ({tracks.total} tracks)
     </div>
   );
-}
+});
 
 export default PlaylistItem;

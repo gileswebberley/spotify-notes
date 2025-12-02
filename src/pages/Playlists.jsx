@@ -47,15 +47,11 @@ function Playlists() {
             }
             if (index === infiniteScrollElementIndex) {
               return (
-                <>
-                  <div
-                    key="intersection"
-                    width={2}
-                    height={1}
-                    ref={intersectionTargetRef}
-                  ></div>
-                  <PlaylistItem key={item.id} playlist={item} />
-                </>
+                <PlaylistItem
+                  ref={intersectionTargetRef}
+                  key={item.id}
+                  playlist={item}
+                />
               );
             }
             return <PlaylistItem key={item.id} playlist={item} />;
