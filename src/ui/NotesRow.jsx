@@ -2,6 +2,8 @@ import { MdCancel, MdDeleteForever, MdEditNote, MdSave } from 'react-icons/md';
 import { useNoteUIContext } from '../contexts/NoteUIContext';
 import { formatDate } from '../utils/helpers';
 import IconButton from './IconButton';
+import { MAX_NOTE_CHARS } from '../utils/constants';
+import { useRef, useState } from 'react';
 
 function NotesRow() {
   const {
@@ -14,6 +16,14 @@ function NotesRow() {
     handleSaveNote,
     handleDeleteNote,
   } = useNoteUIContext();
+
+  const [messageLength, setMessageLength] = useState(
+    () => note?.content?.length ?? 0
+  );
+
+  function countChars(e) {
+    setMessageLength(e.target.value.length);
+  }
 
   if (!showNote) return null;
 
@@ -49,7 +59,15 @@ function NotesRow() {
         <div className="list-row notes-row">
           <form method="post" onSubmit={handleSaveNote}>
             <div className="col-notes">
-              <textarea name="noteContent" defaultValue={note?.content} />
+              <textarea
+                name="noteContent"
+                defaultValue={note?.content}
+                aria-description="Type your note in here"
+                disabled={isAddingOrDeleting}
+                onChange={countChars}
+                maxLength={MAX_NOTE_CHARS}
+              />
+              {messageLength}/{MAX_NOTE_CHARS}
             </div>
             <div className="col-date-added">{formatDate(new Date())}</div>
             <div className="col-runtime"> </div>
