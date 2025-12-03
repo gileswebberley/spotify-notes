@@ -5,16 +5,18 @@
   --light-background-charcoal: #2a2a2a;
   --background-charcoal: #121212;
   --dark-background-charcoal: #090909;
+  --colour-white: rgba(255, 255, 255, 0.87);
   /* make sure the images are in a container with container-size: inline-size */
   --listing-image-size: 5rem;
-  /* --listing-image-size: minmax(6rem, 5cqw); */
+  /* --listing-image-size: minmax(6rem, 5cqw); This was causing all sorts of layout issues so I've just gone for a fixed size */
   --header-image-size: clamp(10rem, 30cqw, 100%);
   --max-content-width: 960px;
   --main-grid-row: 1fr min(100%, var(--max-content-width)) 1fr;
   --footer-height: 6rem;
+  --back-button-size: clamp(2rem, 4dvh, 3rem);
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  color: var(--colour-white);
   background-color: var(--dark-background-charcoal);
 
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -208,6 +210,7 @@ button:focus-visible {
   align-items: flex-end;
   justify-content: flex-start;
   column-gap: 1rem;
+  padding-inline: 2rem;
 }
 
 .playlist-header-info {
@@ -216,6 +219,7 @@ button:focus-visible {
 
   & h2 {
     font-size: 9cqw;
+    letter-spacing: -0.5cqw;
     line-height: 1;
     padding-right: 2rem;
     padding-bottom: 2cqw;
@@ -225,12 +229,15 @@ button:focus-visible {
 .playlist-header-user {
   display: flex;
   align-items: center;
+  justify-items: flex-start;
+  flex-wrap: wrap;
   column-gap: 0.5rem;
   & h3 {
-    font-size: 1.5rem;
+    font-size: min(1.5rem, 4cqw);
+    white-space: nowrap;
   }
   & p {
-    font-size: 1.5rem;
+    font-size: min(1.5rem, 3cqw);
     font-weight: 300;
   }
 }
@@ -244,15 +251,16 @@ button:focus-visible {
   display: 'inline-block';
   /* padding-inline: 2rem; */
   /* padding-block: 0; */
-  margin-left: 2rem;
+  /* margin-left: 2rem; */
 }
 
 .back-button {
   display: block;
-  font-size: 3rem;
+  font-size: var(--back-button-size);
   position: sticky;
   top: 0;
   padding-left: 0.5rem;
+  padding-top: 0.5rem;
   z-index: 10;
 }
 
@@ -288,7 +296,7 @@ button:focus-visible {
 }
 
 /* all of the grid cells, other than the header, contents to get the hover colour change to work */
-.list-row:not(.list-header):hover > div {
+.list-row:not(.list-header, .notes-row):hover > div {
   background-color: var(--light-background-charcoal);
   /* we just want this on the first and last column */
   &:is(.col-title) {
@@ -318,6 +326,17 @@ img/title/artist | album | added by | date added | runtime | buttons
   text-align: right;
 }
 
+.col-notes {
+  grid-column: 1/4;
+}
+
+.col-title {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 5px;
+  /* justify-items: end; */
+}
+
 /* remove date added column */
 @container list-container (width < 820px ) {
   .track-list-table {
@@ -336,6 +355,10 @@ img/title/artist | album | added by | date added | runtime | buttons
 
   .col-added-by {
     display: none;
+  }
+
+  .col-notes {
+    grid-column: 1/3;
   }
 }
 /* remove runtime column */
@@ -358,26 +381,60 @@ img/title/artist | album | added by | date added | runtime | buttons
     display: none;
   }
 
-  /* .playlist-list-table {
-    grid-template-columns: 1fr 60px;
+  .col-notes {
+    grid-column: 1;
   }
-
-  .col-playlist-added {
-    display: none;
-  } */
 }
+
 /* apparently you can then make the children of a div act as items within a parent grid with this line */
-.list-row {
+.list-row,
+.list-row > form {
   display: contents;
 }
 
-.notes-row {
-  /* display: contents; */
-  grid-column: 1/-1;
+.notes-row > div,
+.notes-row > form > div {
+  background-color: var(--light-background-charcoal);
+  border-bottom: 1px solid var(--colour-white);
+  /* border-top: 2px dotted var(--colour-white); */
+
+  &:is(.col-notes) {
+    margin-left: 1px;
+    border-radius: 0 0 0 0.8rem;
+    border-left: 1px solid var(--colour-white);
+  }
+
+  &:is(.col-buttons) {
+    /* margin-right: 5px; */
+    /* border-radius: 0 0 0.8rem 0; */
+    border-right: 1px solid var(--colour-white);
+  }
+}
+
+.notes-row > form > div > textarea {
+  width: 100%;
+  /* for browsers that support it... */
+  field-sizing: content;
+  min-height: 6rem;
+  padding: 0.5rem;
+  height: fit-content;
+  resize: vertical;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 200;
+  letter-spacing: 0.1rem;
+  border-radius: 0 0 0 0.6rem;
+
+  &:focus {
+    /* help with legibility whilst writing */
+    background-color: var(--dark-background-charcoal);
+    outline: none;
+  }
 }
 
 .list-row > div,
-.list-header > div {
+.list-header > div,
+.list-row > form > div {
   font-size: 1.3rem;
   font-weight: 300;
   font-kerning: normal;
@@ -390,6 +447,10 @@ img/title/artist | album | added by | date added | runtime | buttons
   transition: background-color 0.3s ease;
 }
 
+.list-row > form > div {
+  padding-block: 0.7rem;
+}
+
 /* for the PlaylistItem */
 .list-row[role='button'] > div {
   cursor: pointer;
@@ -397,18 +458,11 @@ img/title/artist | album | added by | date added | runtime | buttons
 
 .list-header > div {
   position: sticky;
-  padding-top: 3.5rem;
+  padding-top: var(--back-button-size);
   top: 0;
   background-color: var(--background-charcoal);
   font-weight: 400;
   border-bottom: 2px solid var(--light-background-charcoal);
-}
-
-.col-title {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  column-gap: 5px;
-  /* justify-items: end; */
 }
 
 .playlist-page-colour {

@@ -102,7 +102,7 @@ export async function requestToken(code) {
   };
   const response = await fetchPayloadResponse(url, payload);
 
-  setAccessTokenStorage(response);
+  await setAccessTokenStorage(response);
 
   // //clear up the now defunct code based keys (they expire after 10 minutes anyway)
   window.localStorage.removeItem(CODE_VERIFIER_STORAGE_KEY);
@@ -135,7 +135,7 @@ async function fetchPayloadResponse(url, payload) {
 }
 
 //this is used when the access token is returned from spotify and adds the expiration time to local storage so it can be tested against when consuming the token and refresh if it's getting close to expiring
-function setAccessTokenStorage(response) {
+async function setAccessTokenStorage(response) {
   console.table(
     `setAccessTokenStorage has been called with response - `,
     response
@@ -171,7 +171,7 @@ async function refreshAccessToken() {
     console.error(`Error refreshing access token: ${e}`);
     gotoSpotifyAuth(); //if we can't refresh the token then we need to re-authenticate from the beginning, namely do the whole code challenge and acceptance of spotify scopes again
   });
-  setAccessTokenStorage(response);
+  await setAccessTokenStorage(response);
 }
 
 //I need to work out how to deal with the access token expiring and refresh it - apparently you receive a 401 error when expired at which point we'll want to use the refresh token to get a new one. Instead of doing that I'm going to save the UTC expiiration time and simply compare that against 'now' in milliseconds

@@ -1,3 +1,4 @@
+import { LuDot } from 'react-icons/lu';
 import { useUser } from '../query-hooks/useUser';
 import UserImage from './UserImage';
 
@@ -6,21 +7,29 @@ function PlaylistHeaderInfo({ name, tracks, owner }) {
   const { display_name, images } = user ?? {};
 
   return (
-    <div className="playlist-header-info">
+    <section className="playlist-header-info">
       <h2>{name}</h2>
-      <div className="playlist-header-user">
+      <article className="playlist-header-user">
         {status === 'pending' ? (
           'loading...'
         ) : status === 'error' ? (
           '-'
         ) : (
           <>
-            <UserImage images={images} size={20} /> <h3>{display_name}</h3>
+            <UserImage images={images} size={20} />{' '}
+            <h3>
+              {display_name}
+              <LuDot
+                style={{
+                  transform: 'translateY(3px)',
+                }}
+              />
+            </h3>
           </>
         )}
         <p>{tracks} songs</p>
-      </div>
-    </div>
+      </article>
+    </section>
   );
 }
 
