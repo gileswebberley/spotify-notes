@@ -23,7 +23,8 @@ function Home() {
       await requestToken(code)
         .then(() => {
           console.log(`Token successfully requested`);
-          window.localStorage.removeItem(AUTH_CODE_STORAGE_KEY);
+          //This should probably be done in requestToken?
+          // window.localStorage.removeItem(AUTH_CODE_STORAGE_KEY);
           navigate('/playlists', { replace: true });
         })
         .catch((e) => {

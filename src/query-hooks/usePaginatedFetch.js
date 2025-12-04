@@ -35,6 +35,7 @@
 
 import { useMemo } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { isTokenExpiring } from '../services/apiSpotify';
 
 // fetchFunction(pageOffset, limit, ...args) => returns a Spotify page object { items, next, previous, limit, offset, ... }
 // initialState is the first-page object (from your loader)
@@ -63,6 +64,7 @@ export function usePaginatedFetch(fetchFunction, initialState, ...args) {
       ? { pages: [initialState], pageParams: [initialOffset] }
       : undefined,
     keepPreviousData: true,
+    enabled: !isTokenExpiring(),
   });
 
   const merged = useMemo(() => {

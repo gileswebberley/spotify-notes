@@ -8,7 +8,6 @@ import {
   CODE_CHALLENGE_STORAGE_KEY,
   REFRESH_TOKEN_STORAGE_KEY,
   EXPIRATION_TIME_STORAGE_KEY,
-  AUTH_CODE_STORAGE_KEY,
 } from '../utils/constants.js';
 
 //using .env.local and this is how you access those variables within Vite
@@ -94,7 +93,6 @@ export async function requestToken(code) {
     redirect_uri: REDIRECT_URI,
     code_verifier: codeVerifier,
   }).toString();
-
   const payload = {
     method: 'POST',
     headers: {
@@ -102,18 +100,14 @@ export async function requestToken(code) {
     },
     body: body,
   };
+  const response = await fetchPayloadResponse(url, payload);
 
-  try {
-    const response = await fetchPayloadResponse(url, payload);
-    await setAccessTokenStorage(response);
-    // //clear up the now defunct code based keys (they expire after 10 minutes anyway)
-    window.localStorage.removeItem(CODE_VERIFIER_STORAGE_KEY);
-    window.localStorage.removeItem(CODE_CHALLENGE_STORAGE_KEY);
-    window.localStorage.removeItem(AUTH_CODE_STORAGE_KEY);
-    return response.access_token;
-  } catch (error) {
-    throw new Error(`requestToken failed with error: ${error}`);
-  }
+  await setAccessTokenStorage(response);
+
+  // //clear up the now defunct code based keys (they expire after 10 minutes anyway)
+  window.localStorage.removeItem(CODE_VERIFIER_STORAGE_KEY);
+  window.localStorage.removeItem(CODE_CHALLENGE_STORAGE_KEY);
+  return response.access_token;
 }
 
 //because I'm copying and pasting some stuff I'll extract it into functions
@@ -122,49 +116,22 @@ async function fetchPayloadResponse(url, payload) {
   console.log(`fetchPayloadResponse called with url: ${url}`);
   console.table('And payload:', payload);
   const result = await fetch(url, payload);
-  // if (!result.ok) {
-  //   console.table(
-  //     `Fetching error from fetchPayloadResponse call - status: `,
-  //     JSON.stringify(result)
-  //   );
-  //   throw new Error(
-  //     `Fetching error from fetchPayloadResponse: ${JSON.stringify(result)}`
-  //   );
-  // }
-  // const response = await result.json();
-  // if (response.error) {
-  //   throw new Error(
-  //     `Response error from fetchPayloadResponse: ${response.error} - ${response.error_description}`
-  //   );
-  // }
-  // return response;
-  //chat helping to fix the error refreshing caused by react-query
-  const text = await result.text();
-  let body;
-  try {
-    body = text ? JSON.parse(text) : null;
-  } catch {
-    body = text;
-  }
-
   if (!result.ok) {
-    console.error('Fetch failed:', result.status, body);
+    console.table(
+      `Fetching error from fetchPayloadResponse call - status: `,
+      JSON.stringify(result)
+    );
     throw new Error(
-      `fetchPayloadResponse error: status=${
-        result.status
-      } body=${JSON.stringify(body)}`
+      `Fetching error from fetchPayloadResponse: ${JSON.stringify(result)}`
     );
   }
-
-  if (body && body.error) {
+  const response = await result.json();
+  if (response.error) {
     throw new Error(
-      `Response error from fetchPayloadResponse: ${body.error} - ${
-        body.error_description || ''
-      }`
+      `Response error from fetchPayloadResponse: ${response.error} - ${response.error_description}`
     );
   }
-
-  return body;
+  return response;
 }
 
 //this is used when the access token is returned from spotify and adds the expiration time to local storage so it can be tested against when consuming the token and refresh if it's getting close to expiring
@@ -188,91 +155,63 @@ async function setAccessTokenStorage(response) {
   return Promise.resolve('setAccessTokenStorage successful');
 }
 
-//fixing the refresh token races - react-query is using unrefreshed tokens
-let refreshingPromise = null;
-
 async function refreshAccessToken() {
-  if (refreshingPromise) return refreshingPromise;
-  refreshingPromise = (async () => {
-    const refreshToken = window.localStorage.getItem(REFRESH_TOKEN_STORAGE_KEY);
-    if (!refreshToken) {
-      refreshingPromise = null;
-      throw new Error('No refresh token available for refreshAccessToken');
-    }
-
-    console.log(
-      `refreshAccessToken has been called...with refresh token: ${refreshToken}`
-    );
-    const url = 'https://accounts.spotify.com/api/token';
-    const body = new URLSearchParams({
-      grant_type: 'refresh_token',
-      refresh_token: refreshToken,
-      client_id: CLIENT_ID,
-    }).toString();
-    const payload = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: body,
-    };
-    //just using a little catch() here rather than try-catch as it's a bit neater for this small block
-    const response = await fetchPayloadResponse(url, payload);
-    // .catch((e) => {
-    //   console.error(`Error refreshing access token: ${e}`);
-    //   return Promise.reject(
-    //     new Error(`refreshAccessToken failed to fetchPayloadResponse`)
-    //   ); //trying to fix error with refreshing
-    //   // gotoSpotifyAuth(); //if we can't refresh the token then we need to re-authenticate from the beginning, namely do the whole code challenge and acceptance of spotify scopes again - switched this off as refreshing seems to have stopped working since I used react-query?? :(
-    // });
-    await setAccessTokenStorage(response);
-    // .then((message) => console.log(message))
-    // .catch((e) => {
-    //   console.error(`Error refreshing access token: ${e}`);
-    //   return Promise.reject(
-    //     new Error(`refreshAccessToken failed to setAccessTokenStorage`)
-    //   ); //trying to fix error with refreshing});
-    // });
-    refreshingPromise = null;
-    return response.access_token;
-  })().catch((error) => {
-    //clear the promise on failure so it doesn't block future attempts
-    refreshingPromise = null;
-    throw error;
+  const refreshToken = window.localStorage.getItem(REFRESH_TOKEN_STORAGE_KEY);
+  console.log(
+    `refreshAccessToken has been called...with refresh token: ${refreshToken}`
+  );
+  const url = 'https://accounts.spotify.com/api/token';
+  const body = new URLSearchParams({
+    grant_type: 'refresh_token',
+    refresh_token: refreshToken,
+    client_id: CLIENT_ID,
+  }).toString();
+  const payload = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: body,
+  };
+  //just using a little catch() here rather than try-catch as it's a bit neater for this small block
+  const response = await fetchPayloadResponse(url, payload).catch((e) => {
+    console.error(`Error refreshing access token: ${e}`);
+    return Promise.reject(
+      new Error(`refreshAccessToken failed to fetchPayloadResponse`)
+    ); //trying to fix error with refreshing
+    // gotoSpotifyAuth(); //if we can't refresh the token then we need to re-authenticate from the beginning, namely do the whole code challenge and acceptance of spotify scopes again - switched this off as refreshing seems to have stopped working since I used react-query?? :(
   });
-
-  return refreshingPromise;
+  await setAccessTokenStorage(response)
+    .then((message) => console.log(message))
+    .catch((e) => {
+      console.error(`Error refreshing access token: ${e}`);
+      return Promise.reject(
+        new Error(`refreshAccessToken failed to setAccessTokenStorage`)
+      ); //trying to fix error with refreshing});
+    });
 }
 
 //I need to work out how to deal with the access token expiring and refresh it - apparently you receive a 401 error when expired at which point we'll want to use the refresh token to get a new one. Instead of doing that I'm going to save the UTC expiiration time and simply compare that against 'now' in milliseconds
 //rather than grab the access token whenever it's needed I'm going to use this function which will check the expiration time and refresh if needed before returning the token
 //THIS DOES NOT THROW AN ERROR BUT INSTEAD SIMPLY RETURNS FALSE
-//changing to fix the issues with react-query using outdated access token so now throwing errors
 export async function getAccessToken() {
-  // const now = Number(new Date().getTime());
-  // const safe = 5000 * 60 + now; //5 minutes safety margin
-  // const expire = Number(
-  //   window.localStorage.getItem(EXPIRATION_TIME_STORAGE_KEY)
-  // );
-  // //I've just made a user context which requests the user profile before we're logged in so we'll check whether the expiration time has been set as a way to know if we are logged in or not - I'll return false if not logged in rather than throwing an error
-  // if (!expire) {
-  //   console.error(`No expiration time found - user not logged in`);
-  //   return false;
-  // }
-  // console.log(
-  //   `Now is ${safe} and token expires at ${expire} so safe > expire is ${
-  //     safe > expire
-  //   } by ${(expire - safe) / 60000} minutes`
-  // );
-  let refreshNeeded;
-  try {
-    refreshNeeded = isTokenExpiring();
-  } catch (error) {
-    console.error(error);
+  const now = Number(new Date().getTime());
+  const safe = 5000 * 60 + now; //5 minutes safety margin
+  const expire = Number(
+    window.localStorage.getItem(EXPIRATION_TIME_STORAGE_KEY)
+  );
+  //I've just made a user context which requests the user profile before we're logged in so we'll check whether the expiration time has been set as a way to know if we are logged in or not - I'll return false if not logged in rather than throwing an error
+  if (!expire) {
+    console.log(`No expiration time found - user not logged in`);
     return false;
   }
+  console.log(
+    `Now is ${safe} and token expires at ${expire} so safe > expire is ${
+      safe > expire
+    } by ${(expire - safe) / 60000} minutes`
+  );
   //check whether there's at least 5 minutes left on the token
-  if (refreshNeeded) {
+  if (expire - safe <= 0) {
     //token is expired or about to expire so we need to get a new one
     console.log(`Access token expired or about to expire - refreshing`);
     await refreshAccessToken().catch((e) => {
@@ -281,31 +220,7 @@ export async function getAccessToken() {
     });
   }
   const accessToken = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
-  if (!accessToken) {
-    console.error('No access token stored after refreshing');
-    return false;
-  }
   return accessToken;
-}
-
-//just want to check expiration in isLoggedIn too so I'll extract it
-export function isTokenExpiring() {
-  const now = Number(new Date().getTime());
-  const safe = 5000 * 60 + now; //5 minutes safety margin
-  const expire = Number(
-    window.localStorage.getItem(EXPIRATION_TIME_STORAGE_KEY)
-  );
-  //I've just made a user context which requests the user profile before we're logged in so we'll check whether the expiration time has been set as a way to know if we are logged in or not - I'll return false if not logged in rather than throwing an error
-  if (!expire) {
-    throw new Error(`No expiration time found - user not logged in`);
-  }
-  // console.log(
-  //   `Now is ${safe} and token expires at ${expire} so safe > expire is ${
-  //     safe > expire
-  //   } by ${(expire - safe) / 60000} minutes`
-  // );
-
-  return expire - safe <= 0;
 }
 
 //I want to be able to protect the playlists and playlist component so just want a little function that checks if we have logged in or are trying to go to a link
