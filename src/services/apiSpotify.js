@@ -122,23 +122,7 @@ async function fetchPayloadResponse(url, payload) {
   console.log(`fetchPayloadResponse called with url: ${url}`);
   console.table('And payload:', payload);
   const result = await fetch(url, payload);
-  // if (!result.ok) {
-  //   console.table(
-  //     `Fetching error from fetchPayloadResponse call - status: `,
-  //     JSON.stringify(result)
-  //   );
-  //   throw new Error(
-  //     `Fetching error from fetchPayloadResponse: ${JSON.stringify(result)}`
-  //   );
-  // }
-  // const response = await result.json();
-  // if (response.error) {
-  //   throw new Error(
-  //     `Response error from fetchPayloadResponse: ${response.error} - ${response.error_description}`
-  //   );
-  // }
-  // return response;
-  //chat helping to fix the error refreshing caused by react-query
+  //chat helping to fix the error refreshing caused by react-query and improving the error messages
   const text = await result.text();
   let body;
   try {
@@ -188,11 +172,13 @@ async function setAccessTokenStorage(response) {
   return Promise.resolve('setAccessTokenStorage successful');
 }
 
-//fixing the refresh token races - react-query is using unrefreshed tokens
+//fixing the refresh token races - react-query is using unrefreshed tokens so this was suggested
 let refreshingPromise = null;
 
 async function refreshAccessToken() {
+  //if we're already in the process of refreshing then return the ongoing promise
   if (refreshingPromise) return refreshingPromise;
+  //otherwise create the promise that is expected by the call to this function
   refreshingPromise = (async () => {
     const refreshToken = window.localStorage.getItem(REFRESH_TOKEN_STORAGE_KEY);
     if (!refreshToken) {
@@ -216,23 +202,8 @@ async function refreshAccessToken() {
       },
       body: body,
     };
-    //just using a little catch() here rather than try-catch as it's a bit neater for this small block
     const response = await fetchPayloadResponse(url, payload);
-    // .catch((e) => {
-    //   console.error(`Error refreshing access token: ${e}`);
-    //   return Promise.reject(
-    //     new Error(`refreshAccessToken failed to fetchPayloadResponse`)
-    //   ); //trying to fix error with refreshing
-    //   // gotoSpotifyAuth(); //if we can't refresh the token then we need to re-authenticate from the beginning, namely do the whole code challenge and acceptance of spotify scopes again - switched this off as refreshing seems to have stopped working since I used react-query?? :(
-    // });
     await setAccessTokenStorage(response);
-    // .then((message) => console.log(message))
-    // .catch((e) => {
-    //   console.error(`Error refreshing access token: ${e}`);
-    //   return Promise.reject(
-    //     new Error(`refreshAccessToken failed to setAccessTokenStorage`)
-    //   ); //trying to fix error with refreshing});
-    // });
     refreshingPromise = null;
     return response.access_token;
   })().catch((error) => {
@@ -247,23 +218,7 @@ async function refreshAccessToken() {
 //I need to work out how to deal with the access token expiring and refresh it - apparently you receive a 401 error when expired at which point we'll want to use the refresh token to get a new one. Instead of doing that I'm going to save the UTC expiiration time and simply compare that against 'now' in milliseconds
 //rather than grab the access token whenever it's needed I'm going to use this function which will check the expiration time and refresh if needed before returning the token
 //THIS DOES NOT THROW AN ERROR BUT INSTEAD SIMPLY RETURNS FALSE
-//changing to fix the issues with react-query using outdated access token so now throwing errors
 export async function getAccessToken() {
-  // const now = Number(new Date().getTime());
-  // const safe = 5000 * 60 + now; //5 minutes safety margin
-  // const expire = Number(
-  //   window.localStorage.getItem(EXPIRATION_TIME_STORAGE_KEY)
-  // );
-  // //I've just made a user context which requests the user profile before we're logged in so we'll check whether the expiration time has been set as a way to know if we are logged in or not - I'll return false if not logged in rather than throwing an error
-  // if (!expire) {
-  //   console.error(`No expiration time found - user not logged in`);
-  //   return false;
-  // }
-  // console.log(
-  //   `Now is ${safe} and token expires at ${expire} so safe > expire is ${
-  //     safe > expire
-  //   } by ${(expire - safe) / 60000} minutes`
-  // );
   let refreshNeeded;
   try {
     refreshNeeded = isTokenExpiring();
@@ -275,10 +230,12 @@ export async function getAccessToken() {
   if (refreshNeeded) {
     //token is expired or about to expire so we need to get a new one
     console.log(`Access token expired or about to expire - refreshing`);
-    await refreshAccessToken().catch((e) => {
-      console.error(`getAccessToken failed to refresh with error: ${e}`);
+    try {
+      await refreshAccessToken();
+    } catch (error) {
+      console.error(`getAccessToken failed to refresh with error: ${error}`);
       return false;
-    });
+    }
   }
   const accessToken = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
   if (!accessToken) {
@@ -288,23 +245,18 @@ export async function getAccessToken() {
   return accessToken;
 }
 
-//just want to check expiration in isLoggedIn too so I'll extract it
+//just want to check expiration in react-query enabled property too so I'll extract it
 export function isTokenExpiring() {
   const now = Number(new Date().getTime());
   const safe = 5000 * 60 + now; //5 minutes safety margin
   const expire = Number(
     window.localStorage.getItem(EXPIRATION_TIME_STORAGE_KEY)
   );
-  //I've just made a user context which requests the user profile before we're logged in so we'll check whether the expiration time has been set as a way to know if we are logged in or not - I'll return false if not logged in rather than throwing an error
+  //I've just made a user context which requests the user profile before we're logged in so we'll check whether the expiration time has been set as a way to know if we are logged in or not - I'll return false if not logged in rather than throwing an error - UPDATE now throwing an error because the token doesn't need refreshing if there's no expire time but instead is being called when it shouldn't be, and the user problem has been taken care of elsewhere
   if (!expire) {
     throw new Error(`No expiration time found - user not logged in`);
   }
-  // console.log(
-  //   `Now is ${safe} and token expires at ${expire} so safe > expire is ${
-  //     safe > expire
-  //   } by ${(expire - safe) / 60000} minutes`
-  // );
-
+  //true if token needs refreshing so when using it for enabled prop in react-query we reverse it - ie enabled = !isTokenExpiring
   return expire - safe <= 0;
 }
 
@@ -344,6 +296,10 @@ export async function getUserPlaylists(offset = 0, limit = 20) {
     limit = 50;
   }
   const accessToken = await getAccessToken();
+  if (!accessToken) {
+    console.warn(`No access token available - cannot fetch user playlists`);
+    return null;
+  }
   //if you want to be able to get other users playlists you'd need to get their user ID first and replace the 'me' in the URL below
   // const userId = await getUserProfile().then((profile) => profile.id);
   const url = new URL(`https://api.spotify.com/v1/me/playlists`);
@@ -364,6 +320,12 @@ export async function getUserPlaylists(offset = 0, limit = 20) {
 
 export async function getUserPlaylist(playlistId) {
   const accessToken = await getAccessToken();
+  if (!accessToken) {
+    console.warn(
+      `No access token available - cannot fetch playlist with id ${playlistId}`
+    );
+    return null;
+  }
   const url = new URL(`https://api.spotify.com/v1/playlists/${playlistId}`);
   const payload = {
     method: 'GET',
@@ -382,6 +344,10 @@ export async function getUserPlaylist(playlistId) {
 //
 export async function getPlaylistTracks(offset = 0, limit = 20, [playlistId]) {
   const accessToken = await getAccessToken();
+  if (!accessToken) {
+    console.warn(`No access token available - cannot fetch playlist tracks`);
+    return null;
+  }
   const url = new URL(
     `https://api.spotify.com/v1/playlists/${playlistId}/tracks`
   );

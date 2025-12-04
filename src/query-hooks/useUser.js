@@ -3,6 +3,12 @@ import { getUserProfile, isTokenExpiring } from '../services/apiSpotify';
 
 export function useUser(id = null) {
   const userKey = id === null ? 'me' : id;
+  let enableCheck;
+  try {
+    enableCheck = !isTokenExpiring();
+  } catch (error) {
+    enableCheck = false;
+  }
   const {
     status,
     fetchStatus,
@@ -11,7 +17,7 @@ export function useUser(id = null) {
   } = useQuery({
     queryKey: ['user', userKey],
     queryFn: () => getUserProfile(id),
-    enabled: !isTokenExpiring(),
+    enabled: enableCheck,
   });
 
   return { status, fetchStatus, user, error };

@@ -44,6 +44,13 @@ export function usePaginatedFetch(fetchFunction, initialState, ...args) {
   const limit = Number(initialState?.limit ?? 20);
   const queryKey = [fetchFunction.name || 'paginated', ...args];
 
+  let enabledCheck = true;
+  try {
+    enabledCheck = !isTokenExpiring();
+  } catch (error) {
+    enabledCheck = false;
+  }
+
   const query = useInfiniteQuery({
     queryKey,
     queryFn: ({ pageParam = initialOffset }) =>
@@ -64,7 +71,7 @@ export function usePaginatedFetch(fetchFunction, initialState, ...args) {
       ? { pages: [initialState], pageParams: [initialOffset] }
       : undefined,
     keepPreviousData: true,
-    enabled: !isTokenExpiring(),
+    enabled: enabledCheck,
   });
 
   const merged = useMemo(() => {
