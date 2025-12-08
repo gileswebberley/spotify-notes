@@ -53,15 +53,43 @@ body {
   overflow: hidden;
   display: grid;
   grid-template-columns: var(--main-grid-row);
+  grid-template-rows: auto 1fr;
   /* 1fr min(100%, var(--max-content-width)) 1fr; */
-  grid-template-areas: 'gutter-start main gutter-end';
+  grid-template-areas:
+    '. header .'
+    'gutter-start main gutter-end';
 }
 
 /* Using the overlayscrollbars package instead of overflow: auto */
 .main-content {
   grid-area: main;
   margin-bottom: var(--footer-height);
+  border-radius: 20px 20px 0 0;
+  margin-inline: 5px;
   /* overflow-y: auto; */
+}
+
+header {
+  grid-area: header;
+  height: 5dvh;
+  padding: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  column-gap: 0.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+header h2 {
+  font-size: 3dvh;
+}
+
+.header-icon {
+  height: 3.5dvh;
+  width: auto;
 }
 
 footer {

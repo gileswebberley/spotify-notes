@@ -13,6 +13,9 @@ function AppLayout() {
 
   return (
     <main className="app-layout">
+      <header>
+        <img src="/logo300.png" className="header-icon" /> <h2>Snotify</h2>
+      </header>
       <UserContextProvider>
         <OverlayScrollContainer className="main-content">
           <Outlet key={location.key} />
