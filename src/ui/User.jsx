@@ -25,10 +25,23 @@ function User() {
   // console.table('User images:', images);
 
   return (
-    <div>
-      <UserImage images={images} size={50} style={{ cursor: 'pointer' }} />
-      Hi {getUserFirstName()}
+    // <div className="user-button-container">
+    <div
+      className={`user-button-menu ${isExpanded ? 'is-expanded' : ''}`}
+      onClick={toggleExpanded}
+      aria-description="click to open user menu"
+    >
+      <span className="main-user-toggle ">
+        <UserImage images={images} size={50} style={{ cursor: 'pointer' }} />
+      </span>
+      {/* {!isExpanded && `Hi ${getUserFirstName()}`} */}
+      <div className="user-sub-buttons">
+        <button className="user-sub-btn">Delete Notes</button>
+        <button className="user-sub-btn">Log Out</button>
+        {/* <button className="user-sub-btn">Test 3</button> */}
+      </div>
     </div>
+    // </div>
   );
 }
 
