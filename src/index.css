@@ -85,6 +85,7 @@ header {
 
 header h2 {
   font-size: 3dvh;
+  margin-right: 15px;
 }
 
 .header-icon {
@@ -336,6 +337,7 @@ h2 {
 .back-button {
   display: block;
   font-size: var(--back-button-size);
+  color: var(--colour-white);
   position: sticky;
   top: 0;
   padding-left: 0.5rem;
@@ -503,10 +505,14 @@ img/title/artist | album | added by | date added | runtime | buttons
   font-weight: 200;
   letter-spacing: 0.1rem;
   border-radius: 0 0 0 0.6rem;
+  /* for firefox */
+  background-color: var(--light-background-charcoal);
+  color: var(--colour-white);
 
   &:focus {
     /* help with legibility whilst writing */
     background-color: var(--dark-background-charcoal);
+    color: var(--colour-white);
     outline: none;
   }
 }
