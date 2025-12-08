@@ -64,13 +64,15 @@ function Home() {
 
   if (error) {
     return (
-      <>
-        <h1>Please accept the usage of Spotify to use this app</h1>
-        <p>Error details: {error}</p>
-        <button onClick={() => window.location.replace(REDIRECT_URI)}>
-          Try Again
-        </button>
-      </>
+      <main className="app-layout">
+        <OverlayScrollContainer className="main-content">
+          <h1>Please accept the usage of Spotify to use this app</h1>
+          <p>Error details: {error}</p>
+          <button onClick={() => window.location.replace(REDIRECT_URI)}>
+            Try Again
+          </button>
+        </OverlayScrollContainer>
+      </main>
     );
   }
 

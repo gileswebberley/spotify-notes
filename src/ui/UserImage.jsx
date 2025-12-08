@@ -1,6 +1,7 @@
 import { getImageURLByHeightSize } from '../utils/helpers';
 
-function UserImage({ images, size = 64 }) {
+//added the style prop when I was making a button out of one of them so that I could just control the cursor style
+function UserImage({ images, size = 64, style = {} }) {
   if (images.length === 0) {
     return null;
   }
@@ -13,7 +14,7 @@ function UserImage({ images, size = 64 }) {
     return null;
   }
   return (
-    <div className="user-image" style={{ width: size, height: size }}>
+    <div className="user-image" style={{ ...style, width: size, height: size }}>
       <img
         loading="lazy"
         src={imgUrl}
