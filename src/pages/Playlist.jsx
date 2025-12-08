@@ -61,7 +61,7 @@ function Playlist() {
     rootMargin: '0px',
     scrollMargin: '0px',
     threshold: 0.5,
-    delay: 100,
+    delay: 20,
   };
 
   const { intersectionTargetRef } = useIntersection(

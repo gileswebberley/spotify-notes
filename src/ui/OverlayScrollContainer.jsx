@@ -10,7 +10,7 @@ function OverlayScrollContainer({ className, children }) {
           x: 'hidden',
         },
         scrollbars: {
-          autoHide: 'leave',
+          autoHide: 'scroll',
           autoHideSuspend: true,
           autoHideDelay: 600,
           theme: 'os-theme-light',
