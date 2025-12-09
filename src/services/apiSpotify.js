@@ -66,7 +66,7 @@ export async function gotoSpotifyAuth() {
     await createCodeChallengeWithVerifier();
   } catch (error) {
     throw new Error(
-      `gotoSpotifyAuth failed to create a code challenge correctly`
+      `gotoSpotifyAuth failed to create a code challenge correctly: ${error}`
     );
   }
 
@@ -390,4 +390,11 @@ export async function getPlaylistTracks(offset = 0, limit = 20, [playlistId]) {
   } catch (error) {
     throw new Error(`getPlaylistTracks failed with error: ${error}`);
   }
+}
+
+//to allow users to 'log out' we'll just clear local storage of token related stuff
+export function logoutUser() {
+  window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+  window.localStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY);
+  window.localStorage.removeItem(EXPIRATION_TIME_STORAGE_KEY);
 }

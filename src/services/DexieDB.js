@@ -60,6 +60,18 @@ export async function deleteNoteForTrack(userId, trackId) {
     });
 }
 
+export async function deleteAllNotesForUser(userId) {
+  return db
+    .transaction('rw', db.notes, async () => {
+      const numDeleted = await db.notes.where('userId').equals(userId).delete();
+      return numDeleted;
+    })
+    .catch((e) => {
+      console.error(`Failed to delete all notes for user id ${userId}:`, e);
+      throw e;
+    });
+}
+
 //rather than have a separate update and add function I'll just have one which does either depending on whether a note already exists for that userId and trackId
 export async function saveNoteForTrack(userId, trackId, noteContent) {
   return db

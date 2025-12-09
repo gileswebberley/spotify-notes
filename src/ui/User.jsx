@@ -3,6 +3,7 @@ import { useUserContext } from '../contexts/userContext';
 import UserImage from './UserImage';
 import { AUTH_PATH } from '../utils/constants';
 import { useState } from 'react';
+import { deleteAllNotesForUser } from '../services/DexieDB';
 
 function User() {
   //having quickly implemented this I think I might want to refactor it to put this in a context provider so that it is available to all components because we'll save notes under the user id later on
@@ -10,7 +11,42 @@ function User() {
   const [isExpanded, setIsExpanded] = useState(false);
   const toggleExpanded = () => setIsExpanded(!isExpanded);
 
-  const { isLoadingUser, getUserFirstName, getUserImages } = useUserContext();
+  const { isLoadingUser, getUserFirstName, getUserImages, getUserId } =
+    useUserContext();
+
+  const [isAddingOrDeleting, setIsAddingOrDeleting] = useState(false);
+
+  async function handleDeleteAllNotes(event) {
+    setIsAddingOrDeleting(true);
+    if (
+      window.confirm(
+        `Are you sure you want to delete all of your notes ${getUserFirstName()}? THIS ACTION CANNOT BE UNDONE AND WILL DELETE ALL OF YOUR NOTES, PERMANENTLY!`
+      )
+    ) {
+      const userId = getUserId();
+      try {
+        const deletedCount = await deleteAllNotesForUser(userId);
+        if (deletedCount) {
+          // console.log('Note deleted');
+          window.alert(
+            `All ${deletedCount} of your notes have been deleted ${getUserFirstName()}`
+          );
+        } else {
+          console.log('No note to delete');
+        }
+      } catch (e) {
+        window.alert('Failed to delete your notes:', e);
+        // throw e;
+      } finally {
+        setIsAddingOrDeleting(false);
+      }
+    } else {
+      setIsAddingOrDeleting(false);
+      //remove focus from button when deleting is cancelled
+      event.target.blur();
+    }
+  }
+
   const location = useLocation();
   const path = location.path;
   //a little lock to make sure it doesn't try to get user info before it's available
@@ -36,7 +72,13 @@ function User() {
       </span>
       {/* {!isExpanded && `Hi ${getUserFirstName()}`} */}
       <div className="user-sub-buttons">
-        <button className="user-sub-btn">Delete Notes</button>
+        <button
+          className="user-sub-btn"
+          disabled={isAddingOrDeleting}
+          onClick={handleDeleteAllNotes}
+        >
+          Delete Notes
+        </button>
         <button className="user-sub-btn">Log Out</button>
         {/* <button className="user-sub-btn">Test 3</button> */}
       </div>
