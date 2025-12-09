@@ -202,7 +202,7 @@ h2 {
 }
 
 .user-button-menu.is-expanded {
-  width: 250px;
+  width: 260px;
   border-radius: 2rem;
 }
 
@@ -247,6 +247,11 @@ h2 {
   background-color: var(--lighter-background-charcoal);
 }
 
+.user-sub-btn:disabled {
+  color: var(--background-charcoal);
+  cursor: not-allowed;
+}
+
 .user-sub-btn:first-of-type {
   padding-left: 25px;
 }
@@ -271,6 +276,10 @@ h2 {
   font-size: 2rem;
 }
 
+.icon-button:disabled {
+  color: var(--lighter-background-charcoal);
+}
+
 .clear-button {
   /* padding-inline: 0.25rem;
   padding-block: 0.25rem; */
@@ -278,16 +287,16 @@ h2 {
   transition: scale 0.25s;
   border: 1px solid transparent;
   cursor: pointer;
+}
 
-  &:hover {
-    scale: 1.2;
-    border-color: rgba(0, 0, 0, 0);
-  }
+.clear-button:hover {
+  scale: 1.2;
+  border-color: rgba(0, 0, 0, 0);
+}
 
-  &:focus,
-  &:focus-visible {
-    outline-style: none;
-  }
+.clear-button:focus,
+.clear-button:focus-visible {
+  outline-style: none;
 }
 
 .playlist-header-colour {
@@ -324,14 +333,14 @@ h2 {
 .playlist-header-info {
   display: flex;
   flex-direction: column;
+}
 
-  & h2 {
-    font-size: 9cqw;
-    letter-spacing: -0.5cqw;
-    line-height: 1;
-    padding-right: 2rem;
-    padding-bottom: 2cqw;
-  }
+.playlist-header-info h2 {
+  font-size: 9cqw;
+  letter-spacing: -0.5cqw;
+  line-height: 1;
+  padding-right: 2rem;
+  padding-bottom: 2cqw;
 }
 
 .playlist-header-user {
@@ -340,14 +349,15 @@ h2 {
   justify-items: flex-start;
   flex-wrap: wrap;
   column-gap: 0.5rem;
-  & h3 {
-    font-size: min(1.5rem, 4cqw);
-    white-space: nowrap;
-  }
-  & p {
-    font-size: min(1.5rem, 3cqw);
-    font-weight: 300;
-  }
+}
+
+.playlist-header-user h3 {
+  font-size: min(1.5rem, 4cqw);
+  white-space: nowrap;
+}
+.playlist-header-user p {
+  font-size: min(1.5rem, 3cqw);
+  font-weight: 300;
 }
 
 .playlist-header-image {
@@ -407,14 +417,15 @@ h2 {
 /* all of the grid cells, other than the header, contents to get the hover colour change to work */
 .list-row:not(.list-header, .notes-row):hover > div {
   background-color: var(--light-background-charcoal);
-  /* we just want this on the first and last column */
-  &:is(.col-title) {
-    border-radius: 0.6rem 0 0 0.6rem;
-  }
+}
 
-  &:is(.col-buttons) {
-    border-radius: 0 0.6rem 0.6rem 0;
-  }
+/* we just want this on the first and last column */
+.list-row:not(.list-header, .notes-row):hover > div:is(.col-title) {
+  border-radius: 0.6rem 0 0 0.6rem;
+}
+
+.list-row:not(.list-header, .notes-row):hover > div:is(.col-buttons) {
+  border-radius: 0 0.6rem 0.6rem 0;
 }
 
 /* attempt to make the rows with collapsing columns for the playlist tracks - works nicely :)
@@ -506,18 +517,20 @@ img/title/artist | album | added by | date added | runtime | buttons
   background-color: var(--light-background-charcoal);
   border-bottom: 1px solid var(--colour-white);
   /* border-top: 2px dotted var(--colour-white); */
+}
 
-  &:is(.col-notes) {
-    margin-left: 1px;
-    border-radius: 0 0 0 0.8rem;
-    border-left: 1px solid var(--colour-white);
-  }
+.notes-row > div:is(.col-notes),
+.notes-row > form > div:is(.col-notes) {
+  margin-left: 1px;
+  border-radius: 0 0 0 0.8rem;
+  border-left: 1px solid var(--colour-white);
+}
 
-  &:is(.col-buttons) {
-    /* margin-right: 5px; */
-    /* border-radius: 0 0 0.8rem 0; */
-    border-right: 1px solid var(--colour-white);
-  }
+.notes-row > div:is(.col-buttons),
+.notes-row > form > div:is(.col-buttons) {
+  /* margin-right: 5px; */
+  /* border-radius: 0 0 0.8rem 0; */
+  border-right: 1px solid var(--colour-white);
 }
 
 .notes-row > form > div > textarea {
@@ -536,13 +549,13 @@ img/title/artist | album | added by | date added | runtime | buttons
   /* for firefox */
   background-color: var(--light-background-charcoal);
   color: var(--colour-white);
+}
 
-  &:focus {
-    /* help with legibility whilst writing */
-    background-color: var(--dark-background-charcoal);
-    color: var(--colour-white);
-    outline: none;
-  }
+.notes-row > form > div > textarea:focus {
+  /* help with legibility whilst writing */
+  background-color: var(--dark-background-charcoal);
+  color: var(--colour-white);
+  outline: none;
 }
 
 .list-row > div,

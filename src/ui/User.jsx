@@ -4,6 +4,7 @@ import UserImage from './UserImage';
 import { AUTH_PATH } from '../utils/constants';
 import { useState } from 'react';
 import { deleteAllNotesForUser } from '../services/DexieDB';
+import { logoutUser } from '../services/apiSpotify';
 
 function User() {
   //having quickly implemented this I think I might want to refactor it to put this in a context provider so that it is available to all components because we'll save notes under the user id later on
@@ -14,10 +15,11 @@ function User() {
   const { isLoadingUser, getUserFirstName, getUserImages, getUserId } =
     useUserContext();
 
-  const [isAddingOrDeleting, setIsAddingOrDeleting] = useState(false);
+  const [isBusy, setisBusy] = useState(false);
 
+  //Making a really verbose confirmation message so this isn't done by accident!
   async function handleDeleteAllNotes(event) {
-    setIsAddingOrDeleting(true);
+    setisBusy(true);
     if (
       window.confirm(
         `Are you sure you want to delete all of your notes ${getUserFirstName()}? THIS ACTION CANNOT BE UNDONE AND WILL DELETE ALL OF YOUR NOTES, PERMANENTLY!`
@@ -38,18 +40,32 @@ function User() {
         window.alert('Failed to delete your notes:', e);
         // throw e;
       } finally {
-        setIsAddingOrDeleting(false);
+        setisBusy(false);
       }
     } else {
-      setIsAddingOrDeleting(false);
+      setisBusy(false);
       //remove focus from button when deleting is cancelled
+      event.target.blur();
+    }
+  }
+
+  function handleLogOut(event) {
+    setisBusy(true);
+    if (
+      window.confirm(`Are you sure you wish to log out ${getUserFirstName()}?`)
+    ) {
+      logoutUser();
+      setisBusy(false);
+      window.location.replace('/');
+    } else {
+      setisBusy(false);
       event.target.blur();
     }
   }
 
   const location = useLocation();
   const path = location.path;
-  //a little lock to make sure it doesn't try to get user info before it's available
+  //a little lock to make sure it doesn't try to get user info before it's available, placed here as all hooks need to be at the top level (ie without conditionals)
   if (path === AUTH_PATH || path === '/') {
     return null;
   }
@@ -57,6 +73,7 @@ function User() {
   if (isLoadingUser) {
     return <div>Loading user profile...</div>;
   }
+
   const images = getUserImages();
   // console.table('User images:', images);
 
@@ -74,12 +91,18 @@ function User() {
       <div className="user-sub-buttons">
         <button
           className="user-sub-btn"
-          disabled={isAddingOrDeleting}
+          disabled={isBusy}
+          onClick={handleLogOut}
+        >
+          Log Out
+        </button>
+        <button
+          className="user-sub-btn"
+          disabled={isBusy}
           onClick={handleDeleteAllNotes}
         >
-          Delete Notes
+          Delete All Notes
         </button>
-        <button className="user-sub-btn">Log Out</button>
         {/* <button className="user-sub-btn">Test 3</button> */}
       </div>
     </div>
