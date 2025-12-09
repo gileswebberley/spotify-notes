@@ -1,5 +1,6 @@
 //send either a Date object or an ISO date string to be formatted as Mon DD, YYYY, HH:MM AM/PM
 export function formatDate(date) {
+  if (!date) return '-';
   const dateStr = typeof date === 'string' ? date : date.toISOString();
   return new Intl.DateTimeFormat('en-GB', {
     day: 'numeric',

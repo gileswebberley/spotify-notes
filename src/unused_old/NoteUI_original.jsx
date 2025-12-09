@@ -15,7 +15,7 @@ import {
   MdEditNote,
   MdPreview,
 } from 'react-icons/md';
-import IconButton from './IconButton';
+import IconButton from '../ui/IconButton';
 import { BiSolidHide, BiSolidShow } from 'react-icons/bi';
 
 function NoteUI({ trackId, addedAt }) {
