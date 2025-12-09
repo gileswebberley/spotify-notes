@@ -335,12 +335,27 @@ h2 {
   flex-direction: column;
 }
 
+.playlist-header-info .clamp-wrapper {
+  padding-right: 2rem;
+  padding-bottom: 2cqw;
+}
+
 .playlist-header-info h2 {
   font-size: 9cqw;
   letter-spacing: -0.5cqw;
   line-height: 1;
-  padding-right: 2rem;
-  padding-bottom: 2cqw;
+}
+
+.playlist-header-info h2.clamped {
+  /* going to add clamping to avoid the header being too big if the playlist name is very long, and on a small screen */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow-y: clip;
+  text-overflow: ellipsis;
+
+  /* Limit to a maximum of 2 rows of wrapped text */
+  -webkit-line-clamp: 4;
+  line-clamp: 4; /* For forward compatibility */
 }
 
 .playlist-header-user {
@@ -389,13 +404,6 @@ h2 {
   letter-spacing: +0.02rem;
   /* display: block; This stops the ellipsis from working*/
 }
-
-/* .artist-name-font {
-  font-size: 1.3rem;
-  font-weight: 300;
-  font-kerning: normal;
-  letter-spacing: +0.015rem;
-} */
 
 .ellipsis-text-block {
   white-space: nowrap;
