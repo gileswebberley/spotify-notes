@@ -60,6 +60,34 @@ body {
     'gutter-start main gutter-end';
 }
 
+/* for both the Error component and for when acess-denied is returned from spotify whilst requesting a code */
+.error-content {
+  grid-area: main;
+  width: 100%;
+  height: 100%;
+  padding-inline: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 2rem;
+}
+
+.error-content button {
+  font-size: 1.8rem;
+  font-weight: 600;
+  /* color: #df0909; */
+  padding: 0.8rem 1.5rem;
+  border-radius: 2.6rem;
+  background-color: var(--spotify-green);
+  border: 1px solid var(--colour-white);
+}
+
+.error-content h2 {
+  color: red;
+}
+
 /* Using the overlayscrollbars package instead of overflow: auto */
 .main-content {
   grid-area: main;

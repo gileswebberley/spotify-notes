@@ -7,17 +7,6 @@ db.version(1).stores({
   notes: '++id, userId, trackId',
 });
 
-//pop a test note in the db
-// db.on('populate', function (tx) {
-//   tx.notes.add({
-//     userId: '1198909265',
-//     trackId: '4xNl7wvrgaTDofpLenB9Mo',
-//     content: 'This is a test note for PUDDLE ( OF ME ) by Saya Gray',
-//     createdAt: new Date(),
-//     updatedAt: new Date(),
-//   });
-// });
-
 export async function getNotesByUserId(userId) {
   return db
     .transaction('r', db.notes, async () => {

@@ -46,11 +46,12 @@ async function createCodeChallengeWithVerifier() {
   //using await avoids the codeChallenge being saved as [object Promise] which is what I had been sending to Spotify!!
   const codeChallenge = await sha256(codeVerifier)
     .then((hashed) => {
-      console.log(`Code challenge is: ${base64encode(hashed)}`);
+      // console.log(`Code challenge is: ${base64encode(hashed)}`);
+      //now return the base64 encoded hash so that it will be stored in the variable codeChallenge...
       return base64encode(hashed);
     })
     .catch((e) => {
-      console.error(`Error generating code challenge: ${e}`);
+      throw new Error(`Error generating code challenge: ${e}`);
     });
 
   //Now we'll pop our code challenge in local storage to compare later
@@ -60,8 +61,15 @@ async function createCodeChallengeWithVerifier() {
 
 //This creates the code challenge and verifier then redirects to Spotify for authorisation code which we can use to request an access token
 export async function gotoSpotifyAuth() {
-  //returns a promise so we need to wait for it to resolve...
-  await createCodeChallengeWithVerifier();
+  //returns a promise so we need to wait for it to resolve (or reject, but that is unlikely given what it does)...
+  try {
+    await createCodeChallengeWithVerifier();
+  } catch (error) {
+    throw new Error(
+      `gotoSpotifyAuth failed to create a code challenge correctly`
+    );
+  }
+
   const codeChallenge = window.localStorage.getItem(CODE_CHALLENGE_STORAGE_KEY);
   // console.log(`Code challenge from storage is: ${codeChallenge}`);
   //next we build our request string
@@ -119,8 +127,8 @@ export async function requestToken(code) {
 //because I'm copying and pasting some stuff I'll extract it into functions
 //first a function to handle fetch requests with a payload and deal with errors
 async function fetchPayloadResponse(url, payload) {
-  console.log(`fetchPayloadResponse called with url: ${url}`);
-  console.table('And payload:', payload);
+  // console.log(`fetchPayloadResponse called with url: ${url}`);
+  // console.table('And payload:', payload);
   const result = await fetch(url, payload);
   //chat helping to fix the error refreshing caused by react-query and improving the error messages
   const text = await result.text();
@@ -172,13 +180,18 @@ async function setAccessTokenStorage(response) {
   return Promise.resolve('setAccessTokenStorage successful');
 }
 
-//fixing the refresh token races - react-query is using unrefreshed tokens so this was suggested
+//fixing the refresh token races - react-query is using unrefreshed tokens so this was suggested, like a single promise that will be shared by all simultaneous calls to refresh the token (a bit like a mutex apparently although I seem to remember from my days of playing with multithreaded code that a mutex is more about locking than sharing a resource)
 let refreshingPromise = null;
 
 async function refreshAccessToken() {
   //if we're already in the process of refreshing then return the ongoing promise
-  if (refreshingPromise) return refreshingPromise;
-  //otherwise create the promise that is expected by the call to this function
+  if (refreshingPromise) {
+    console.log(
+      'refreshAccessToken has been called again while the refreshingPromise already exists'
+    );
+    return refreshingPromise;
+  }
+  //otherwise create the promise that is expected by the call to this function with an immediately invoked function implementation
   refreshingPromise = (async () => {
     const refreshToken = window.localStorage.getItem(REFRESH_TOKEN_STORAGE_KEY);
     if (!refreshToken) {
@@ -217,7 +230,7 @@ async function refreshAccessToken() {
 
 //I need to work out how to deal with the access token expiring and refresh it - apparently you receive a 401 error when expired at which point we'll want to use the refresh token to get a new one. Instead of doing that I'm going to save the UTC expiiration time and simply compare that against 'now' in milliseconds
 //rather than grab the access token whenever it's needed I'm going to use this function which will check the expiration time and refresh if needed before returning the token
-//THIS DOES NOT THROW AN ERROR BUT INSTEAD SIMPLY RETURNS FALSE
+//THIS DOES NOT THROW AN ERROR BUT INSTEAD SIMPLY RETURNS FALSE / ACCESS TOKEN
 export async function getAccessToken() {
   let refreshNeeded;
   try {
@@ -268,12 +281,13 @@ export function isLoggedIn() {
   return true;
 }
 
+//Just came back to this and it kinda froze which made me have another look at error handling and throwing so rather than silently fail by returning null I think I should be throwing errors
 //adding get by id for get the added-by user in tracklist
 export async function getUserProfile(id = null) {
   const accessToken = await getAccessToken();
   if (!accessToken) {
-    console.warn(`No access token available - cannot fetch user profile`);
-    return null;
+    throw new Error(`No access token available - cannot fetch user profile`);
+    // return null;
   }
   const url = !id
     ? 'https://api.spotify.com/v1/me'
@@ -285,9 +299,13 @@ export async function getUserProfile(id = null) {
       Authorization: `Bearer ${accessToken}`,
     },
   };
-  const result = await fetchPayloadResponse(url, payload);
-  console.table(`User profile response:`, result);
-  return result;
+  try {
+    const result = await fetchPayloadResponse(url, payload);
+    console.table(`User profile response:`, result);
+    return result;
+  } catch (error) {
+    throw new Error(`getUserProfile failed with error: ${error}`);
+  }
 }
 
 export async function getUserPlaylists(offset = 0, limit = 20) {
@@ -297,8 +315,8 @@ export async function getUserPlaylists(offset = 0, limit = 20) {
   }
   const accessToken = await getAccessToken();
   if (!accessToken) {
-    console.warn(`No access token available - cannot fetch user playlists`);
-    return null;
+    throw new Error(`No access token available - cannot fetch user playlists`);
+    // return null;
   }
   //if you want to be able to get other users playlists you'd need to get their user ID first and replace the 'me' in the URL below
   // const userId = await getUserProfile().then((profile) => profile.id);
@@ -312,19 +330,23 @@ export async function getUserPlaylists(offset = 0, limit = 20) {
       Authorization: `Bearer ${accessToken}`,
     },
   };
-  const result = await fetchPayloadResponse(url, payload);
-  // console.log(`User playlists response:`);
-  // console.table(result.items);
-  return result;
+  try {
+    const result = await fetchPayloadResponse(url, payload);
+    // console.log(`User playlists response:`);
+    // console.table(result.items);
+    return result;
+  } catch (error) {
+    throw new Error(`getUserPlaylists failed with error: ${error}`);
+  }
 }
 
 export async function getUserPlaylist(playlistId) {
   const accessToken = await getAccessToken();
   if (!accessToken) {
-    console.warn(
+    throw new Error(
       `No access token available - cannot fetch playlist with id ${playlistId}`
     );
-    return null;
+    // return null;
   }
   const url = new URL(`https://api.spotify.com/v1/playlists/${playlistId}`);
   const payload = {
@@ -333,20 +355,22 @@ export async function getUserPlaylist(playlistId) {
       Authorization: `Bearer ${accessToken}`,
     },
   };
-  //limit has no effect as it is locked to 100 by Spotify
-  // const limit = 20; //arbitrary large number to get all tracks in one go
-  // url.search = new URLSearchParams({limit}).toString();
-  const result = await fetchPayloadResponse(url, payload);
-  // console.table(`Playlist ${playlistId} details:`, result);
-  return result;
+  try {
+    //limit has no effect as it is locked to 100 by Spotify
+    const result = await fetchPayloadResponse(url, payload);
+    // console.table(`Playlist ${playlistId} details:`, result);
+    return result;
+  } catch (error) {
+    throw new Error(`getUserPlaylist failed with error: ${error}`);
+  }
 }
 
 //
 export async function getPlaylistTracks(offset = 0, limit = 20, [playlistId]) {
   const accessToken = await getAccessToken();
   if (!accessToken) {
-    console.warn(`No access token available - cannot fetch playlist tracks`);
-    return null;
+    throw new Error(`No access token available - cannot fetch playlist tracks`);
+    // return null;
   }
   const url = new URL(
     `https://api.spotify.com/v1/playlists/${playlistId}/tracks`
@@ -358,8 +382,12 @@ export async function getPlaylistTracks(offset = 0, limit = 20, [playlistId]) {
       Authorization: `Bearer ${accessToken}`,
     },
   };
-  const result = await fetchPayloadResponse(url, payload);
-  // console.log(`Playlist ${playlistId} tracks response:`);
-  // console.table(result.items);
-  return result;
+  try {
+    const result = await fetchPayloadResponse(url, payload);
+    // console.log(`Playlist ${playlistId} tracks response:`);
+    // console.table(result.items);
+    return result;
+  } catch (error) {
+    throw new Error(`getPlaylistTracks failed with error: ${error}`);
+  }
 }

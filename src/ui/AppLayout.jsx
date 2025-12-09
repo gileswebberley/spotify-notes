@@ -3,6 +3,7 @@ import { UserContextProvider } from '../contexts/userContext';
 import Spinner from './Spinner';
 import User from './User';
 import OverlayScrollContainer from './OverlayScrollContainer';
+import Header from './Header';
 
 function AppLayout() {
   const navigationState = useNavigation();
@@ -14,9 +15,7 @@ function AppLayout() {
   return (
     <main className="app-layout">
       <UserContextProvider>
-        <header>
-          <img src="/logo300.png" className="header-icon" /> <h2>Snotify</h2>
-        </header>
+        <Header />
         <OverlayScrollContainer className="main-content">
           <Outlet key={location.key} />
         </OverlayScrollContainer>

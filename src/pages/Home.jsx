@@ -9,6 +9,8 @@ import {
 } from '../utils/constants';
 import { useNavigate } from 'react-router-dom';
 import Spinner from '../ui/Spinner';
+import OverlayScrollContainer from '../ui/OverlayScrollContainer';
+import Header from '../ui/Header';
 
 function Home() {
   console.log('Home component rendered');
@@ -18,6 +20,18 @@ function Home() {
 
   //trying to get the spinner to show before this executes which is why I tried LayoutEffect in place of standard useEffect - it didn't work :(
   useLayoutEffect(() => {
+    //For error handling and awaiting my async api functions I'll set up some inner async functions that can be called from in here
+    //gotoSpotifyAuth can throw an error so we'll want to catch that
+    async function tryGotoSpotifyAuth() {
+      try {
+        gotoSpotifyAuth();
+      } catch (error) {
+        console.error(
+          'Error thrown by gotoSpotifyAuth whilst being called from Home:',
+          error
+        );
+      }
+    }
     //if we have already got the code then this function 'swaps' it for the actual access token
     async function getTokenWithCode(code) {
       await requestToken(code)
@@ -51,7 +65,7 @@ function Home() {
       console.log(
         `No code found in Home so calling gotoSpotifyAuth() to redirect user to Spotify login/auth page`
       );
-      gotoSpotifyAuth();
+      tryGotoSpotifyAuth();
     }
     //we have gone to spotify and got a code back so we store it in local storage and 'reload' the app to clear the url params
     else if (code && !window.localStorage.getItem(AUTH_CODE_STORAGE_KEY)) {
@@ -65,13 +79,14 @@ function Home() {
   if (error) {
     return (
       <main className="app-layout">
-        <OverlayScrollContainer className="main-content">
+        <Header />
+        <div className="error-content">
           <h1>Please accept the usage of Spotify to use this app</h1>
-          <p>Error details: {error}</p>
+          <h2>We received an error message from Spotify: {error}</h2>
           <button onClick={() => window.location.replace(REDIRECT_URI)}>
             Try Again
           </button>
-        </OverlayScrollContainer>
+        </div>
       </main>
     );
   }
