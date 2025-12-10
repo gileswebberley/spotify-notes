@@ -8,8 +8,8 @@
   --dark-background-charcoal: #090909;
   --colour-white: rgba(255, 255, 255, 0.87);
   /* make sure the images are in a container with container-size: inline-size */
-  --listing-image-size: 5rem;
   /* --listing-image-size: minmax(6rem, 5cqw); This was causing all sorts of layout issues so I've just gone for a fixed size */
+  --listing-image-size: 5rem;
   --header-image-size: clamp(10rem, 30cqw, 100%);
   --max-content-width: 960px;
   --main-grid-row: 1fr min(100%, var(--max-content-width)) 1fr;
@@ -59,13 +59,19 @@ ul {
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+  cursor: default;
 }
 
 h2 {
   font-size: 2.2rem;
   font-weight: 700;
-  /* padding-bottom: 1.2rem; */
+  cursor: default;
 }
+
+p {
+  cursor: default;
+}
+
 header {
   grid-area: header;
   height: 5dvh;
@@ -81,17 +87,23 @@ header {
 }
 
 header button {
-  font-size: 2dvh;
+  font-size: max(1rem, 2dvh);
   font-weight: 600;
-  /* color: #df0909; */
   padding: 0.8dvh 1.5dvh;
   border-radius: 2.8dvh;
   margin-top: 0.8dvh;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+header button:hover {
+  background-color: var(--lighter-background-charcoal);
 }
 
 header h2 {
-  font-size: 3dvh;
+  font-size: max(1.5rem, 3dvh);
   margin-right: 15px;
+  cursor: default;
 }
 
 footer {
@@ -122,7 +134,6 @@ footer {
   display: grid;
   grid-template-columns: var(--main-grid-row);
   grid-template-rows: auto 1fr;
-  /* 1fr min(100%, var(--max-content-width)) 1fr; */
   grid-template-areas:
     '. header .'
     'gutter-start main gutter-end';
@@ -176,6 +187,43 @@ footer {
 .landing-content p {
   font-size: max(2cqw, 2cqh);
   padding-inline: 2cqw;
+  text-align: center;
+}
+
+.demo-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-block: 2cqh;
+  padding-inline: 2cqw;
+  border-block: 1px solid var(--spotify-green);
+  margin-block: 2cqh;
+  margin-inline: 2cqw;
+}
+
+.demo-section :is(h2, p) {
+  text-align: left;
+}
+
+.demo-section img {
+  aspect-ratio: auto;
+  object-fit: contain;
+  width: 40cqw;
+  max-width: max-content;
+}
+
+@container (width < 600px) {
+  .demo-section {
+    flex-direction: column;
+    align-items: center;
+  }
+  .demo-section :is(h2, p) {
+    text-align: center;
+  }
+  .demo-section img {
+    width: 80cqw;
+    max-width: max-content;
+  }
 }
 
 /* for both the Error component and for when acess-denied is returned from spotify whilst requesting a code */
@@ -415,8 +463,8 @@ footer {
   text-overflow: ellipsis;
 
   /* Limit to a maximum of 2 rows of wrapped text */
-  -webkit-line-clamp: 4;
-  line-clamp: 4; /* For forward compatibility */
+  -webkit-line-clamp: 3;
+  line-clamp: 3; /* For forward compatibility */
 }
 
 .playlist-header-user {
