@@ -12,6 +12,7 @@ import { loader as playlistsLoader } from './pages/Playlists';
 const Playlist = lazy(() => import('./pages/Playlist'));
 import { loader as playlistLoader } from './pages/Playlist';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Landing from './pages/Landing';
 // import Auth from './pages/Auth';
 
 //I'm dealing with a lot of data requests now so I'm going to implement tanstack query to look after caching etc
@@ -29,6 +30,12 @@ const router = createBrowserRouter(
     {
       index: true,
       // path: '/',
+      element: <Landing />,
+      errorElement: <Error />,
+    },
+    {
+      // index: true,
+      path: '/auth',
       element: <Home />,
       errorElement: <Error />,
     },

@@ -198,10 +198,10 @@ async function refreshAccessToken() {
       refreshingPromise = null;
       throw new Error('No refresh token available for refreshAccessToken');
     }
-
-    console.log(
-      `refreshAccessToken has been called...with refresh token: ${refreshToken}`
-    );
+    console.log('Refreshing access token...');
+    // console.log(
+    //   `refreshAccessToken has been called...with refresh token: ${refreshToken}`
+    // );
     const url = 'https://accounts.spotify.com/api/token';
     const body = new URLSearchParams({
       grant_type: 'refresh_token',
@@ -301,7 +301,7 @@ export async function getUserProfile(id = null) {
   };
   try {
     const result = await fetchPayloadResponse(url, payload);
-    console.table(`User profile response:`, result);
+    // console.table(`User profile response:`, result);
     return result;
   } catch (error) {
     throw new Error(`getUserProfile failed with error: ${error}`);
