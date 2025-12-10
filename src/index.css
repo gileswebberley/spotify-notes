@@ -46,6 +46,74 @@ body {
   min-height: 100dvh;
 }
 
+button {
+  background-color: var(--spotify-green);
+  border: 1px solid var(--colour-white);
+}
+
+ul {
+  margin: 0;
+  width: 100%;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  /* padding-bottom: 1.2rem; */
+}
+header {
+  grid-area: header;
+  height: 5dvh;
+  padding: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  column-gap: 0.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+header button {
+  font-size: 2dvh;
+  font-weight: 600;
+  /* color: #df0909; */
+  padding: 0.8dvh 1.5dvh;
+  border-radius: 2.8dvh;
+  margin-top: 0.8dvh;
+}
+
+header h2 {
+  font-size: 3dvh;
+  margin-right: 15px;
+}
+
+footer {
+  container: footer-container / inline-size;
+  background-color: rgba(0, 0, 0, 0.8);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--footer-height);
+  padding-block: 0.3rem;
+  display: grid;
+  grid-template-columns: var(--main-grid-row);
+  /* gap: 10px; */
+  grid-template-areas: '. footer-main .';
+}
+
+.header-icon {
+  height: 3.5dvh;
+  width: auto;
+}
+
 /* We'll set up a simple grid as a way to place our content in the middle of a big screen and simply have main-content take up the whole screen when it's smaller than --max-content-width via the --main-grid-row definition */
 .app-layout {
   width: 100%;
@@ -58,6 +126,56 @@ body {
   grid-template-areas:
     '. header .'
     'gutter-start main gutter-end';
+}
+
+.landing-content {
+  grid-area: main;
+  container-type: inline-size;
+  border-radius: max(10dvw, 10dvh) 0 0 0;
+  background-color: var(--light-background-charcoal);
+  margin-top: 1dvh;
+  margin-bottom: 3dvh;
+  margin-inline: 3dvw;
+  overflow: clip;
+}
+
+.landing-ident {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border-radius: 0 0 0 max(20cqw, 15cqh);
+  border-bottom: 3px solid var(--spotify-green);
+  padding: max(0.6cqh, 0.6cqw) 0 0 max(0.6cqh, 0.6cqw);
+}
+
+.landing-content h1 {
+  /* text-decoration: underline 1cqh;
+  text-underline-offset: 2cqh; */
+  color: #ffffff;
+  font-size: max(15cqw, 8cqh);
+}
+
+.landing-content h1.name {
+  transform: translateY(-8%) translateX(-5%);
+}
+
+.landing-logo {
+  aspect-ratio: 1/1;
+  object-fit: contain;
+  width: max(20cqw, 15cqh);
+  max-width: 100%;
+}
+
+.landing-content h2 {
+  font-size: max(3cqw, 3cqh);
+  padding-inline: 2cqw;
+  padding-block: 2cqh;
+  text-align: center;
+}
+
+.landing-content p {
+  font-size: max(2cqw, 2cqh);
+  padding-inline: 2cqw;
 }
 
 /* for both the Error component and for when acess-denied is returned from spotify whilst requesting a code */
@@ -80,8 +198,6 @@ body {
   /* color: #df0909; */
   padding: 0.8rem 1.5rem;
   border-radius: 2.6rem;
-  background-color: var(--spotify-green);
-  border: 1px solid var(--colour-white);
 }
 
 .error-content h2 {
@@ -97,66 +213,11 @@ body {
   /* overflow-y: auto; */
 }
 
-header {
-  grid-area: header;
-  height: 5dvh;
-  padding: 0.7rem;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  width: 100%;
-  column-gap: 0.5rem;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-header h2 {
-  font-size: 3dvh;
-  margin-right: 15px;
-}
-
-.header-icon {
-  height: 3.5dvh;
-  width: auto;
-}
-
-footer {
-  container: footer-container / inline-size;
-  background-color: rgba(0, 0, 0, 0.8);
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: var(--footer-height);
-  padding-block: 0.3rem;
-  display: grid;
-  grid-template-columns: var(--main-grid-row);
-  /* gap: 10px; */
-  grid-template-areas: '. footer-main .';
-}
-
 .footer-content {
   grid-area: footer-main;
   display: flex;
   width: 100%;
   justify-content: center;
-}
-
-ul {
-  margin: 0;
-  width: 100%;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-h2 {
-  font-size: 2.2rem;
-  font-weight: 700;
-  /* padding-bottom: 1.2rem; */
 }
 
 .user-image {
