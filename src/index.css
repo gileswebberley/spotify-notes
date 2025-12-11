@@ -160,8 +160,6 @@ footer {
 }
 
 .landing-content h1 {
-  /* text-decoration: underline 1cqh;
-  text-underline-offset: 2cqh; */
   color: #ffffff;
   font-size: max(15cqw, 8cqh);
 }
@@ -279,20 +277,12 @@ footer {
   width: 100%;
 }
 
-/* .user-button-container {
-  container: user-button / inline-size;
-} */
-
 .user-button-menu {
   display: flex;
-  /* justify-content: center; */
   align-items: center;
-  column-gap: 0.4rem;
   width: 60px;
-  /* height: 30px; */
-  /* border-radius: 50%; Starts round */
-  /*background-color: #1DB954;  Spotify green */
   position: relative;
+  /* if overflow-x is set to hidden then overflow-y isn't visible, whereas when set to clip it keeps them seperate */
   overflow-y: visible;
   overflow-x: clip;
   transition: all 0.4s ease-out;
@@ -305,9 +295,9 @@ footer {
   transition: border 0.6s ease-in;
   z-index: 2;
 }
+
 .user-button-menu.is-expanded .main-user-toggle {
   border-right: 2px solid var(--dark-background-charcoal);
-  /* border-top: 2px solid #1db954; */
 }
 
 .user-button-menu.is-expanded {
@@ -327,18 +317,14 @@ footer {
   border-radius: 20px;
   opacity: 0;
   pointer-events: none; /* Prevents interaction when hidden */
-  transform: translateX(-50%) scale(0.8);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateX(-100%) scale(0.3);
+  transition: opacity 0.3s ease, transform 0.6s ease;
 }
 
 .user-button-menu.is-expanded .user-sub-buttons {
   opacity: 1;
   pointer-events: auto; /* Enables interaction when visible */
   transform: translateX(-25px) scale(1);
-  /* transition-delay: 0.3s; */
-  /* margin-left: -15%; */
-  /* padding-left: -50px; */
-  gap: 5px;
 }
 
 .user-sub-btn {
@@ -349,8 +335,14 @@ footer {
   border-radius: 20px;
   cursor: pointer;
   white-space: nowrap;
-  transition: background-color 0.3s ease;
+  /* transform: translateX(-100%) scale(0.3);
+  transition-delay: 1.4s; Having no effect unfortunately*/
+  transition: transform 0.6s ease, background-color 0.3s ease;
 }
+/* 
+.user-button-menu.is-expanded .user-sub-btn {
+  transform: translateX(0) scale(1);
+} */
 
 .user-sub-btn:hover {
   background-color: var(--lighter-background-charcoal);
@@ -362,6 +354,7 @@ footer {
 }
 
 .user-sub-btn:first-of-type {
+  /* to make up for the translateX(-25px) of user-sub-buttons */
   padding-left: 25px;
 }
 
@@ -390,8 +383,6 @@ footer {
 }
 
 .clear-button {
-  /* padding-inline: 0.25rem;
-  padding-block: 0.25rem; */
   background-color: rgba(0, 0, 0, 0);
   transition: scale 0.25s;
   border: 1px solid transparent;
@@ -491,9 +482,6 @@ footer {
   height: var(--header-image-size);
   border-radius: calc(var(--header-image-size) / 15);
   display: 'inline-block';
-  /* padding-inline: 2rem; */
-  /* padding-block: 0; */
-  /* margin-left: 2rem; */
 }
 
 .back-button {
@@ -537,12 +525,32 @@ footer {
 }
 
 /* we just want this on the first and last column */
-.list-row:not(.list-header, .notes-row):hover > div:is(.col-title) {
+.list-row:not(.list-header, .notes-row, .note-open):hover > div:is(.col-title) {
   border-radius: 0.6rem 0 0 0.6rem;
 }
 
-.list-row:not(.list-header, .notes-row):hover > div:is(.col-buttons) {
+.list-row:not(.list-header, .notes-row, .note-open):hover
+  > div:is(.col-buttons) {
   border-radius: 0 0.6rem 0.6rem 0;
+}
+
+.note-open > div {
+  background-color: var(--light-background-charcoal);
+  /* border-radius: 0 0.6rem 0 0; */
+  border-top: 1px solid var(--colour-white);
+}
+
+.note-open > div:is(.col-buttons) {
+  border-radius: 0 0.8rem 0 0;
+  border-right: 1px solid var(--colour-white);
+}
+.note-open > div:is(.col-title) {
+  /* border-radius: 0 0.8rem 0 0; */
+  border-left: 1px solid var(--colour-white);
+}
+
+.note-open:hover > div {
+  background-color: var(--lighter-background-charcoal) !important;
 }
 
 /* attempt to make the rows with collapsing columns for the playlist tracks - works nicely :)
@@ -571,7 +579,15 @@ img/title/artist | album | added by | date added | runtime | buttons
   display: grid;
   grid-template-columns: auto 1fr;
   column-gap: 5px;
-  /* justify-items: end; */
+  border-top: 1px solid transparent;
+  border-left: 1px solid transparent;
+  /* transparent border to stop the slight shift when the note is opened/closed */
+}
+
+.col-buttons {
+  border-top: 1px solid transparent;
+  border-right: 1px solid transparent;
+  /* transparent border to stop the slight shift when the note is opened/closed */
 }
 
 /* remove date added column */
@@ -638,7 +654,7 @@ img/title/artist | album | added by | date added | runtime | buttons
 
 .notes-row > div:is(.col-notes),
 .notes-row > form > div:is(.col-notes) {
-  margin-left: 1px;
+  /* margin-left: 1px; */
   border-radius: 0 0 0 0.8rem;
   border-left: 1px solid var(--colour-white);
 }

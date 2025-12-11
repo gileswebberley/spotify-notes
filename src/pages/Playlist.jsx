@@ -1,27 +1,20 @@
-import {
-  redirect,
-  useLoaderData,
-  useNavigate,
-  useNavigation,
-} from 'react-router-dom';
+import { redirect, useLoaderData, useNavigation } from 'react-router-dom';
 import {
   getAccessToken,
   getPlaylistTracks,
   getUserPlaylist,
   isLoggedIn,
-  isTokenExpiring,
 } from '../services/apiSpotify';
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback } from 'react';
 import { usePaginatedFetch } from '../query-hooks/usePaginatedFetch';
 import TrackItem from '../ui/TrackItem';
-import User from '../ui/User';
-import PlaylistsPaginationButton from '../ui/PlaylistsPaginationButton';
 import { AUTH_PATH } from '../utils/constants';
 import PlaylistHeader from '../ui/PlaylistHeader';
 import BackButton from '../ui/BackButton';
 import { FaEllipsis } from 'react-icons/fa6';
 import Spinner from '../ui/Spinner';
 import { useIntersection } from '../hooks/useIntersection';
+import { NoteUIContextProvider } from '../contexts/NoteUIContext';
 
 function Playlist() {
   const { playlist, playlistId } = useLoaderData();
@@ -96,17 +89,29 @@ function Playlist() {
             }
             if (infiniteScrollElementIndex === index) {
               return (
-                <TrackItem
-                  index={index}
-                  ref={intersectionTargetRef}
+                <NoteUIContextProvider
                   key={item.track.id}
-                  item={item}
-                />
+                  trackId={item.track.id}
+                >
+                  <TrackItem
+                    index={index}
+                    ref={intersectionTargetRef}
+                    // key={item.track.id}
+                    item={item}
+                  />
+                </NoteUIContextProvider>
               );
             }
             //passing the item rather than the track object as it has the added_at property which would be handy to have in the notes
             //   console.table(`item for playlist is: `, item);
-            return <TrackItem index={index} key={item.track.id} item={item} />;
+            return (
+              <NoteUIContextProvider
+                key={item.track.id}
+                trackId={item.track.id}
+              >
+                <TrackItem index={index} item={item} />
+              </NoteUIContextProvider>
+            );
           })}
           {/* </div> */}
           {/* </ul> */}

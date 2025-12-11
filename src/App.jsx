@@ -46,17 +46,6 @@ const router = createBrowserRouter(
       //browser router also catches errors and you can define a component to be shown if that occurs (see Error component for how to get the message)
       errorElement: <Error />,
       children: [
-        // {
-        //   index: true,
-        //   // path: '/',
-        //   element: <Home />,
-        //   errorElement: <Error />,
-        // },
-        // {
-        //   path: '/auth',
-        //   element: <Auth />,
-        //   errorElement: <Error />,
-        // },
         {
           path: '/playlists',
           element: <Playlists />,

@@ -3,7 +3,10 @@ import { formatDate } from '../utils/helpers';
 import ImagePx from './ImagePx';
 import NoteUI from './NoteUI';
 import IconButton from './IconButton';
-import { NoteUIContextProvider } from '../contexts/NoteUIContext';
+import {
+  NoteUIContextProvider,
+  useNoteUIContext,
+} from '../contexts/NoteUIContext';
 import NotesRow from './NotesRow';
 import { useUser } from '../query-hooks/useUser';
 import { forwardRef } from 'react';
@@ -16,9 +19,12 @@ const TrackItem = forwardRef(({ item }, ref) => {
   //Great, this works nicely
   const { status, fetchStatus, user, error } = useUser(added_by.id);
   const { display_name } = user ?? {};
+  // want to add styling when the note is showing so lifted the NoteUIContextProvider into the Playlist page and wrapped this in it
+  const { showNote } = useNoteUIContext();
   return (
-    <NoteUIContextProvider trackId={id}>
-      <div className="list-row">
+    // <NoteUIContextProvider trackId={id}>
+    <>
+      <div className={`list-row ${showNote ? 'note-open' : ''}`}>
         <div className="col-title" ref={ref}>
           <ImagePx images={album?.images} size={64} name={name} />
           <div className="ellipsis-text-block">
@@ -56,7 +62,8 @@ const TrackItem = forwardRef(({ item }, ref) => {
         </div>
       </div>
       <NotesRow />
-    </NoteUIContextProvider>
+    </>
+    // </NoteUIContextProvider>
   );
 });
 
