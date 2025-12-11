@@ -1,14 +1,8 @@
-import { redirect, useLoaderData, useNavigation } from 'react-router-dom';
-import {
-  getAccessToken,
-  getPlaylistTracks,
-  getUserPlaylist,
-  isLoggedIn,
-} from '../services/apiSpotify';
+import { useLoaderData, useNavigation } from 'react-router-dom';
+import { getPlaylistTracks } from '../services/apiSpotify';
 import { useCallback } from 'react';
 import { usePaginatedFetch } from '../query-hooks/usePaginatedFetch';
 import TrackItem from '../ui/TrackItem';
-import { AUTH_PATH } from '../utils/constants';
 import PlaylistHeader from '../ui/PlaylistHeader';
 import BackButton from '../ui/BackButton';
 import { FaEllipsis } from 'react-icons/fa6';
@@ -29,15 +23,12 @@ function Playlist() {
   let infiniteScrollElementIndex = tracks?.items?.length - 4;
   console.log(`infiniteScrollElement is ${infiniteScrollElementIndex}`);
 
-  const intersectionCallback = useCallback(
-    (target) => {
-      if (hasNext && !isLoading) {
-        console.log(`I'm loading more of the list`);
-        getNextPrev(1);
-      }
-    },
-    [isLoading, getNextPrev, hasNext]
-  );
+  const intersectionCallback = useCallback(() => {
+    if (hasNext && !isLoading) {
+      console.log(`I'm loading more of the list`);
+      getNextPrev(1);
+    }
+  }, [isLoading, getNextPrev, hasNext]);
 
   const options = {
     rootMargin: '0px',

@@ -1,9 +1,7 @@
-import { redirect } from 'react-router-dom';
-import { getUserPlaylists, isLoggedIn } from '../services/apiSpotify';
+import { getUserPlaylists } from '../services/apiSpotify';
 import { useCallback } from 'react';
 import PlaylistItem from '../ui/PlaylistItem';
 import { usePaginatedFetch } from '../query-hooks/usePaginatedFetch';
-import { AUTH_PATH } from '../utils/constants';
 import Spinner from '../ui/Spinner';
 import { useIntersection } from '../hooks/useIntersection';
 
