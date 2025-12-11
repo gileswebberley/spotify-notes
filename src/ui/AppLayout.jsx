@@ -1,5 +1,5 @@
 import { Outlet, useLocation, useNavigation } from 'react-router-dom';
-import { UserContextProvider } from '../contexts/userContext';
+import { UserContextProvider } from '../contexts/UserContext';
 import Spinner from './Spinner';
 import User from './User';
 import OverlayScrollContainer from './OverlayScrollContainer';
