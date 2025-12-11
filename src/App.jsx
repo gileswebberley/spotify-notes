@@ -8,12 +8,11 @@ import AppLayout from './ui/AppLayout';
 const Home = lazy(() => import('./pages/Home'));
 import Error from './ui/Error';
 const Playlists = lazy(() => import('./pages/Playlists'));
-import { loader as playlistsLoader } from './pages/Playlists';
+import { playlistsLoader } from './loaders/playlistsLoader';
 const Playlist = lazy(() => import('./pages/Playlist'));
-import { loader as playlistLoader } from './pages/Playlist';
+import { playlistLoader } from './loaders/playlistLoader';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Landing from './pages/Landing';
-// import Auth from './pages/Auth';
 
 //I'm dealing with a lot of data requests now so I'm going to implement tanstack query to look after caching etc
 const queryClient = new QueryClient({
@@ -29,12 +28,10 @@ const router = createBrowserRouter(
   [
     {
       index: true,
-      // path: '/',
       element: <Landing />,
       errorElement: <Error />,
     },
     {
-      // index: true,
       path: '/auth',
       element: <Home />,
       errorElement: <Error />,
@@ -71,7 +68,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <RouterProvider
-        // future={{ v7_startTransition: true }}
+        future={{ v7_startTransition: true }}
         router={router}
         fallbackElement={<Spinner />}
       />

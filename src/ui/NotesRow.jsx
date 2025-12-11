@@ -3,7 +3,7 @@ import { useNoteUIContext } from '../contexts/NoteUIContext';
 import { formatDate } from '../utils/helpers';
 import IconButton from './IconButton';
 import { MAX_NOTE_CHARS } from '../utils/constants';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
 function NotesRow() {
   const {

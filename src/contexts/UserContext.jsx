@@ -1,7 +1,4 @@
 import { createContext, useContext } from 'react';
-// import { getUserProfile } from '../services/apiSpotify';
-// import { useLocation, useNavigation } from 'react-router-dom';
-// import { AUTH_PATH } from '../utils/constants';
 import { useUser } from '../query-hooks/useUser';
 
 const UserContext = createContext(null);

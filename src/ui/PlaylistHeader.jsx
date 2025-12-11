@@ -1,5 +1,4 @@
 import HeaderColourSettingImage from './HeaderColourSettingImage';
-import BackButton from './BackButton';
 import PlaylistHeaderInfo from './PlaylistHeaderInfo';
 
 function PlaylistHeader({ playlist }) {
@@ -8,7 +7,6 @@ function PlaylistHeader({ playlist }) {
 
   return (
     <div className="playlist-header-colour playlist-header-container">
-      {/* <BackButton steps={1} /> */}
       <div className="playlist-header-layout">
         <HeaderColourSettingImage images={images} />
         <PlaylistHeaderInfo name={name} tracks={totalTracks} owner={owner} />

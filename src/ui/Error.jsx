@@ -1,5 +1,4 @@
 import { useNavigate, useRouteError } from 'react-router-dom';
-import Header from './Header';
 
 function Error() {
   const navigate = useNavigate();
@@ -7,8 +6,6 @@ function Error() {
   const err = useRouteError();
 
   return (
-    // <div className="app-layout">
-    //   <Header />
     <div className="error-content">
       <h1>
         We're very sorry but something went wrong
@@ -20,7 +17,6 @@ function Error() {
       <button onClick={() => navigate(-1)}>&larr; Go Back</button>
       <button onClick={() => navigate('/')}>Reset App</button>
     </div>
-    // </div>
   );
 }
 

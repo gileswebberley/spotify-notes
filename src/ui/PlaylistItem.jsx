@@ -29,17 +29,6 @@ const PlaylistItem = forwardRef(({ playlist }, ref) => {
       </div>
       {/* can't find this information via the web api :/ <div className="col-playlist-added">date</div> */}
       <div className="col-playlist-tracks">{tracks.total}</div>
-      {/* <div
-        ref={ref}
-        className="interactive-listing-item"
-        role="button"
-        aria-description={`Click to open the playlist called ${name}`}
-        onClick={handleClick}
-        style={{ cursor: 'pointer' }}
-      >
-        <ImagePx images={images} name={name} />
-        {name} by {owner.display_name} ({tracks.total} tracks)
-      </div> */}
     </div>
   );
 });

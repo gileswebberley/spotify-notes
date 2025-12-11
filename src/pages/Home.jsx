@@ -1,5 +1,4 @@
 import { useLayoutEffect } from 'react';
-// import { useToken } from '../hooks/useToken';
 import { gotoSpotifyAuth, requestToken } from '../services/apiSpotify';
 import { useCodeChallenge } from '../hooks/useCodeChallenge';
 import {
@@ -9,9 +8,9 @@ import {
 } from '../utils/constants';
 import { useNavigate } from 'react-router-dom';
 import Spinner from '../ui/Spinner';
-import OverlayScrollContainer from '../ui/OverlayScrollContainer';
 import Header from '../ui/Header';
 
+//This is now the auth component as I have created the Landing page as the home page once it was all working
 function Home() {
   console.log('Home component rendered');
   //code is the ref.current - if no value then we have not gone to spotify for an auth code, if it has a value then it is the code that has been returned

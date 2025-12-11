@@ -3,10 +3,7 @@ import { formatDate } from '../utils/helpers';
 import ImagePx from './ImagePx';
 import NoteUI from './NoteUI';
 import IconButton from './IconButton';
-import {
-  NoteUIContextProvider,
-  useNoteUIContext,
-} from '../contexts/NoteUIContext';
+import { useNoteUIContext } from '../contexts/NoteUIContext';
 import NotesRow from './NotesRow';
 import { useUser } from '../query-hooks/useUser';
 import { forwardRef } from 'react';

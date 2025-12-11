@@ -307,6 +307,7 @@ footer {
 
 .user-sub-buttons {
   display: flex;
+  gap: 2px;
   background-color: rgba(
     29,
     185,
@@ -335,9 +336,9 @@ footer {
   border-radius: 20px;
   cursor: pointer;
   white-space: nowrap;
-  transform: translateX(-100%) scale(0.3);
-  transition: transform 0.6s ease, background-color 0.3s ease;
-  transition-delay: 1.6s;
+  transform: translateX(-100%) scale(0.8);
+  transition: background-color 0.3s ease;
+  /* transition-delay: 0.6s; */
 }
 
 .user-button-menu.is-expanded .user-sub-btn {
@@ -356,11 +357,14 @@ footer {
 .user-sub-btn:first-of-type {
   /* to make up for the translateX(-25px) of user-sub-buttons */
   padding-left: 25px;
+  z-index: 1;
+  transition: transform 0.2s ease 0.4s;
 }
-/* 
+
 .user-sub-btn:last-of-type {
-  transition-delay: 2.2s;
-} */
+  transform: translateX(-300%) scale(0.8);
+  transition: transform 0.4s ease-out 0.5s;
+}
 
 /* used in ImagePx */
 .listing-image {

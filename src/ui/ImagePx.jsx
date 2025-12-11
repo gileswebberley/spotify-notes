@@ -18,8 +18,6 @@ function ImagePx({ images, name, showPlaceholder = true, size = 'md' }) {
   } else {
     pixelSize = size;
   }
-  // images.sort((a, b) => a.height - b.height);
-  // const imgUrl = images?.find((img) => img.height >= pixelSize)?.url;
   const imgUrl = getImageURLByHeightSize(images, pixelSize);
   //set the width and height properties on the img tag so that it avoids layout shifts whilst loading
   return (

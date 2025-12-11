@@ -6,7 +6,6 @@ import { usePaginatedFetch } from '../query-hooks/usePaginatedFetch';
 import { AUTH_PATH } from '../utils/constants';
 import Spinner from '../ui/Spinner';
 import { useIntersection } from '../hooks/useIntersection';
-import { FaEllipsis } from 'react-icons/fa6';
 
 function Playlists() {
   //extracted all this to a custom hook so that I can use it with tracks in the Playlist page too
@@ -19,15 +18,12 @@ function Playlists() {
 
   let infiniteScrollElementIndex = playlists?.items?.length - 4;
 
-  const intersectionCallback = useCallback(
-    (target) => {
-      if (hasNext && !isLoading) {
-        console.log(`I'm loading more of the list`);
-        getNextPrev(1);
-      }
-    },
-    [isLoading, getNextPrev, hasNext]
-  );
+  const intersectionCallback = useCallback(() => {
+    if (hasNext && !isLoading) {
+      console.log(`I'm loading more of the list`);
+      getNextPrev(1);
+    }
+  }, [isLoading, getNextPrev, hasNext]);
 
   const options = {
     rootMargin: '0px',
@@ -76,14 +72,12 @@ function Playlists() {
   );
 }
 
-//Now using react-query so it loads the first 20 and caches them, unlike in Playlist (singular) the first call to usePaginatedFetch is the same function so we can do it this way
-export async function loader() {
-  if (!isLoggedIn()) {
-    return redirect(AUTH_PATH);
-  }
-  // const playlists = await getUserPlaylists();
-  // return playlists;
-  return null;
-}
+// //Now using react-query so it loads the first 20 and caches them, unlike in Playlist (singular) the first call to usePaginatedFetch is the same function so we can do it this way
+// export async function loader() {
+//   if (!isLoggedIn()) {
+//     return redirect(AUTH_PATH);
+//   }
+//   return null;
+// }
 
 export default Playlists;
