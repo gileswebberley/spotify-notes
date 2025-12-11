@@ -1,18 +1,21 @@
 //following the tutorial https://dev.to/dom_the_dev/how-to-use-the-spotify-api-in-your-react-js-app-50pn
-//going to use the overlayscrollbars package so I need to import the css
-import 'overlayscrollbars/styles/overlayscrollbars.css';
+//going to use the overlayscrollbars package so I need to import the css - moving this to it's component so it is dynamically loaded
+// import 'overlayscrollbars/styles/overlayscrollbars.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { lazy } from 'react';
 import Spinner from './ui/Spinner';
-import AppLayout from './ui/AppLayout';
+// import AppLayout from './ui/AppLayout';
+const AppLayout = lazy(() => import('./ui/AppLayout'));
 const Home = lazy(() => import('./pages/Home'));
-import Error from './ui/Error';
+// import Error from './ui/Error';
+const Error = lazy(() => import('./ui/Error'));
 const Playlists = lazy(() => import('./pages/Playlists'));
 import { playlistsLoader } from './loaders/playlistsLoader';
 const Playlist = lazy(() => import('./pages/Playlist'));
 import { playlistLoader } from './loaders/playlistLoader';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Landing from './pages/Landing';
+// import Landing from './pages/Landing';
+const Landing = lazy(() => import('./pages/Landing'));
 
 //I'm dealing with a lot of data requests now so I'm going to implement tanstack query to look after caching etc
 const queryClient = new QueryClient({

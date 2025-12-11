@@ -1,6 +1,10 @@
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
+import { useEffect } from 'react';
 
 function OverlayScrollContainer({ className, children }) {
+  useEffect(() => {
+    import('overlayscrollbars/styles/overlayscrollbars.css');
+  }, []);
   return (
     <OverlayScrollbarsComponent
       element="section"
