@@ -12,8 +12,8 @@ import {
 } from '../utils/constants.js';
 
 //using .env.local and this is how you access those variables within Vite
-const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-
+// const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID; Not working on Netlify
+const CLIENT_ID = 'ecbe55ef331142259862b25a9f54a3ea';
 //We now have to use PCKE authorizion flow as the token method was deprecated in 2025
 //first generate a random string as the code-verifier with this code from Spotify docs https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow
 const generateRandomString = (length) => {
