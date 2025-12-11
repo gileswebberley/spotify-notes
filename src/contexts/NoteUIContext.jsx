@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from 'react';
-import { useUserContext } from './userContext';
+import { useUserContext } from './UserContext';
 import { useLiveQuery } from 'dexie-react-hooks';
 import {
   deleteNoteForTrack,

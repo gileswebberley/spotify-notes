@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import { useUserContext } from '../contexts/userContext';
+import { useUserContext } from '../contexts/UserContext';
 import UserImage from './UserImage';
 import { AUTH_PATH } from '../utils/constants';
 import { useState } from 'react';
