@@ -335,14 +335,14 @@ footer {
   border-radius: 20px;
   cursor: pointer;
   white-space: nowrap;
-  /* transform: translateX(-100%) scale(0.3);
-  transition-delay: 1.4s; Having no effect unfortunately*/
+  transform: translateX(-100%) scale(0.3);
   transition: transform 0.6s ease, background-color 0.3s ease;
+  transition-delay: 1.6s;
 }
-/* 
+
 .user-button-menu.is-expanded .user-sub-btn {
   transform: translateX(0) scale(1);
-} */
+}
 
 .user-sub-btn:hover {
   background-color: var(--lighter-background-charcoal);
@@ -357,6 +357,10 @@ footer {
   /* to make up for the translateX(-25px) of user-sub-buttons */
   padding-left: 25px;
 }
+/* 
+.user-sub-btn:last-of-type {
+  transition-delay: 2.2s;
+} */
 
 /* used in ImagePx */
 .listing-image {
