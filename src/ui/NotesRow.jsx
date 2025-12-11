@@ -25,6 +25,11 @@ function NotesRow() {
     setMessageLength(e.target.value.length);
   }
 
+  function handleDeleteNoteAndHide(event) {
+    handleDeleteNote(event);
+    setShowNote(false);
+  }
+
   if (!showNote) return null;
 
   return (
@@ -45,7 +50,7 @@ function NotesRow() {
             </IconButton>
             <IconButton
               disabledProp={isAddingOrDeleting}
-              clickHandler={handleDeleteNote}
+              clickHandler={handleDeleteNoteAndHide}
               tooltipText="Delete the note for this track"
             >
               <MdDeleteForever />
@@ -84,7 +89,7 @@ function NotesRow() {
                 disabledProp={isAddingOrDeleting}
                 clickHandler={() => {
                   setEditMode(false);
-                  setShowNote(false);
+                  // setShowNote(false);
                 }}
                 tooltipText="Cancel changes to this note"
               >
