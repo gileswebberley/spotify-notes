@@ -71,7 +71,7 @@ export async function gotoSpotifyAuth() {
   }
 
   const codeChallenge = window.localStorage.getItem(CODE_CHALLENGE_STORAGE_KEY);
-  // console.log(`Code challenge from storage is: ${codeChallenge}`);
+  console.log(`Code challenge from storage is: ${codeChallenge}`);
   //next we build our request string
   const params = {
     client_id: CLIENT_ID,
@@ -89,7 +89,7 @@ export async function gotoSpotifyAuth() {
 
 //Once we've got the code from spotify we use this to 'swap' it for an access token
 export async function requestToken(code) {
-  // console.log(`Requesting token with code: ${code}`);
+  console.log(`Requesting token with code: ${code}`);
   //this should have been stored during execution of gotoSpotifyAuth along with the code that has been passed in here
   const codeVerifier = window.localStorage.getItem(CODE_VERIFIER_STORAGE_KEY);
   // console.log(`Code verifier from storage: ${codeVerifier}`);
@@ -232,6 +232,7 @@ async function refreshAccessToken() {
 //rather than grab the access token whenever it's needed I'm going to use this function which will check the expiration time and refresh if needed before returning the token
 //THIS DOES NOT THROW AN ERROR BUT INSTEAD SIMPLY RETURNS FALSE / ACCESS TOKEN
 export async function getAccessToken() {
+  console.log('getAccessToken called....');
   let refreshNeeded;
   try {
     refreshNeeded = isTokenExpiring();
@@ -265,7 +266,7 @@ export function isTokenExpiring() {
   const expire = Number(
     window.localStorage.getItem(EXPIRATION_TIME_STORAGE_KEY)
   );
-  //I've just made a user context which requests the user profile before we're logged in so we'll check whether the expiration time has been set as a way to know if we are logged in or not - I'll return false if not logged in rather than throwing an error - UPDATE now throwing an error because the token doesn't need refreshing if there's no expire time but instead is being called when it shouldn't be, and the user problem has been taken care of elsewhere
+  //I've just made a user context which requests the user profile before we're logged in so we'll check whether the expiration time has been set as a way to know if we are logged in or not - I'll return false if not logged in rather than throwing an error - UPDATE now throwing an error because the token doesn't need refreshing if there's no expire time but instead is being called when it shouldn't be, and the user problem has been taken care of elsewhere. This is unfortunately causing issues so just
   if (!expire) {
     throw new Error(`No expiration time found - user not logged in`);
   }

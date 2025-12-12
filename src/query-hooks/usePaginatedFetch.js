@@ -3,7 +3,7 @@
 
 import { useMemo } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { isTokenExpiring } from '../services/apiSpotify';
+import { isLoggedIn, isTokenExpiring } from '../services/apiSpotify';
 
 // fetchFunction(pageOffset, limit, ...args) => returns a Spotify page object { items, next, previous, limit, offset, ... }
 // initialState is the first-page object (from your loader)
@@ -12,12 +12,12 @@ export function usePaginatedFetch(fetchFunction, initialState, ...args) {
   const limit = Number(initialState?.limit ?? 20);
   const queryKey = [fetchFunction.name || 'paginated', ...args];
 
-  let enabledCheck;
-  try {
-    enabledCheck = !isTokenExpiring();
-  } catch (error) {
-    enabledCheck = false;
-  }
+  let enabledCheck = isLoggedIn();
+  // try {
+  //   enabledCheck = !isTokenExpiring();
+  // } catch (error) {
+  //   enabledCheck = false;
+  // }
 
   const query = useInfiniteQuery({
     queryKey,
@@ -40,6 +40,7 @@ export function usePaginatedFetch(fetchFunction, initialState, ...args) {
       : undefined,
     keepPreviousData: true,
     enabled: enabledCheck,
+    useErrorBoundary: true,
   });
 
   const merged = useMemo(() => {
