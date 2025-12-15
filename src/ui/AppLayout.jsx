@@ -4,6 +4,7 @@ import Spinner from './Spinner';
 import User from './User';
 import OverlayScrollContainer from './OverlayScrollContainer';
 import Header from './Header';
+import Footer from './Footer';
 
 function AppLayout() {
   const navigationState = useNavigation();
@@ -19,11 +20,7 @@ function AppLayout() {
         <OverlayScrollContainer className="main-content">
           <Outlet key={location.key} />
         </OverlayScrollContainer>
-        <footer>
-          <div className="footer-content">
-            <User />
-          </div>
-        </footer>
+        <Footer />
       </UserContextProvider>
     </main>
   );

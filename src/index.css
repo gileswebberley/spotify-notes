@@ -48,6 +48,7 @@ body {
 
 button {
   background-color: var(--spotify-green);
+  color: var(--colour-white);
   border: 1px solid var(--colour-white);
 }
 

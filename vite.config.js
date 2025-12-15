@@ -4,8 +4,13 @@ import react from '@vitejs/plugin-react';
 import eslint from 'vite-plugin-eslint';
 import { HOST, PORT } from './src/utils/constants';
 import { VitePWA } from 'vite-plugin-pwa';
+import path from 'path';
 
 export default defineConfig(({ mode }) => ({
+  //trying to fix the problem with sw.js not being found
+  build: {
+    outDir: 'dist', // Ensures all build outputs go into the 'dist' folder
+  },
   plugins: [
     react({
       babel: {
@@ -14,8 +19,20 @@ export default defineConfig(({ mode }) => ({
     }),
     //let's try to make this a pwa...
     VitePWA({
+      srcDir: 'src',
+      filename: 'sw.js',
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'icons/*', 'offline.html'],
+      strategies: 'injectManifest',
+      // injectManifest: {
+      //   swSrc: path.resolve(__dirname, 'src/sw.js'), // ensure Vite/rollup sees the correct file
+      //   swDest: 'sw.js',
+      // },
+      includeAssets: [
+        'icon_logo.png',
+        'icons/*',
+        'offline.html',
+        'manifest.webmanifest',
+      ],
       manifest: {
         name: 'Snotify App',
         short_name: 'Snotify',
@@ -40,9 +57,14 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       workbox: {
-        navigateFallback: '/offline.html',
+        navigateFallback: '/index.html',
         runtimeCaching: [
-          // Images and static media: CacheFirst
+          // token endpoint: never cache
+          {
+            urlPattern: /^https:\/\/accounts\.spotify\.com\/api\/token/,
+            handler: 'NetworkOnly',
+          },
+          // safe caching for images/static assets
           {
             urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
             handler: 'CacheFirst',
@@ -51,20 +73,14 @@ export default defineConfig(({ mode }) => ({
               expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 },
             },
           },
-          // Spotify API: avoid caching Authorization responses — use NetworkFirst or NetworkOnly
+          // no cache for API calls as react-query handles the caching
           {
             urlPattern: /^https:\/\/api\.spotify\.com\/.*/,
             handler: 'NetworkOnly',
-            options: {
-              cacheName: 'spotify-api',
-              networkTimeoutSeconds: 10,
-              // prefer not to cache responses that require auth
-              cacheableResponse: { statuses: [200] },
-            },
           },
         ],
       },
-      devOptions: { enabled: mode !== 'production' }, // optional: allow testing SW in dev
+      devOptions: { enabled: false }, // optional: allow testing SW in dev
     }),
     // Only run eslint in development
     mode === 'development' && eslint(),

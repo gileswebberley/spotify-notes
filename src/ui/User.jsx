@@ -78,7 +78,6 @@ function User() {
   // console.table('User images:', images);
 
   return (
-    // <div className="user-button-container">
     <div
       className={`user-button-menu ${isExpanded ? 'is-expanded' : ''}`}
       onClick={toggleExpanded}
@@ -103,10 +102,8 @@ function User() {
         >
           Delete All Notes
         </button>
-        {/* <button className="user-sub-btn">Test 3</button> */}
       </div>
     </div>
-    // </div>
   );
 }
 

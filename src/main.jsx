@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client';
 // import './index.css';//now imported in index.html
 import App from './App.jsx';
 import { registerSW } from 'virtual:pwa-register';
-// import Spinner from './ui/Spinner.jsx';
 
 const updateSW = registerSW({
   onNeedRefresh() {
