@@ -126,6 +126,23 @@ footer {
   width: auto;
 }
 
+.offline-page {
+  display: block;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100dvh;
+  width: 99dvw;
+  text-align: center;
+  padding: 2rem;
+}
+
+.offline-page img {
+  aspect-ratio: initial;
+  object-fit: contain;
+  width: min(40cqw, 40cqh, 300px);
+}
+
 /* We'll set up a simple grid as a way to place our content in the middle of a big screen and simply have main-content take up the whole screen when it's smaller than --max-content-width via the --main-grid-row definition */
 .app-layout {
   width: 100%;
