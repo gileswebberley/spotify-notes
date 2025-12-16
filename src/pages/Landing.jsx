@@ -1,13 +1,40 @@
 import { useNavigate } from 'react-router-dom';
 import OverlayScrollContainer from '../ui/OverlayScrollContainer';
+import { useEffect, useState } from 'react';
 
 function Landing() {
   const navigate = useNavigate();
+  //now we've tried to make this a pwa I'm going to change the header according to network status and simply serve this as the navigateFallback in vite.config.js (or more to the point serve index.html whether online ot offline and block other routes when offline)
+  const [networkAvailable, setNetworkAvailable] = useState(navigator.onLine);
+  console.log(`is networkAvailable: ${networkAvailable}`);
+  //little helper functions for adding/removing eventListeners
+  const setOnline = () => setNetworkAvailable(true);
+  const setOffline = () => setNetworkAvailable(false);
+
+  useEffect(() => {
+    window.addEventListener('online', setOnline);
+    window.addEventListener('offline', setOffline);
+
+    return () => {
+      window.removeEventListener('online', setOnline);
+      window.removeEventListener('offline', setOffline);
+    };
+  }, []);
+
   return (
     <div className="app-layout">
       <header style={{ height: 'auto', textAlign: 'right' }}>
-        <h2 style={{ marginTop: '0.8dvh' }}>Let's Get You Started...</h2>
-        <button onClick={() => navigate('/auth')}>Login To Spotify</button>
+        {networkAvailable ? (
+          <>
+            <h2 style={{ marginTop: '0.8dvh' }}>Let's Get You Started...</h2>
+            <button onClick={() => navigate('/auth')}>Login To Spotify</button>
+          </>
+        ) : (
+          <>
+            <h2 style={{ marginTop: '0.8dvh' }}>You Are Offline</h2>
+            <button disabled={true}>Login To Spotify</button>
+          </>
+        )}
       </header>
       {/* <main className="landing-content"> */}
       <OverlayScrollContainer className={'landing-content'}>

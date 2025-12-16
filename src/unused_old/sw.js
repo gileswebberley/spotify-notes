@@ -2,12 +2,13 @@ import { precacheAndRoute } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 
 // Precache injected manifest plus explicit files
-precacheAndRoute(
-  (self.__WB_MANIFEST || []).concat([
-    // { url: '/manifest.webmanifest', revision: null },
-    { url: '/offline.html', revision: null },
-  ])
-);
+// precacheAndRoute(
+//   (self.__WB_MANIFEST || []).concat([
+//     // { url: '/manifest.webmanifest', revision: null },
+//     { url: '/offline.html', revision: null },
+//   ])
+// );
+precacheAndRoute(self.__WB_MANIFEST || []);
 
 // take control of the page as soon as possible
 self.addEventListener('install', (event) => {

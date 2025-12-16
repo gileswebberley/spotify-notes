@@ -17,22 +17,21 @@ export default defineConfig(({ mode }) => ({
         plugins: [['babel-plugin-react-compiler']],
       },
     }),
-    //let's try to make this a pwa...
+    //let's try to make this a pwa...after a lot of learning and going round in ai generated circles I have discovered that we can get vite-plugin-pwa to generate a service worker for us that will do what we need by using the 'generateSW' strategy and declaring the workbox object rather than trying to write our own sw.js file and using the 'injectManifest' strategy (which is for more fine-grained control over the routing and caching which is beyond my knowledge base at this stage as this is my first experience with PWAs)
     VitePWA({
-      srcDir: 'src',
-      filename: 'sw.js',
+      //see the comment below about injectManifest...
+      // srcDir: 'src',
+      // filename: 'sw.js',
+      //let's try changing to generateSW which will ignore our sw.js file
+      // strategies: 'injectManifest',
+      strategies: 'generateSW',
       registerType: 'autoUpdate',
-      strategies: 'injectManifest',
+      //this was causing confusion in the build process when using injectManifest, the srcDir etc above worked but because we are using NetworkOnly (rather than NetworkFirst) for the api calls it would not serve the offline.html page when there was no network
       // injectManifest: {
       //   swSrc: path.resolve(__dirname, 'src/sw.js'), // ensure Vite/rollup sees the correct file
       //   swDest: 'sw.js',
       // },
-      includeAssets: [
-        'icon_logo.png',
-        'icons/*',
-        'offline.html',
-        'manifest.webmanifest',
-      ],
+      includeAssets: ['icon_logo.png', 'icons/*', 'offline.html'],
       manifest: {
         name: 'Snotify App',
         short_name: 'Snotify',
@@ -57,7 +56,17 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       workbox: {
+        // Serve offline.html if navigation fails for most routes
         navigateFallback: '/index.html',
+        // ALLOW only the root path (/) to bypass the fallback logic and go to the network - doesn't work for SPAs
+        // navigateFallbackAllowlist: [/^\/$/],
+
+        // If you have specific backend API routes you NEVER want falling back to index.html
+        // (which you do), keep your denylist logic configured correctly for those:
+        navigateFallbackDenylist: [
+          /^https:\/\/accounts\.spotify\.com\/api\/token/,
+          /^https:\/\/api\.spotify\.com\/.*/,
+        ],
         runtimeCaching: [
           // token endpoint: never cache
           {
@@ -80,7 +89,7 @@ export default defineConfig(({ mode }) => ({
           },
         ],
       },
-      devOptions: { enabled: false }, // optional: allow testing SW in dev
+      devOptions: { enabled: false }, // doesn't seem to work properly with sw.js and offline etc so having to build and preview instead
     }),
     // Only run eslint in development
     mode === 'development' && eslint(),

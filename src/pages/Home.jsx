@@ -20,18 +20,10 @@ function Home() {
 
   //trying to get the spinner to show before this executes which is why I tried LayoutEffect in place of standard useEffect - it didn't work :(
   useEffect(() => {
-    //For error handling and awaiting my async api functions I'll set up some inner async functions that can be called from in here
-    //gotoSpotifyAuth can throw an error so we'll want to catch that
-    // async function tryGotoSpotifyAuth() {
-    //   try {
-    //     gotoSpotifyAuth();
-    //   } catch (error) {
-    //     console.error(
-    //       'Error thrown by gotoSpotifyAuth whilst being called from Home:',
-    //       error
-    //     );
-    //   }
-    // }
+    //little check to see if we're online before trying any of this and return to the homepage (Landing) if not
+    if (!navigator.onLine) {
+      navigate('/');
+    }
     //if we have already got the code then this function 'swaps' it for the actual access token - used in two places hence extracting it to it's own function
     async function getTokenWithCode(code) {
       try {

@@ -52,6 +52,12 @@ button {
   border: 1px solid var(--colour-white);
 }
 
+button:disabled {
+  cursor: not-allowed;
+  text-decoration: line-through;
+  background-color: var(--lighter-background-charcoal);
+}
+
 ul {
   margin: 0;
   width: 100%;
@@ -205,7 +211,7 @@ footer {
   padding-inline: 2cqw;
   text-align: center;
 }
-
+/* Landing page section with the screenshot image and text */
 .demo-section {
   display: flex;
   justify-content: center;
