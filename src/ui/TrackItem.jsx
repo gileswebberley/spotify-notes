@@ -1,5 +1,5 @@
 import { FaSpotify } from 'react-icons/fa';
-import { formatDate } from '../utils/helpers';
+import { formatDate, getArtistsString } from '../utils/helpers';
 import ImagePx from './ImagePx';
 import NoteUI from './NoteUI';
 import IconButton from './IconButton';
@@ -12,7 +12,7 @@ import { forwardRef } from 'react';
 const TrackItem = forwardRef(({ item }, ref) => {
   const { name, album, artists, id, duration_ms } = item.track;
   const { added_at, added_by } = item;
-  const artistString = artists.map((artist) => artist.name).join(', ');
+  const artistString = getArtistsString(artists); //artists.map((artist) => artist.name).join(', ');
   //Great, this works nicely
   const { status, fetchStatus, user, error } = useUser(added_by.id);
   const { display_name } = user ?? {};

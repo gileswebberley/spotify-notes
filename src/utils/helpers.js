@@ -16,3 +16,7 @@ export function getImageURLByHeightSize(images, size) {
   const imgUrl = images?.find((img) => img.height >= size)?.url;
   return imgUrl;
 }
+
+export function getArtistsString(artists) {
+  return artists.map((artist) => artist.name).join(', ');
+}
