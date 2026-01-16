@@ -55,7 +55,8 @@ const TrackItem = forwardRef(({ item }, ref) => {
             </IconButton>
             {/* [Open in Spotify] */}
           </a>
-          <NoteUI trackId={id} addedAt={added_at} />
+          {/* <NoteUI trackId={id} addedAt={added_at} /> now using NoteUIContext instead */}
+          <NoteUI />
         </div>
       </div>
       <NotesRow />

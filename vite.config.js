@@ -94,5 +94,5 @@ export default defineConfig(({ mode }) => ({
     // Only run eslint in development
     mode === 'development' && eslint(),
   ].filter(Boolean),
-  server: { host: HOST, port: PORT },
+  server: { host: HOST, port: PORT, hmr: true },
 }));
