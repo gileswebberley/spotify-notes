@@ -2,6 +2,9 @@ import { getArtistsString } from '../utils/helpers';
 import { useNoteUIContext } from '../contexts/NoteUIContext';
 import IconButton from './IconButton';
 import { FaPause, FaPlay } from 'react-icons/fa6';
+import ImagePx from './ImagePx';
+import NoteUI from './NoteUI';
+import NotesRow from './NotesRow';
 
 function CurrentTrackItem({ current }) {
   const { showNote, editMode } = useNoteUIContext();
@@ -12,7 +15,7 @@ function CurrentTrackItem({ current }) {
   return (
     <>
       <div className={`list-row ${showNote ? 'note-open' : ''}`}>
-        <div className="col-title" ref={ref}>
+        <div className="col-title">
           <ImagePx images={album?.images} size={64} name={name} />
           <div className="ellipsis-text-block">
             <span className="track-name-font">{name}</span>

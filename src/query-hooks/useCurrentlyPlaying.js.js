@@ -13,7 +13,7 @@ export function useCurrentlyPlaying() {
     queryFn: () => getCurrentlyPlayingTrack(),
     enabled: enableCheck,
     useErrorBoundary: true,
-    staleTime: 5000,
+    // refetchInterval: 5000,
   });
 
   return { status, fetchStatus, currentlyPlaying, error };

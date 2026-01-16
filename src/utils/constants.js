@@ -3,7 +3,7 @@ export const PORT = 4173;
 export const REDIRECT_URI = `http://${HOST}:${PORT}/auth`; //for testing'https://s-notify.netlify.app/auth';//for deployment
 export const AUTH_ENDPOINT = new URL('https://accounts.spotify.com/authorize');
 export const SCOPE =
-  'user-read-private user-read-email playlist-read-private playlist-read-collaborative'; // user-read-private user-read-email';
+  'user-read-private user-read-email playlist-read-private playlist-read-collaborative user-read-currently-playing'; // user-read-private user-read-email';
 export const CODE_VERIFIER_STORAGE_KEY = 'code-verifier';
 export const CODE_CHALLENGE_STORAGE_KEY = 'code-challenge';
 export const ACCESS_TOKEN_STORAGE_KEY = 'access-token';

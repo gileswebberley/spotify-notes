@@ -411,7 +411,7 @@ export async function getCurrentlyPlayingTrack() {
     const result = await fetchPayloadResponse(url, payload);
     console.log(`Currently playing track response:`);
     console.table('result', result);
-    console.table('items', result.items);
+    console.table('items', result.item);
     return result;
   } catch (error) {
     throw new Error(`getCurrentlyPlayingTrack failed with error: ${error}`);
