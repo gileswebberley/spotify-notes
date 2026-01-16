@@ -393,6 +393,31 @@ export async function getPlaylistTracks(offset = 0, limit = 20, [playlistId]) {
   }
 }
 
+//let's get currently playing so we can either highlight the track in a playlist or, as originally planned, so you can add notes to it
+export async function getCurrentlyPlayingTrack() {
+  const accessToken = await getAccessToken();
+  if (!accessToken) {
+    throw new Error(`No access token available - cannot fetch playlist tracks`);
+    // return null;
+  }
+  const url = new URL(`https://api.spotify.com/v1/me/player/currently-playing`);
+  const payload = {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+  try {
+    const result = await fetchPayloadResponse(url, payload);
+    console.log(`Currently playing track response:`);
+    console.table('result', result);
+    console.table('items', result.items);
+    return result;
+  } catch (error) {
+    throw new Error(`getCurrentlyPlayingTrack failed with error: ${error}`);
+  }
+}
+
 //to allow users to 'log out' we'll just clear local storage of token related stuff
 export function logoutUser() {
   window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
