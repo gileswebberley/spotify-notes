@@ -30,7 +30,7 @@ function CurrentTrackItem({ current }) {
         <div className="col-date-added"></div>
         <div className="col-runtime">{(duration_ms / 60000).toFixed(2)}</div>
         <div className="col-buttons">
-          {is_playing ? (
+          {/* {is_playing ? (
             <IconButton>
               <FaPause />
             </IconButton>
@@ -38,7 +38,7 @@ function CurrentTrackItem({ current }) {
             <IconButton>
               <FaPlay />
             </IconButton>
-          )}
+          )} */}
           <NoteUI />
         </div>
       </div>

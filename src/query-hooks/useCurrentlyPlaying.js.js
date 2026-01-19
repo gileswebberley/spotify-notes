@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getCurrentlyPlayingTrack, isLoggedIn } from '../services/apiSpotify';
 
+//I am using this hook via an event (clicking a button) and so I do not want to set the refreshInterval, instead it will remain with the same track so it doesn't automatically change whilst making a note
 export function useCurrentlyPlaying() {
   let enableCheck = isLoggedIn();
   const {
@@ -13,6 +14,7 @@ export function useCurrentlyPlaying() {
     queryFn: () => getCurrentlyPlayingTrack(),
     enabled: enableCheck,
     useErrorBoundary: true,
+    staleTime: 0,
     // refetchInterval: 5000,
   });
 

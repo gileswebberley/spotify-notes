@@ -14,7 +14,7 @@ function CurrentlyPlaying() {
     error ||
     currentlyPlaying.currently_playing_type !== 'track'
   ) {
-    return null;
+    return <h2>No track is currently playing</h2>;
   }
 
   const { item: track } = currentlyPlaying ?? {};

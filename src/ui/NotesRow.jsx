@@ -89,7 +89,9 @@ function NotesRow() {
                 disabledProp={isAddingOrDeleting}
                 clickHandler={() => {
                   setEditMode(false);
-                  // setShowNote(false);
+                  if (messageLength === 0) {
+                    setShowNote(false);
+                  }
                 }}
                 tooltipText="Cancel changes to this note"
               >

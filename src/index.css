@@ -86,7 +86,7 @@ header {
   padding: 0.7rem;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   width: 100%;
   column-gap: 0.5rem;
   position: sticky;
@@ -111,7 +111,7 @@ header button:hover {
 .header-logo {
   display: flex;
   align-items: center;
-  column-gap: 5px;
+  column-gap: 0.5rem;
   /* justify-content: center; */
 }
 
@@ -126,6 +126,17 @@ header h2 {
   display: inline-block;
   height: 3.5dvh;
   width: auto;
+}
+
+/* Using the popoverAPI which provides an anchor to the toggle button */
+.add-current-note-container {
+  width: min(96dvw, calc(var(--max-content-width) - 1.5rem));
+  height: fit-content;
+  position: absolute;
+  top: calc(anchor(bottom) + 0.5rem);
+  left: anchor(left);
+  border: 1px solid var(--spotify-green);
+  border-radius: 20px;
 }
 
 footer {
@@ -425,6 +436,17 @@ footer {
 
 .icon-button:disabled {
   color: var(--lighter-background-charcoal);
+}
+
+.add-current-note-button {
+  background-color: rgba(0, 0, 0, 0);
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.add-current-note-button:focus,
+.add-current-note-button:focus-visible {
+  outline-style: none;
 }
 
 .clear-button {
@@ -733,6 +755,7 @@ img/title/artist | album | added by | date added | runtime | buttons
   /* help with legibility whilst writing */
   background-color: var(--dark-background-charcoal);
   color: var(--colour-white);
+  font-size: 1.6rem;
   outline: none;
 }
 

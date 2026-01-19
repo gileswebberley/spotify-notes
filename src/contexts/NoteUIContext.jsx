@@ -9,7 +9,11 @@ import {
 
 const NoteUIContext = createContext(null);
 
-function NoteUIContextProvider({ children, trackId }) {
+function NoteUIContextProvider({
+  children,
+  trackId,
+  isCurrentlyPlaying = false,
+}) {
   const [editMode, setEditMode] = useState(false);
   const [showNote, setShowNote] = useState(false);
   const { isLoadingUser, getUserId } = useUserContext();

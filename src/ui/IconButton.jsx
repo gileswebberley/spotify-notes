@@ -14,6 +14,7 @@ function IconButton({
   disabledProp = false,
   additionalStyles = {},
   tooltipText = '',
+  // popoverTarget = null,
 }) {
   return (
     <button
@@ -23,6 +24,7 @@ function IconButton({
       onClick={clickHandler}
       title={tooltipText}
       aria-description={tooltipText}
+      // {...(popoverTarget && { 'popover-target': popoverTarget })}
     >
       {children}
     </button>
