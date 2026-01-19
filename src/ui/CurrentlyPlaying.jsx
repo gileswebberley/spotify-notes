@@ -3,8 +3,7 @@ import { useCurrentlyPlaying } from '../query-hooks/useCurrentlyPlaying.js';
 import CurrentTrackItem from './CurrentTrackItem.jsx';
 // have to consider that we may be adding a note to a track and then it finishes and so we lose the note because the track id changes? hmm
 function CurrentlyPlaying() {
-  const { status, fetchStatus, currentlyPlaying, error } =
-    useCurrentlyPlaying();
+  const { status, currentlyPlaying, error } = useCurrentlyPlaying();
 
   if (status === 'loading') {
     return <div>Loading...</div>;
@@ -18,7 +17,7 @@ function CurrentlyPlaying() {
     return null;
   }
 
-  const { item: track, progress_ms } = currentlyPlaying ?? {};
+  const { item: track } = currentlyPlaying ?? {};
 
   return (
     <NoteUIContextProvider trackId={track.id}>

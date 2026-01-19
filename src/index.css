@@ -13,7 +13,8 @@
   --header-image-size: clamp(10rem, 30cqw, 100%);
   --max-content-width: 960px;
   --main-grid-row: 1fr min(100%, var(--max-content-width)) 1fr;
-  --footer-height: 70px;
+  /*--footer-height: min(70px, 7dvh);*/
+  --footer-height: 60px;
   --back-button-size: clamp(2rem, 4dvh, 3rem);
 
   color-scheme: light dark;
@@ -93,7 +94,7 @@ header {
   z-index: 10;
 }
 
-header button {
+/* header button {
   font-size: max(1rem, 2dvh);
   font-weight: 600;
   padding: 0.8dvh 1.5dvh;
@@ -105,12 +106,26 @@ header button {
 
 header button:hover {
   background-color: var(--lighter-background-charcoal);
+} */
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  column-gap: 5px;
+  /* justify-content: center; */
 }
 
 header h2 {
+  display: inline-block;
   font-size: max(1.5rem, 3dvh);
   margin-right: 15px;
   cursor: default;
+}
+
+.header-icon {
+  display: inline-block;
+  height: 3.5dvh;
+  width: auto;
 }
 
 footer {
@@ -126,11 +141,6 @@ footer {
   grid-template-columns: var(--main-grid-row);
   /* gap: 10px; */
   grid-template-areas: '. footer-main .';
-}
-
-.header-icon {
-  height: 3.5dvh;
-  width: auto;
 }
 
 .offline-page {
@@ -290,6 +300,7 @@ footer {
   justify-content: center;
 }
 
+/* width and height are set within the UserImage component */
 .user-image {
   border-radius: 50%;
   overflow: hidden;
