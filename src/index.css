@@ -41,6 +41,7 @@ html {
   /* make 1rem equivalent to approx 10px */
   font-size: 62.5%;
   box-sizing: border-box;
+  color: var(--colour-white);
 }
 
 body {
@@ -94,7 +95,7 @@ header {
   z-index: 10;
 }
 
-/* header button {
+header button {
   font-size: max(1rem, 2dvh);
   font-weight: 600;
   padding: 0.8dvh 1.5dvh;
@@ -106,7 +107,7 @@ header {
 
 header button:hover {
   background-color: var(--lighter-background-charcoal);
-} */
+}
 
 .header-logo {
   display: flex;
@@ -137,6 +138,7 @@ header h2 {
   left: anchor(left);
   border: 1px solid var(--spotify-green);
   border-radius: 20px;
+  color: var(--colour-white);
 }
 
 footer {
@@ -365,7 +367,9 @@ footer {
   opacity: 0;
   pointer-events: none; /* Prevents interaction when hidden */
   transform: translateX(-100%) scale(0.3);
-  transition: opacity 0.3s ease, transform 0.6s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.6s ease;
 }
 
 .user-button-menu.is-expanded .user-sub-buttons {
