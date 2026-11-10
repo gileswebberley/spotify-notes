@@ -1,9 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import {
-  getUserProfile,
-  isLoggedIn,
-  isTokenExpiring,
-} from '../services/apiSpotify';
+import { getUserProfile, isLoggedIn } from '../services/apiSpotify';
 
 export function useUser(id = null) {
   const userKey = id === null ? 'me' : id;

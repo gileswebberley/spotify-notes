@@ -62,9 +62,7 @@ async function createCodeChallengeWithVerifier() {
 //This creates the code challenge and verifier then redirects to Spotify for authorisation code which we can use to request an access token
 export async function gotoSpotifyAuth() {
   //to fix the token problem introduced by Spotify in 2026 let's clear out any old tokens etc from local storage
-  window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
-  window.localStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY);
-  window.localStorage.removeItem(EXPIRATION_TIME_STORAGE_KEY);
+  logoutUser();
   //returns a promise so we need to wait for it to resolve (or reject, but that is unlikely given what it does)...
   try {
     await createCodeChallengeWithVerifier();
@@ -144,6 +142,19 @@ async function fetchPayloadResponse(url, payload) {
   }
 
   if (!result.ok) {
+    //I think I will have to put the new refresh token expiration logic in here, I guess just remove the tokens from local storage as that is what isLoggedIn checks and if that is false it will redirect to the auth page (which also checks for the existence of the access token and if not present will re-run the whole auth flow)?
+    // const response = await result.json();
+    if (body.error === 'invalid_grant') {
+      //we are trying to refresh the access token but our refresh token has expired
+      console.error(
+        'Refresh token is no longer valid - clearing local storage!!',
+      );
+      // I'm going to keep the local storage manipulation in the getAccessToken function instead
+      // window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+      // window.localStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY);
+      // window.localStorage.removeItem(EXPIRATION_TIME_STORAGE_KEY);
+      throw new Error(body.error);
+    }
     console.error('Fetch failed:', result.status, body);
     throw new Error(
       `fetchPayloadResponse error: status=${
@@ -174,10 +185,13 @@ async function setAccessTokenStorage(response) {
     response,
   );
   window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, response.access_token);
-  window.localStorage.setItem(
-    REFRESH_TOKEN_STORAGE_KEY,
-    response.refresh_token,
-  );
+  //no longer always sends a refresh token until it has expired or become invalid - it was setting it to undefined when used to refresh the access token!!
+  if (response.refresh_token) {
+    window.localStorage.setItem(
+      REFRESH_TOKEN_STORAGE_KEY,
+      response.refresh_token,
+    );
+  }
   //to deal with the access token expiring we'll store the expiration time and then we can compare against it within the useAccessToken function
   const expirationTime = new Date().getTime() + response.expires_in * 1000; //expires_in is in seconds!
   window.localStorage.setItem(EXPIRATION_TIME_STORAGE_KEY, expirationTime);
@@ -251,6 +265,12 @@ export async function getAccessToken() {
     try {
       await refreshAccessToken();
     } catch (error) {
+      //check if the error is due to the new refresh token expiration logic - if so I think it would be best to clear the storage here rather than in the fetchPayloadResponse function
+      if (error.message === 'invalid_grant') {
+        logoutUser();
+        console.error('Refresh token no longer valid - clearing tokens');
+        return false;
+      }
       console.error(`getAccessToken failed to refresh with error: ${error}`);
       return false;
     }

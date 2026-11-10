@@ -35,6 +35,11 @@ export const playlistLoader =
       });
     } catch (error) {
       console.error('Failed to prefetch playlist:', error);
+      if (error.message.includes('No access token')) {
+        console.log('Throwing a redirect....');
+        //need to throw this redirect as returning it from a catch block does not work
+        throw redirect(AUTH_PATH);
+      }
       return { playlist: null, playlistId };
     }
     // const enabled = !isTokenExpiring();

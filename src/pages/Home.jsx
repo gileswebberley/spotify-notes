@@ -53,7 +53,7 @@ function Home() {
           console.log(`hasValidToken has returned as: ${hasValidToken}`);
           if (!hasValidToken) {
             throw new Error(
-              'The access token found in Home is not valid - we will try to get a new one',
+              'The access token found is not valid - click Try Again to login to Spotify again and get a new one',
             );
           }
           console.log(`Access token already exists - navigating to playlists`);
@@ -61,8 +61,8 @@ function Home() {
           return;
         } catch (error) {
           console.error(error);
+          setFatality(error.message);
           return;
-          // gotoSpotifyAuth();
         }
       }
       //we have gone to the spotify auth and got our code which we can 'swap' for a token
@@ -93,7 +93,7 @@ function Home() {
           url.pathname + url.search,
         );
 
-        // immediately start exchangeing code for token
+        // immediately start exchanging code for token
         await getTokenWithCode(code);
         return;
       }
@@ -138,9 +138,9 @@ function Home() {
         <Header />
         <div className="error-content">
           <h1>
-            We're very sorry but something has gone wrong whilst trying to log
-            into Spotify. This could be due to network problems or a server
-            error
+            We're very sorry but something has gone wrong whilst trying to login
+            to Spotify. This could be due to network problems, an expired token,
+            or a server error
           </h1>
           <h2>We received an error message: {fatality}</h2>
           <button onClick={() => window.location.replace(REDIRECT_URI)}>
