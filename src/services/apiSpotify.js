@@ -61,12 +61,16 @@ async function createCodeChallengeWithVerifier() {
 
 //This creates the code challenge and verifier then redirects to Spotify for authorisation code which we can use to request an access token
 export async function gotoSpotifyAuth() {
+  //to fix the token problem introduced by Spotify in 2026 let's clear out any old tokens etc from local storage
+  window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+  window.localStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY);
+  window.localStorage.removeItem(EXPIRATION_TIME_STORAGE_KEY);
   //returns a promise so we need to wait for it to resolve (or reject, but that is unlikely given what it does)...
   try {
     await createCodeChallengeWithVerifier();
   } catch (error) {
     throw new Error(
-      `gotoSpotifyAuth failed to create a code challenge correctly: ${error}`
+      `gotoSpotifyAuth failed to create a code challenge correctly: ${error}`,
     );
   }
 
@@ -144,7 +148,7 @@ async function fetchPayloadResponse(url, payload) {
     throw new Error(
       `fetchPayloadResponse error: status=${
         result.status
-      } body=${JSON.stringify(body)}`
+      } body=${JSON.stringify(body)}`,
     );
   }
 
@@ -152,7 +156,7 @@ async function fetchPayloadResponse(url, payload) {
     throw new Error(
       `Response error from fetchPayloadResponse: ${body.error} - ${
         body.error_description || ''
-      }`
+      }`,
     );
   }
 
@@ -163,16 +167,16 @@ async function fetchPayloadResponse(url, payload) {
 async function setAccessTokenStorage(response) {
   if (!response)
     return Promise.reject(
-      new Error(`Set access token was called with an empty response`)
+      new Error(`Set access token was called with an empty response`),
     ); //trying to fix this sudden issue with refreshing
   console.table(
     `setAccessTokenStorage has been called with response - `,
-    response
+    response,
   );
   window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, response.access_token);
   window.localStorage.setItem(
     REFRESH_TOKEN_STORAGE_KEY,
-    response.refresh_token
+    response.refresh_token,
   );
   //to deal with the access token expiring we'll store the expiration time and then we can compare against it within the useAccessToken function
   const expirationTime = new Date().getTime() + response.expires_in * 1000; //expires_in is in seconds!
@@ -187,7 +191,7 @@ async function refreshAccessToken() {
   //if we're already in the process of refreshing then return the ongoing promise
   if (refreshingPromise) {
     console.log(
-      'refreshAccessToken has been called again while the refreshingPromise already exists'
+      'refreshAccessToken has been called again while the refreshingPromise already exists',
     );
     return refreshingPromise;
   }
@@ -264,7 +268,7 @@ export function isTokenExpiring() {
   const now = Number(new Date().getTime());
   const safe = 5000 * 60 + now; //5 minutes safety margin
   const expire = Number(
-    window.localStorage.getItem(EXPIRATION_TIME_STORAGE_KEY)
+    window.localStorage.getItem(EXPIRATION_TIME_STORAGE_KEY),
   );
   //I've just made a user context which requests the user profile before we're logged in so we'll check whether the expiration time has been set as a way to know if we are logged in or not - I'll return false if not logged in rather than throwing an error - UPDATE now throwing an error because the token doesn't need refreshing if there's no expire time but instead is being called when it shouldn't be, and the user problem has been taken care of elsewhere. This is unfortunately causing issues so just
   if (!expire) {
@@ -345,7 +349,7 @@ export async function getUserPlaylist(playlistId) {
   const accessToken = await getAccessToken();
   if (!accessToken) {
     throw new Error(
-      `No access token available - cannot fetch playlist with id ${playlistId}`
+      `No access token available - cannot fetch playlist with id ${playlistId}`,
     );
     // return null;
   }
@@ -374,7 +378,7 @@ export async function getPlaylistTracks(offset = 0, limit = 20, [playlistId]) {
     // return null;
   }
   const url = new URL(
-    `https://api.spotify.com/v1/playlists/${playlistId}/tracks`
+    `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
   );
   url.search = new URLSearchParams({ offset, limit }).toString();
   const payload = {

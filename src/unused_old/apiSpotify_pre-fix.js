@@ -1,0 +1,426 @@
+//...decided to centralise these constants
+import {
+  REDIRECT_URI,
+  AUTH_ENDPOINT,
+  SCOPE,
+  CODE_VERIFIER_STORAGE_KEY,
+  ACCESS_TOKEN_STORAGE_KEY,
+  CODE_CHALLENGE_STORAGE_KEY,
+  REFRESH_TOKEN_STORAGE_KEY,
+  EXPIRATION_TIME_STORAGE_KEY,
+  AUTH_CODE_STORAGE_KEY,
+} from '../utils/constants.js';
+
+//using .env.local and this is how you access those variables within Vite
+// const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID; Not working on Netlify
+const CLIENT_ID = 'ecbe55ef331142259862b25a9f54a3ea';
+//We now have to use PCKE authorizion flow as the token method was deprecated in 2025
+//first generate a random string as the code-verifier with this code from Spotify docs https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow
+const generateRandomString = (length) => {
+  const possible =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  //now fill a typed array with 'length' amount of secure random values
+  const values = crypto.getRandomValues(new Uint8Array(length));
+  //then map those values to characters from the possible string
+  return values.reduce((acc, x) => acc + possible[x % possible.length], '');
+};
+
+//Next we need to create the code-challenge, it needs to be hashed using SHA256 and then base64 encoded
+async function sha256(plain) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(plain);
+  return await window.crypto.subtle.digest('SHA-256', data);
+}
+
+//base64 encode the hash
+function base64encode(input) {
+  return btoa(String.fromCharCode(...new Uint8Array(input)))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+}
+
+//These were all defined in the main thread and so were being recreated between sending the code challenge and requesting the token with the verifier - moving them here and calling within the gotoAuth function seems to have solved the problem
+async function createCodeChallengeWithVerifier() {
+  const codeVerifier = generateRandomString(64);
+  //using await avoids the codeChallenge being saved as [object Promise] which is what I had been sending to Spotify!!
+  const codeChallenge = await sha256(codeVerifier)
+    .then((hashed) => {
+      // console.log(`Code challenge is: ${base64encode(hashed)}`);
+      //now return the base64 encoded hash so that it will be stored in the variable codeChallenge...
+      return base64encode(hashed);
+    })
+    .catch((e) => {
+      throw new Error(`Error generating code challenge: ${e}`);
+    });
+
+  //Now we'll pop our code challenge in local storage to compare later
+  window.localStorage.setItem(CODE_VERIFIER_STORAGE_KEY, codeVerifier);
+  window.localStorage.setItem(CODE_CHALLENGE_STORAGE_KEY, codeChallenge);
+}
+
+//This creates the code challenge and verifier then redirects to Spotify for authorisation code which we can use to request an access token
+export async function gotoSpotifyAuth() {
+  //returns a promise so we need to wait for it to resolve (or reject, but that is unlikely given what it does)...
+  try {
+    await createCodeChallengeWithVerifier();
+  } catch (error) {
+    throw new Error(
+      `gotoSpotifyAuth failed to create a code challenge correctly: ${error}`,
+    );
+  }
+
+  const codeChallenge = window.localStorage.getItem(CODE_CHALLENGE_STORAGE_KEY);
+  console.log(`Code challenge from storage is: ${codeChallenge}`);
+  //next we build our request string
+  const params = {
+    client_id: CLIENT_ID,
+    response_type: 'code',
+    redirect_uri: REDIRECT_URI,
+    scope: SCOPE,
+    code_challenge_method: 'S256',
+    code_challenge: codeChallenge,
+  };
+  //as the AUTH_ENDPOINT is a URL object we can set the search params directly
+  AUTH_ENDPOINT.search = new URLSearchParams(params).toString();
+  //then redirect to the modified AUTH_ENDPOINT (namely with the params added to the URL object)
+  window.location.href = AUTH_ENDPOINT.toString();
+}
+
+//Once we've got the code from spotify we use this to 'swap' it for an access token
+export async function requestToken(code) {
+  console.log(`Requesting token with code: ${code}`);
+  //this should have been stored during execution of gotoSpotifyAuth along with the code that has been passed in here
+  const codeVerifier = window.localStorage.getItem(CODE_VERIFIER_STORAGE_KEY);
+  // console.log(`Code verifier from storage: ${codeVerifier}`);
+  const url = 'https://accounts.spotify.com/api/token';
+  //whilst developing this it was all working until I enabled network throttling at which point it failed. After a day of searching and trying to troubleshoot with a bit of AI assistance I discovered that the serialisation proccess involved in using URLSearchParams was taking a moment longer somehow (which I don't fully understand tbh). By creating the serailised body first and then passing that in as the body it seems to work fine even with throttling enabled - This is an important lesson which I had no idea about until this point.
+  const body = new URLSearchParams({
+    client_id: CLIENT_ID,
+    grant_type: 'authorization_code',
+    code: code,
+    redirect_uri: REDIRECT_URI,
+    code_verifier: codeVerifier,
+  }).toString();
+
+  const payload = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: body,
+  };
+
+  try {
+    const response = await fetchPayloadResponse(url, payload);
+    await setAccessTokenStorage(response);
+    // //clear up the now defunct code based keys (they expire after 10 minutes anyway)
+    window.localStorage.removeItem(CODE_VERIFIER_STORAGE_KEY);
+    window.localStorage.removeItem(CODE_CHALLENGE_STORAGE_KEY);
+    window.localStorage.removeItem(AUTH_CODE_STORAGE_KEY);
+    return response.access_token;
+  } catch (error) {
+    throw new Error(`requestToken failed with error: ${error}`);
+  }
+}
+
+//because I'm copying and pasting some stuff I'll extract it into functions
+//first a function to handle fetch requests with a payload and deal with errors
+async function fetchPayloadResponse(url, payload) {
+  // console.log(`fetchPayloadResponse called with url: ${url}`);
+  // console.table('And payload:', payload);
+  const result = await fetch(url, payload);
+  //chat helping to fix the error refreshing caused by react-query and improving the error messages
+  const text = await result.text();
+  let body;
+  try {
+    body = text ? JSON.parse(text) : null;
+  } catch {
+    body = text;
+  }
+
+  if (!result.ok) {
+    console.error('Fetch failed:', result.status, body);
+    throw new Error(
+      `fetchPayloadResponse error: status=${
+        result.status
+      } body=${JSON.stringify(body)}`,
+    );
+  }
+
+  if (body && body.error) {
+    throw new Error(
+      `Response error from fetchPayloadResponse: ${body.error} - ${
+        body.error_description || ''
+      }`,
+    );
+  }
+
+  return body;
+}
+
+//this is used when the access token is returned from spotify and adds the expiration time to local storage so it can be tested against when consuming the token and refresh if it's getting close to expiring
+async function setAccessTokenStorage(response) {
+  if (!response)
+    return Promise.reject(
+      new Error(`Set access token was called with an empty response`),
+    ); //trying to fix this sudden issue with refreshing
+  console.table(
+    `setAccessTokenStorage has been called with response - `,
+    response,
+  );
+  window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, response.access_token);
+  window.localStorage.setItem(
+    REFRESH_TOKEN_STORAGE_KEY,
+    response.refresh_token,
+  );
+  //to deal with the access token expiring we'll store the expiration time and then we can compare against it within the useAccessToken function
+  const expirationTime = new Date().getTime() + response.expires_in * 1000; //expires_in is in seconds!
+  window.localStorage.setItem(EXPIRATION_TIME_STORAGE_KEY, expirationTime);
+  return Promise.resolve('setAccessTokenStorage successful');
+}
+
+//fixing the refresh token races - react-query is using unrefreshed tokens so this was suggested, like a single promise that will be shared by all simultaneous calls to refresh the token (a bit like a mutex apparently although I seem to remember from my days of playing with multithreaded code that a mutex is more about locking than sharing a resource)
+let refreshingPromise = null;
+
+async function refreshAccessToken() {
+  //if we're already in the process of refreshing then return the ongoing promise
+  if (refreshingPromise) {
+    console.log(
+      'refreshAccessToken has been called again while the refreshingPromise already exists',
+    );
+    return refreshingPromise;
+  }
+  //otherwise create the promise that is expected by the call to this function with an immediately invoked function implementation
+  refreshingPromise = (async () => {
+    const refreshToken = window.localStorage.getItem(REFRESH_TOKEN_STORAGE_KEY);
+    if (!refreshToken) {
+      refreshingPromise = null;
+      throw new Error('No refresh token available for refreshAccessToken');
+    }
+    console.log('Refreshing access token...');
+    // console.log(
+    //   `refreshAccessToken has been called...with refresh token: ${refreshToken}`
+    // );
+    const url = 'https://accounts.spotify.com/api/token';
+    const body = new URLSearchParams({
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+      client_id: CLIENT_ID,
+    }).toString();
+    const payload = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: body,
+    };
+    const response = await fetchPayloadResponse(url, payload);
+    await setAccessTokenStorage(response);
+    refreshingPromise = null;
+    return response.access_token;
+  })().catch((error) => {
+    //clear the promise on failure so it doesn't block future attempts
+    refreshingPromise = null;
+    throw error;
+  });
+
+  return refreshingPromise;
+}
+
+//I need to work out how to deal with the access token expiring and refresh it - apparently you receive a 401 error when expired at which point we'll want to use the refresh token to get a new one. Instead of doing that I'm going to save the UTC expiiration time and simply compare that against 'now' in milliseconds
+//rather than grab the access token whenever it's needed I'm going to use this function which will check the expiration time and refresh if needed before returning the token
+//THIS DOES NOT THROW AN ERROR BUT INSTEAD SIMPLY RETURNS FALSE / ACCESS TOKEN
+export async function getAccessToken() {
+  console.log('getAccessToken called....');
+  let refreshNeeded;
+  try {
+    refreshNeeded = isTokenExpiring();
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+  //check whether there's at least 5 minutes left on the token
+  if (refreshNeeded) {
+    //token is expired or about to expire so we need to get a new one
+    console.log(`Access token expired or about to expire - refreshing`);
+    try {
+      await refreshAccessToken();
+    } catch (error) {
+      console.error(`getAccessToken failed to refresh with error: ${error}`);
+      return false;
+    }
+  }
+  const accessToken = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
+  if (!accessToken) {
+    console.error('No access token stored after refreshing');
+    return false;
+  }
+  return accessToken;
+}
+
+//just want to check expiration in react-query enabled property too so I'll extract it
+export function isTokenExpiring() {
+  const now = Number(new Date().getTime());
+  const safe = 5000 * 60 + now; //5 minutes safety margin
+  const expire = Number(
+    window.localStorage.getItem(EXPIRATION_TIME_STORAGE_KEY),
+  );
+  //I've just made a user context which requests the user profile before we're logged in so we'll check whether the expiration time has been set as a way to know if we are logged in or not - I'll return false if not logged in rather than throwing an error - UPDATE now throwing an error because the token doesn't need refreshing if there's no expire time but instead is being called when it shouldn't be, and the user problem has been taken care of elsewhere. This is unfortunately causing issues so just
+  if (!expire) {
+    throw new Error(`No expiration time found - user not logged in`);
+  }
+  //true if token needs refreshing so when using it for enabled prop in react-query we reverse it - ie enabled = !isTokenExpiring
+  return expire - safe <= 0;
+}
+
+//I want to be able to protect the playlists and playlist component so just want a little function that checks if we have logged in or are trying to go to a link
+export function isLoggedIn() {
+  if (!window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)) {
+    return false;
+  }
+  return true;
+}
+
+//Just came back to this and it kinda froze which made me have another look at error handling and throwing so rather than silently fail by returning null I think I should be throwing errors
+//adding get by id for get the added-by user in tracklist
+export async function getUserProfile(id = null) {
+  const accessToken = await getAccessToken();
+  if (!accessToken) {
+    throw new Error(`No access token available - cannot fetch user profile`);
+    // return null;
+  }
+  const url = !id
+    ? 'https://api.spotify.com/v1/me'
+    : `https://api.spotify.com/v1/users/${id}`;
+  //a little reminder - GET requests do not have a body so if you see extra stuff in the documentation (like limit or offset) they need to go in the URL as query params
+  const payload = {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+  try {
+    const result = await fetchPayloadResponse(url, payload);
+    // console.table(`User profile response:`, result);
+    return result;
+  } catch (error) {
+    throw new Error(`getUserProfile failed with error: ${error}`);
+  }
+}
+
+export async function getUserPlaylists(offset = 0, limit = 20) {
+  //max limit is 50 as per Spotify docs
+  if (limit > 50) {
+    limit = 50;
+  }
+  const accessToken = await getAccessToken();
+  if (!accessToken) {
+    throw new Error(`No access token available - cannot fetch user playlists`);
+    // return null;
+  }
+  //if you want to be able to get other users playlists you'd need to get their user ID first and replace the 'me' in the URL below
+  // const userId = await getUserProfile().then((profile) => profile.id);
+  const url = new URL(`https://api.spotify.com/v1/me/playlists`);
+  // console.log(`Fetching playlists for user: ${userId}`);
+  //This is the way to add query params that I mentioned in getUserProfile when using a GET request
+  url.search = new URLSearchParams({ offset, limit }).toString();
+  const payload = {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+  try {
+    const result = await fetchPayloadResponse(url, payload);
+    // console.log(`User playlists response:`);
+    // console.table(result.items);
+    return result;
+  } catch (error) {
+    throw new Error(`getUserPlaylists failed with error: ${error}`);
+  }
+}
+
+export async function getUserPlaylist(playlistId) {
+  const accessToken = await getAccessToken();
+  if (!accessToken) {
+    throw new Error(
+      `No access token available - cannot fetch playlist with id ${playlistId}`,
+    );
+    // return null;
+  }
+  const url = new URL(`https://api.spotify.com/v1/playlists/${playlistId}`);
+  const payload = {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+  try {
+    //limit has no effect as it is locked to 100 by Spotify
+    const result = await fetchPayloadResponse(url, payload);
+    // console.table(`Playlist ${playlistId} details:`, result);
+    return result;
+  } catch (error) {
+    throw new Error(`getUserPlaylist failed with error: ${error}`);
+  }
+}
+
+//
+export async function getPlaylistTracks(offset = 0, limit = 20, [playlistId]) {
+  const accessToken = await getAccessToken();
+  if (!accessToken) {
+    throw new Error(`No access token available - cannot fetch playlist tracks`);
+    // return null;
+  }
+  const url = new URL(
+    `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+  );
+  url.search = new URLSearchParams({ offset, limit }).toString();
+  const payload = {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+  try {
+    const result = await fetchPayloadResponse(url, payload);
+    // console.log(`Playlist ${playlistId} tracks response:`);
+    // console.table(result.items);
+    return result;
+  } catch (error) {
+    throw new Error(`getPlaylistTracks failed with error: ${error}`);
+  }
+}
+
+//let's get currently playing so we can either highlight the track in a playlist or, as originally planned, so you can add notes to it
+export async function getCurrentlyPlayingTrack() {
+  const accessToken = await getAccessToken();
+  if (!accessToken) {
+    throw new Error(`No access token available - cannot fetch playlist tracks`);
+    // return null;
+  }
+  const url = new URL(`https://api.spotify.com/v1/me/player/currently-playing`);
+  const payload = {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+  try {
+    const result = await fetchPayloadResponse(url, payload);
+    console.log(`Currently playing track response:`);
+    console.table('result', result);
+    console.table('items', result.item);
+    return result;
+  } catch (error) {
+    throw new Error(`getCurrentlyPlayingTrack failed with error: ${error}`);
+  }
+}
+
+//to allow users to 'log out' we'll just clear local storage of token related stuff
+export function logoutUser() {
+  window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+  window.localStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY);
+  window.localStorage.removeItem(EXPIRATION_TIME_STORAGE_KEY);
+}

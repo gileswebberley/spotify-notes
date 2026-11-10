@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
-import { gotoSpotifyAuth, requestToken } from '../services/apiSpotify';
+import {
+  getAccessToken,
+  gotoSpotifyAuth,
+  requestToken,
+} from '../services/apiSpotify';
 import { useCodeChallenge } from '../hooks/useCodeChallenge';
 import {
   ACCESS_TOKEN_STORAGE_KEY,
@@ -34,7 +38,7 @@ function Home() {
         navigate('/playlists', { replace: true });
       } catch (error) {
         setFatality(
-          `Error requesting token within getTokenWithCode. Error: ${error}`
+          `Error requesting token within getTokenWithCode. Error: ${error}`,
         );
         window.localStorage.removeItem(AUTH_CODE_STORAGE_KEY);
       }
@@ -43,13 +47,27 @@ function Home() {
     async function handleAuthFlow() {
       //we have come back to home although we already have an access token so just navigate to playlists
       if (window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY) && !error) {
-        console.log(`Access token already exists - navigating to playlists`);
-        navigate('/playlists', { replace: true });
-        return;
+        //try to fix the problems caused by the change to access token flow introduced by Spotify, check that we actually have a valid token before navigating to playlists
+        try {
+          const hasValidToken = await getAccessToken();
+          console.log(`hasValidToken has returned as: ${hasValidToken}`);
+          if (!hasValidToken) {
+            throw new Error(
+              'The access token found in Home is not valid - we will try to get a new one',
+            );
+          }
+          console.log(`Access token already exists - navigating to playlists`);
+          navigate('/playlists', { replace: true });
+          return;
+        } catch (error) {
+          console.error(error);
+          return;
+          // gotoSpotifyAuth();
+        }
       }
       //we have gone to the spotify auth and got our code which we can 'swap' for a token
       const authCodeFromStorage = window.localStorage.getItem(
-        AUTH_CODE_STORAGE_KEY
+        AUTH_CODE_STORAGE_KEY,
       );
 
       if (
@@ -61,7 +79,7 @@ function Home() {
       }
       if (code && !window.localStorage.getItem(AUTH_CODE_STORAGE_KEY)) {
         console.log(
-          `Code found in Home, setting AUTH_CODE_STORAGE_KEY to: ${code}`
+          `Code found in Home, setting AUTH_CODE_STORAGE_KEY to: ${code}`,
         );
         window.localStorage.setItem(AUTH_CODE_STORAGE_KEY, code);
         // window.location.reload(); - no this is not the correct way, we'll just try to get the token immediately
@@ -72,7 +90,7 @@ function Home() {
         window.history.replaceState(
           {},
           document.title,
-          url.pathname + url.search
+          url.pathname + url.search,
         );
 
         // immediately start exchangeing code for token
@@ -83,7 +101,7 @@ function Home() {
       //we have not gone to spotify for an auth code yet so we cannot get our token yet
       else if (!code && !error) {
         console.log(
-          `No code found in Home so calling gotoSpotifyAuth() to redirect user to Spotify login/auth page`
+          `No code found in Home so calling gotoSpotifyAuth() to redirect user to Spotify login/auth page`,
         );
         //gotoSpotifyAuth can throw an error so we'll want to catch that
         try {
@@ -91,7 +109,7 @@ function Home() {
         } catch (error) {
           setFatality(
             'Error thrown by gotoSpotifyAuth whilst being called from Home:',
-            error
+            error,
           );
         }
       }
