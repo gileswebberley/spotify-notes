@@ -149,10 +149,6 @@ async function fetchPayloadResponse(url, payload) {
       console.error(
         'Refresh token is no longer valid - clearing local storage!!',
       );
-      // I'm going to keep the local storage manipulation in the getAccessToken function instead
-      // window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
-      // window.localStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY);
-      // window.localStorage.removeItem(EXPIRATION_TIME_STORAGE_KEY);
       throw new Error(body.error);
     }
     console.error('Fetch failed:', result.status, body);
@@ -180,10 +176,10 @@ async function setAccessTokenStorage(response) {
     return Promise.reject(
       new Error(`Set access token was called with an empty response`),
     ); //trying to fix this sudden issue with refreshing
-  console.table(
-    `setAccessTokenStorage has been called with response - `,
-    response,
-  );
+  // console.table(
+  //   `setAccessTokenStorage has been called with response - `,
+  //   response,
+  // );
   window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, response.access_token);
   //no longer always sends a refresh token until it has expired or become invalid - it was setting it to undefined when used to refresh the access token!!
   if (response.refresh_token) {

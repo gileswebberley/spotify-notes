@@ -14,6 +14,19 @@
     <meta name="theme-color" content="#090909" />
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
     <meta name="mobile-web-app-capable" content="yes" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+  default-src 'self';
+  script-src 'self';
+  connect-src 'self' api.spotify.com accounts.spotify.com spotify.com;
+  style-src 'self' 'unsafe-inline';
+  img-src 'self' data: i.scdn.co *.spotifycdn.com image-cdn-ak.spotifycdn.com mosaic.scdn.co *.fbcdn.net;
+  object-src 'none';
+  base-uri 'self';
+  form-action 'self' accounts.spotify.com;
+"
+    />
     <title>Snotify</title>
   </head>
   <body>
