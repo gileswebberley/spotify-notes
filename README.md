@@ -1,18 +1,10 @@
-# React + Vite
+# Snotify (spotify-notes)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+I love discovering music but when I discover it via Spotify I have often wanted to be able to add notes to the tracks as I add them to my playlists. Because this ability does not exist (even though I made a 'developer suggestion' on Spotify's developer forum) I decided to build my own app that would allow me to do this. With this desire in mind I created Snotify, a Progressive Web App that communicates with the Spotify Web API and stores my notes in a local database using Dexie.js.
 
-Currently, two official plugins are available:
+## Development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Possibly the most challenging, and therefore most rewarding, part of building Snotify was learning how to create a pkce authorisation workflow that would be secure and compliant with Spotify's requirements. This involved understanding how to generate a code challenge and verifier, and how to use them in the authorisation flow. I used AI as an artificial colleague to help me understand any bugs that arose during development, of which there were several, especially when I integrated TanStack Query which was racing to use my api and causing issues with refreshing tokens. You can read about my solution in <a aria-label="check out my article about my pkce workflow solution" href="https://dev.to/giles_webberley_2c4cc9f84/getting-to-grips-with-pkce-spotify-authentication-in-a-react-js-app-5g8n" target="_blank">this article</a> that I published on DEV.to
 
-## React Compiler
-
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+A lot of the work involved was to get the styling to feel like Spotify's own UI and make it seamlessly responsive across different screen sizes. I also made sure to use the same colour palette and typography that Spotify uses to make the app feel like a native Spotify experience. A lot of tweaking was required especially to get the playlist header colour a reflection of the dominant colour in the album art. The Spotify algorithm for this is more involved than I could replicate but I was delighted with the results.
+When I started to use it for the annual Song of the Year competition that my friends and I enjoy for New Years Eve I decided to add a feature that allows users to add a note to whatever they are currently playing on Spotify itself. That way you can add a note before you've added it to a playlist and it will be connected to that track wherever you save it.
