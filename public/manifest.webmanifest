@@ -1,12 +1,12 @@
 {
-  "name": "Spotify Notes",
-  "short_name": "Notes",
+  "name": "Snotify - Spotify Notes",
+  "short_name": "Snotify",
   "description": "Save notes with Spotify tracks",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#090909",
-  "theme_color": "#1DB954",
+  "theme_color": "#090909",
   "icons": [
     {
       "src": "/icons/icon-192.png",
