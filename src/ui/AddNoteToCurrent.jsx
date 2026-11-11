@@ -22,13 +22,14 @@ function AddNoteToCurrent() {
   return (
     <>
       <button
-        className="add-current-note-button icon-button"
+        className="add-current-note-button"
         onClick={() => setOpen(!open)}
+        data-open={open}
         title="Add a note to the track currently playing on Spotify"
         aria-description="Add a note to the track currently playing on Spotify"
         popoverTarget="currentNotePopover"
       >
-        <FaPlay style={open && { transform: 'rotate(90deg)' }} />
+        <FaPlay className="add-current-play-icon" />
         <FaPlus />
       </button>
       <div

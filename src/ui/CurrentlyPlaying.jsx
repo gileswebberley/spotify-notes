@@ -14,7 +14,11 @@ function CurrentlyPlaying() {
     error ||
     currentlyPlaying.currently_playing_type !== 'track'
   ) {
-    return <h2>No track is currently playing</h2>;
+    return (
+      <div className="add-current-not-playing">
+        You are not currently playing a track on any of your Spotify devices
+      </div>
+    );
   }
 
   const { item: track } = currentlyPlaying ?? {};

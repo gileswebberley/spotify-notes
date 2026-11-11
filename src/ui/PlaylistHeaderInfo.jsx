@@ -34,9 +34,10 @@ function PlaylistHeaderInfo({ name, tracks, owner }) {
                 }}
               />
             </h3>
+            <p>{tracks} songs</p>
           </>
         )}
-        <p>{tracks} songs</p>
+        {/* <p>{tracks} songs</p> */}
       </article>
     </section>
   );

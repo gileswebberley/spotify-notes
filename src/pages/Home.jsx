@@ -50,7 +50,7 @@ function Home() {
         //try to fix the problems caused by the change to access token flow introduced by Spotify, check that we actually have a valid token before navigating to playlists
         try {
           const hasValidToken = await getAccessToken();
-          console.log(`hasValidToken has returned as: ${hasValidToken}`);
+          // console.log(`hasValidToken has returned as: ${hasValidToken}`);
           if (!hasValidToken) {
             throw new Error(
               'The access token found is not valid - click Try Again to login to Spotify again and get a new one',
@@ -78,9 +78,9 @@ function Home() {
         return;
       }
       if (code && !window.localStorage.getItem(AUTH_CODE_STORAGE_KEY)) {
-        console.log(
-          `Code found in Home, setting AUTH_CODE_STORAGE_KEY to: ${code}`,
-        );
+        // console.log(
+        //   `Code found in Home, setting AUTH_CODE_STORAGE_KEY to: ${code}`,
+        // );
         window.localStorage.setItem(AUTH_CODE_STORAGE_KEY, code);
         // window.location.reload(); - no this is not the correct way, we'll just try to get the token immediately
         // remove ?code=... from the url without reload

@@ -83,7 +83,8 @@ p {
 
 header {
   grid-area: header;
-  height: 5dvh;
+  /* height: 5dvh; */
+  height: fit-content;
   padding: 0.7rem;
   display: flex;
   align-items: center;
@@ -127,18 +128,6 @@ header h2 {
   display: inline-block;
   height: 3.5dvh;
   width: auto;
-}
-
-/* Using the popoverAPI which provides an anchor to the toggle button */
-.add-current-note-container {
-  width: min(96dvw, calc(var(--max-content-width) - 1.5rem));
-  height: fit-content;
-  position: absolute;
-  top: calc(anchor(bottom) + 0.5rem);
-  left: anchor(left);
-  border: 1px solid var(--spotify-green);
-  border-radius: 20px;
-  color: var(--colour-white);
 }
 
 footer {
@@ -443,14 +432,63 @@ footer {
 }
 
 .add-current-note-button {
-  background-color: rgba(0, 0, 0, 0);
+  /* background-color: rgba(0, 0, 0, 0); */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--light-background-charcoal);
+  color: var(--colour-white);
   border: 1px solid transparent;
   cursor: pointer;
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
+  font-size: 1.5rem;
+  anchor-name: --current-note-button;
 }
 
 .add-current-note-button:focus,
 .add-current-note-button:focus-visible {
   outline-style: none;
+}
+
+.add-current-note-button[data-open='true'] {
+  background-color: var(--spotify-green);
+  color: var(--light-background-charcoal);
+}
+
+.add-current-play-icon {
+  transition: transform 0.6s ease;
+}
+
+.add-current-note-button[data-open='true'] .add-current-play-icon {
+  transform: rotate(90deg);
+}
+
+/* Using the popoverAPI which provides an anchor to the toggle button */
+.add-current-note-container {
+  width: min(calc(100dvw - 1.5rem), calc(var(--max-content-width) - 1.5rem));
+  height: fit-content;
+  /* position: absolute; */
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  position-anchor: --current-note-button;
+  top: calc(anchor(bottom) + 0.7rem);
+  left: anchor(left);
+  border: 1px solid var(--spotify-green);
+  border-radius: 0.6rem;
+  color: var(--colour-white);
+}
+
+.add-current-not-playing {
+  grid-column: 1/-1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 400;
 }
 
 .clear-button {
@@ -524,7 +562,7 @@ footer {
   overflow-y: clip;
   text-overflow: ellipsis;
 
-  /* Limit to a maximum of 2 rows of wrapped text */
+  /* Limit to a maximum of 3 rows of wrapped text */
   -webkit-line-clamp: 3;
   line-clamp: 3; /* For forward compatibility */
 }
@@ -535,6 +573,16 @@ footer {
   justify-items: flex-start;
   flex-wrap: wrap;
   column-gap: 0.5rem;
+}
+
+/* try to stop the <p> from rising slightly when at it's smallest */
+.playlist-header-user h3,
+.playlist-header-user p {
+  padding: 0;
+  margin: 0;
+  line-height: 1; /* Normalizes the vertical space the font takes up */
+  display: inline-flex;
+  align-items: center; /* Centers text alignment internally */
 }
 
 .playlist-header-user h3 {
