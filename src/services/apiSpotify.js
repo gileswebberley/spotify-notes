@@ -73,7 +73,7 @@ export async function gotoSpotifyAuth() {
   }
 
   const codeChallenge = window.localStorage.getItem(CODE_CHALLENGE_STORAGE_KEY);
-  console.log(`Code challenge from storage is: ${codeChallenge}`);
+  // console.log(`Code challenge from storage is: ${codeChallenge}`);
   //next we build our request string
   const params = {
     client_id: CLIENT_ID,
@@ -91,7 +91,7 @@ export async function gotoSpotifyAuth() {
 
 //Once we've got the code from spotify we use this to 'swap' it for an access token
 export async function requestToken(code) {
-  console.log(`Requesting token with code: ${code}`);
+  // console.log(`Requesting token with code: ${code}`);
   //this should have been stored during execution of gotoSpotifyAuth along with the code that has been passed in here
   const codeVerifier = window.localStorage.getItem(CODE_VERIFIER_STORAGE_KEY);
   // console.log(`Code verifier from storage: ${codeVerifier}`);
