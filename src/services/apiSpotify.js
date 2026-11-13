@@ -329,6 +329,7 @@ export async function getUserProfile(id = null) {
   }
 }
 
+// offset and limit are for pagination via the infinite query produced by the usePaginatedFetch hook
 export async function getUserPlaylists(offset = 0, limit = 20) {
   //max limit is 50 as per Spotify docs
   if (limit > 50) {
@@ -361,6 +362,7 @@ export async function getUserPlaylists(offset = 0, limit = 20) {
   }
 }
 
+// this is used in the playlist loader to get all of the details of it along with the first batch of tracks, then we use the usePaginatedFetch hook (which is now based on the tanstack-query infinite query) to get the rest of the tracks. The response from this has an items property which includes the offset and limit properties so can be passed to usePaginatedFetch as the initialState argument (see the Playlist component)
 export async function getUserPlaylist(playlistId) {
   const accessToken = await getAccessToken();
   if (!accessToken) {
@@ -386,15 +388,19 @@ export async function getUserPlaylist(playlistId) {
   }
 }
 
-//
+// This is the fetchFunction argument for usePaginatedFetch in the Playlist component, note that it passes the ...args array through to this (as args not ...args) hence the [playlistId] destructuring in the signature.
 export async function getPlaylistTracks(offset = 0, limit = 20, [playlistId]) {
   const accessToken = await getAccessToken();
   if (!accessToken) {
     throw new Error(`No access token available - cannot fetch playlist tracks`);
     // return null;
   }
+  //this has been deprecated by Spotify in favour of items rather than tracks
+  // const url = new URL(
+  //   `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+  // );
   const url = new URL(
-    `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+    `https://api.spotify.com/v1/playlists/${playlistId}/items`,
   );
   url.search = new URLSearchParams({ offset, limit }).toString();
   const payload = {

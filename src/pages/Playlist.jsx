@@ -17,11 +17,12 @@ function Playlist() {
     data: tracks,
     getNextPrev,
     hasNext,
-  } = usePaginatedFetch(getPlaylistTracks, playlist.tracks, playlistId);
+  } = usePaginatedFetch(getPlaylistTracks, playlist.tracks, playlistId); //playlist.tracks has limit, next, previous, offset, and total properties that this hook uses to set up the initial state of the infinite query
   const navigator = useNavigation();
   const isLoading = navigator.state === 'loading' || !playlist;
+  // trigger the infinite scroll loading when the 4th last element is coming into view (we take one away from this if any tracks are filtered out of the list)
   let infiniteScrollElementIndex = tracks?.items?.length - 4;
-  console.log(`infiniteScrollElement is ${infiniteScrollElementIndex}`);
+  // console.log(`infiniteScrollElement is ${infiniteScrollElementIndex}`);
 
   const intersectionCallback = useCallback(() => {
     if (hasNext && !isLoading) {
@@ -39,7 +40,7 @@ function Playlist() {
 
   const { intersectionTargetRef } = useIntersection(
     intersectionCallback,
-    options
+    options,
   );
 
   return (

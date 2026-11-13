@@ -23,7 +23,7 @@ export function useIntersection(callbackFn, options = {}, singleUse = true) {
         }
       }
     },
-    [callbackFn, singleUse]
+    [callbackFn, singleUse],
   );
 
   //if no viewportElement is set then it will be null which will make it default to the browser window
@@ -45,7 +45,7 @@ export function useIntersection(callbackFn, options = {}, singleUse = true) {
       }
       observer?.disconnect();
     };
-  }, [intersectionTargetRef, observerCallback, options]);
+  }, [intersectionTargetRef, viewportElementRef, observerCallback, options]);
 
   return { intersectionTargetRef, viewportElementRef };
 }
