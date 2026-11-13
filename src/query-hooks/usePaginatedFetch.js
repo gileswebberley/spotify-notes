@@ -57,6 +57,7 @@ import { isLoggedIn, isTokenExpiring } from '../services/apiSpotify';
 export function usePaginatedFetch(fetchFunction, initialState, ...args) {
   const initialOffset = Number(initialState?.offset ?? 0);
   const limit = Number(initialState?.limit ?? 20);
+  // when args is the playlistId for example this makes the query key unique to that playlist so that the infinite query is cached separately for each playlist
   const queryKey = [fetchFunction.name || 'paginated', ...args];
 
   let enabledCheck = isLoggedIn();
