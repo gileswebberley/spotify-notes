@@ -10,7 +10,7 @@ import { forwardRef } from 'react';
 
 //forwardRef for use with useIntersection for infinite scroll behaviour
 const TrackItem = forwardRef(({ item }, ref) => {
-  const { name, album, artists, id, duration_ms } = item.track;
+  const { name, album, artists, id, duration_ms } = item.item; //used to be .track but that has been deprecated
   const { added_at, added_by } = item;
   const artistString = getArtistsString(artists); //artists.map((artist) => artist.name).join(', ');
   //Great, this works nicely
@@ -37,8 +37,8 @@ const TrackItem = forwardRef(({ item }, ref) => {
           {status === 'pending'
             ? 'loading...'
             : status === 'error'
-            ? '-'
-            : display_name}
+              ? '-'
+              : display_name}
         </div>
         <div className="col-date-added">{formatDate(added_at)}</div>
         <div className="col-runtime">{(duration_ms / 60000).toFixed(2)}</div>

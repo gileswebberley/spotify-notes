@@ -4,7 +4,7 @@ import { forwardRef } from 'react';
 
 //forwardRef for use with useIntersection
 const PlaylistItem = forwardRef(({ playlist }, ref) => {
-  const { name, tracks, images, owner, id } = playlist;
+  const { name, items: tracks, images, owner, id } = playlist;
   const navigate = useNavigate();
 
   function handleClick() {

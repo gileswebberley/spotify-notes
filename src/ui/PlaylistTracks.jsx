@@ -14,7 +14,7 @@ function PlaylistTracks({ initialTracks, playlistId }) {
     getNextPrev,
     hasNext,
     isLoading: isFetchingTracks,
-  } = usePaginatedFetch(getPlaylistTracks, initialTracks, playlistId); //playlist.tracks has limit, next, previous, offset, and total properties that this hook uses to set up the initial state of the infinite query
+  } = usePaginatedFetch(getPlaylistTracks, initialTracks, playlistId); //playlist.tracks deprecated, now playlist.items which also has limit, next, previous, offset, and total properties that this hook uses to set up the initial state of the infinite query
   // trigger the infinite scroll loading when the 4th last element is coming into view (we take one away from this if any tracks are filtered out of the list)
   let infiniteScrollElementIndex = tracks?.items?.length - 4;
   // console.log(`infiniteScrollElement is ${infiniteScrollElementIndex}`);
@@ -55,21 +55,18 @@ function PlaylistTracks({ initialTracks, playlistId }) {
         {/* <ul> */}
         {/* <div className="list-row"> */}
         {tracks?.items.map((item, index) => {
-          //check that they are only tracks as episodes can also be returned in playlists - could add an EpisodeItem later if it makes any sense
-          if (item.track?.type === 'episode' || !item.track) {
+          //check that they are only tracks as episodes can also be returned in playlists - could add an EpisodeItem later if it makes any sense - track is now deprecated so must use item instead!!
+          if (item.item?.type === 'episode' || !item.item) {
             --infiniteScrollElementIndex;
             return null;
           }
           if (infiniteScrollElementIndex === index) {
             return (
-              <NoteUIContextProvider
-                key={item.track.id}
-                trackId={item.track.id}
-              >
+              <NoteUIContextProvider key={item.item.id} trackId={item.item.id}>
                 <TrackItem
                   index={index}
                   ref={intersectionTargetRef}
-                  // key={item.track.id}
+                  // key={item.item.id}
                   item={item}
                 />
               </NoteUIContextProvider>
@@ -78,7 +75,7 @@ function PlaylistTracks({ initialTracks, playlistId }) {
           //passing the item rather than the track object as it has the added_at property which would be handy to have in the notes
           //   console.table(`item for playlist is: `, item);
           return (
-            <NoteUIContextProvider key={item.track.id} trackId={item.track.id}>
+            <NoteUIContextProvider key={item.item.id} trackId={item.item.id}>
               <TrackItem index={index} item={item} />
             </NoteUIContextProvider>
           );

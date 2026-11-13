@@ -15,7 +15,7 @@ function Playlist() {
       <PlaylistHeader playlist={playlist} />
       <PlaylistTracks
         key={playlistId}
-        initialTracks={playlist?.tracks}
+        initialTracks={playlist?.items}
         playlistId={playlistId}
       />
     </div>

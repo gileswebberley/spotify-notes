@@ -32,7 +32,7 @@ function Playlists() {
 
   const { intersectionTargetRef } = useIntersection(
     intersectionCallback,
-    options
+    options,
   );
 
   return (
@@ -48,7 +48,8 @@ function Playlists() {
             <div className="col-playlist-tracks">Tracks</div>
           </div>
           {playlists?.items.map((item, index) => {
-            if (item.tracks.total < 2) {
+            // check for tiny playlists and the possibility of item or items being null because they have been removed....I think is what Spotify docs is saying!? Also now item.items as item.tracks is deprecated
+            if ((item?.items?.total ?? 0) < 2) {
               --infiniteScrollElementIndex;
               return null;
             }
