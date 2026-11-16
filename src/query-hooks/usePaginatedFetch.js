@@ -3,7 +3,7 @@
 
 import { useMemo } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { isLoggedIn, isTokenExpiring } from '../services/apiSpotify';
+import { isLoggedIn } from '../services/apiSpotify';
 
 // fetchFunction(pageOffset, limit, ...args) => returns a Spotify page object { items, next, previous, limit, offset, ... }
 // initialState is the first-page object (from your loader)

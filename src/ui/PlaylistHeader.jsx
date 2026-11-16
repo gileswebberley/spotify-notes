@@ -2,7 +2,7 @@ import HeaderColourSettingImage from './HeaderColourSettingImage';
 import PlaylistHeaderInfo from './PlaylistHeaderInfo';
 
 function PlaylistHeader({ playlist }) {
-  const { images, name, tracks, owner } = playlist;
+  const { images, name, items: tracks, owner } = playlist;
   const totalTracks = tracks.total;
 
   return (

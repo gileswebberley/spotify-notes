@@ -5,8 +5,13 @@ import { useState } from 'react';
 
 function PlaylistHeaderInfo({ name, tracks, owner }) {
   const { status, fetchStatus, user, error } = useUser(owner?.id);
-  const { display_name, images } = user ?? {};
+  let { display_name, images } = user ?? {};
   const [clampName, setClampName] = useState(true);
+  if (!display_name) {
+    //Spotify are deprecating the get user's profile endpoint!! Twats!
+    //name is still available from the owner so we'll fallback to using that and the image will just be blank I guess
+    display_name = owner.display_name;
+  }
 
   return (
     <section className="playlist-header-info">
