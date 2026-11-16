@@ -97,7 +97,7 @@ header {
 }
 
 header button {
-  font-size: max(1rem, 2dvh);
+  font-size: max(1rem, max(2dvh, 2dvw));
   font-weight: 600;
   padding: 0.8dvh 1.5dvh;
   border-radius: 2.8dvh;

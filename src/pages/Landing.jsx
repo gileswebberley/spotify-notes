@@ -1,11 +1,15 @@
 import { useNavigate } from 'react-router-dom';
 import OverlayScrollContainer from '../ui/OverlayScrollContainer';
 import { useEffect, useState } from 'react';
+import { ACCESS_TOKEN_STORAGE_KEY } from '../utils/constants';
 
 function Landing() {
   const navigate = useNavigate();
   //now we've tried to make this a pwa I'm going to change the header according to network status and simply serve this as the navigateFallback in vite.config.js (or more to the point serve index.html whether online ot offline and block other routes when offline)
   const [networkAvailable, setNetworkAvailable] = useState(navigator.onLine);
+  const [isAlreadySignedIn, setIsAlreadySignedIn] = useState(
+    window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY) ?? false,
+  );
   console.log(`is networkAvailable: ${networkAvailable}`);
   //little helper functions for adding/removing eventListeners
   const setOnline = () => setNetworkAvailable(true);
@@ -14,25 +18,30 @@ function Landing() {
   useEffect(() => {
     window.addEventListener('online', setOnline);
     window.addEventListener('offline', setOffline);
+    if (isAlreadySignedIn) navigate('/auth');
 
     return () => {
       window.removeEventListener('online', setOnline);
       window.removeEventListener('offline', setOffline);
     };
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="app-layout">
       <header style={{ height: 'auto', textAlign: 'right' }}>
         {networkAvailable ? (
           <>
-            <h2 style={{ marginTop: '0.8dvh' }}>Let's Get You Started...</h2>
-            <button onClick={() => navigate('/auth')}>Login To Spotify</button>
+            <h2 style={{ marginTop: '0.8dvh' }}>
+              {!isAlreadySignedIn ? `Let's Get Started...` : 'Welcome Back'}
+            </h2>
+            {!isAlreadySignedIn && (
+              <button onClick={() => navigate('/auth')}>Login</button>
+            )}
           </>
         ) : (
           <>
             <h2 style={{ marginTop: '0.8dvh' }}>You Are Offline</h2>
-            <button disabled={true}>Login To Spotify</button>
+            <button disabled={true}>Login</button>
           </>
         )}
       </header>
