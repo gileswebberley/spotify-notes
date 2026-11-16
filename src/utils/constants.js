@@ -1,6 +1,6 @@
 export const HOST = '127.0.0.1';
 export const PORT = 4173;
-export const REDIRECT_URI = `http://${HOST}:${PORT}/auth`;
+export const REDIRECT_URI = 'https://s-notify.netlify.app/auth';
 //'https://s-notify.netlify.app/auth'; //for deployment
 //`http://${HOST}:${PORT}/auth`; //for testing
 export const AUTH_ENDPOINT = new URL('https://accounts.spotify.com/authorize');
